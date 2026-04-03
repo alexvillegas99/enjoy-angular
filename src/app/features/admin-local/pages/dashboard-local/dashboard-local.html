@@ -1,0 +1,71 @@
+<div class="p-6 space-y-6">
+
+  <!-- HEADER + FILTRO -->
+  <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
+    <h1 class="text-2xl font-semibold">Dashboard Operativo</h1>
+
+    <div class="flex gap-2 items-center">
+      <input type="date" [(ngModel)]="fechaInicio"
+        class="border rounded-lg px-3 py-2 text-sm" />
+      <input type="date" [(ngModel)]="fechaFin"
+        class="border rounded-lg px-3 py-2 text-sm" />
+      <button (click)="filtrar()"
+        class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm">
+        Filtrar
+      </button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    <div class="bg-slate-800 text-white p-6 rounded-2xl shadow-md">
+      <p class="text-sm opacity-70">Total Canjes</p>
+      <h2 class="text-3xl font-bold mt-2">{{ totalCanjes }}</h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <p class="text-sm text-gray-500">Empleados Activos</p>
+      <h2 class="text-3xl font-bold mt-2">{{ empleadosActivos }}</h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <p class="text-sm text-gray-500">Empleado Top</p>
+      <h2 class="text-xl font-semibold mt-2">{{ empleadoTop }}</h2>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <p class="text-sm text-gray-500">Promedio Diario</p>
+      <h2 class="text-3xl font-bold mt-2">{{ promedioDiario }}</h2>
+    </div>
+
+  </div>
+
+  <!-- GRÁFICOS PRINCIPALES -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <div class="bg-white p-6 rounded-2xl shadow-md lg:col-span-2">
+      <h3 class="font-semibold mb-4">Canjes por Empleado</h3>
+      <div echarts [options]="rankingOptions" class="h-64"></div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-md">
+      <h3 class="font-semibold mb-4">Distribución</h3>
+      <div echarts [options]="distribucionOptions" class="h-64"></div>
+    </div>
+
+  </div>
+
+  <!-- TENDENCIA -->
+  <div class="bg-white p-6 rounded-2xl shadow-md">
+    <h3 class="font-semibold mb-4">Tendencia Semanal</h3>
+    <div echarts [options]="tendenciaOptions" class="h-72"></div>
+  </div>
+
+  <!-- HORAS PICO -->
+  <div class="bg-white p-6 rounded-2xl shadow-md">
+    <h3 class="font-semibold mb-4">Horas con Mayor Actividad</h3>
+    <div echarts [options]="horasOptions" class="h-64"></div>
+  </div>
+
+</div>

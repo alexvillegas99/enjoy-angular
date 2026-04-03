@@ -1,0 +1,516 @@
+<div class="max-w-6xl mx-auto space-y-10 pb-20">
+  <!-- ESTABLECIMIENTO -->
+  <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="store" class="text-indigo-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Establecimiento</h3>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Nombre</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="model.nombre"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Email</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="model.email"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Teléfono</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="model.telefono"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Identificación</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
+          [(ngModel)]="model.identificacion"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">Rol</label>
+        <select
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          [(ngModel)]="model.rol"
+        >
+          <option value="admin-local">Admin Local</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-4 flex items-center gap-3">
+        <input type="checkbox" [(ngModel)]="model.estado" />
+        <span class="text-sm text-slate-700">Activo</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORÍAS -->
+  <section class="bg-white rounded-xl border border-indigo-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="tags" class="text-indigo-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Categorías</h3>
+    </header>
+
+    <app-selector-categorias
+      [value]="model.categorias"
+      (valueChange)="model.categorias = $event"
+    >
+    </app-selector-categorias>
+  </section>
+
+  <!-- CIUDADES -->
+  <section class="bg-white rounded-xl border border-emerald-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="map-pin" class="text-emerald-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Ciudades</h3>
+    </header>
+
+    <app-selector-ciudades
+      [value]="model.ciudades"
+      (valueChange)="model.ciudades = $event"
+    >
+    </app-selector-ciudades>
+  </section>
+
+  <!-- PROMOCIÓN GENERAL -->
+  <section class="bg-white rounded-xl border border-sky-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="badge-percent" class="text-sky-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Promoción general</h3>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Texto promoción</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500"
+          [(ngModel)]="model.promocion"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Horario atención general</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-sky-500"
+          [(ngModel)]="model.horarioAtencion"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- DETALLE PROMOCIÓN PRINCIPAL -->
+  <section class="bg-white rounded-xl border border-amber-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="ticket" class="text-amber-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">
+        Detalle de la promoción principal
+      </h3>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Título</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          [(ngModel)]="model.detallePromocion.title"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Dirección</label
+        >
+        <input
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          [(ngModel)]="model.detallePromocion.address"
+        />
+      </div>
+
+
+
+
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Fecha Inicio</label
+        >
+        <input
+          type="date"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          [value]="model.detallePromocion.startDate | date: 'yyyy-MM-dd'"
+          (change)="onDateChange($event, 'startDate')"
+        />
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Fecha Fin</label
+        >
+        <input
+          type="date"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          [value]="model.detallePromocion.endDate | date: 'yyyy-MM-dd'"
+          (change)="onDateChange($event, 'endDate')"
+        />
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block text-xs font-medium text-slate-600 mb-1"
+          >Descripción</label
+        >
+        <textarea
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm min-h-[90px]"
+          [(ngModel)]="model.detallePromocion.description"
+        ></textarea>
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block text-xs font-medium text-slate-600 mb-2"
+          >Etiquetas (Tags)</label
+        >
+        <div class="flex flex-wrap gap-2 mb-3">
+          @for (tag of model.detallePromocion.tags; track tag; let i = $index) {
+            <span
+              class="px-3 py-1 bg-slate-100 rounded-full text-xs flex items-center gap-1"
+            >
+              {{ tag }}
+              <button
+                type="button"
+                class="text-slate-500 hover:text-slate-700"
+                (click)="removeTag(i)"
+              >
+                ×
+              </button>
+            </span>
+          }
+        </div>
+        <div class="flex gap-2">
+          <input
+            #tagInput
+            class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="Nueva etiqueta"
+            (keyup.enter)="addTag(tagInput)"
+          />
+          <button
+            type="button"
+            class="px-3 py-2 bg-slate-200 rounded-lg text-sm hover:bg-slate-300"
+            (click)="addTag(tagInput)"
+          >
+            Añadir
+          </button>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 flex gap-8">
+        <label class="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            [(ngModel)]="model.detallePromocion.isTwoForOne"
+          />
+          2x1
+        </label>
+
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" [(ngModel)]="model.detallePromocion.isFlash" />
+          Promoción flash
+        </label>
+
+        <label class="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            [(ngModel)]="model.detallePromocion.aplicaTodosLosDias"
+          />
+          Aplica todos los días
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- FECHAS EXCLUIDAS -->
+  <section class="bg-white rounded-xl border border-rose-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="calendar-x" class="text-rose-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Fechas Excluidas</h3>
+    </header>
+
+    <div class="space-y-3 mb-4">
+      @for (
+        fecha of model.detallePromocion.fechasExcluidas;
+        track fecha;
+        let i = $index
+      ) {
+        <div class="flex items-center gap-3">
+          <span class="text-sm">{{ fecha | date: "dd/MM/yyyy" }}</span>
+          <button
+            type="button"
+            class="text-rose-600 hover:text-rose-800 text-sm"
+            (click)="removeFechaExcluida(i)"
+          >
+            Eliminar
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="flex gap-2">
+      <input
+        #fechaInput
+        type="date"
+        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+        #fechaExcluidaInput
+      />
+      <button
+        type="button"
+        class="px-3 py-2 bg-slate-200 rounded-lg text-sm hover:bg-slate-300"
+        (click)="addFechaExcluida(fechaExcluidaInput)"
+      >
+        Añadir fecha excluida
+      </button>
+    </div>
+  </section>
+
+  <!-- DÍAS Y HORARIOS ESPECÍFICOS -->
+  <section class="bg-white rounded-xl border border-violet-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="calendar-clock" class="text-violet-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">
+        Días y horarios específicos
+      </h3>
+    </header>
+
+    <div class="mb-4">
+      <label class="flex items-center gap-2 text-sm mb-4">
+        <input
+          type="checkbox"
+          [(ngModel)]="model.detallePromocion.aplicaTodosLosDias"
+          (change)="toggleAplicaTodosLosDias()"
+        />
+        Aplica todos los días
+      </label>
+
+      @if (!model.detallePromocion.aplicaTodosLosDias) {
+        <div class="flex flex-wrap gap-2 mb-4">
+          @for (dia of dias; track dia) {
+            <button
+              type="button"
+              class="px-3 py-1 rounded-full text-xs border border-slate-300 hover:bg-slate-100"
+              [class.bg-indigo-600]="
+                model.detallePromocion.diasAplicables.includes(dia)
+              "
+              [class.text-white]="
+                model.detallePromocion.diasAplicables.includes(dia)
+              "
+              (click)="toggleDia(dia)"
+            >
+              {{ dia }}
+            </button>
+          }
+        </div>
+
+        <div class="space-y-3">
+          @for (dia of model.detallePromocion.diasAplicables; track dia) {
+            <div class="flex items-center gap-4">
+              <span class="w-24 capitalize text-sm">{{ dia }}</span>
+              <input
+                type="time"
+                class="rounded-md border border-slate-300 px-2 py-1 text-xs"
+                [(ngModel)]="model.detallePromocion.horarioPorDia[dia].abre"
+              />
+              <input
+                type="time"
+                class="rounded-md border border-slate-300 px-2 py-1 text-xs"
+                [(ngModel)]="model.detallePromocion.horarioPorDia[dia].cierra"
+              />
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- PROMOCIONES EXTRA -->
+  <section class="bg-white rounded-xl border border-teal-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="ticket-plus" class="text-teal-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Promociones Extra</h3>
+    </header>
+
+    <div class="space-y-6">
+      @for (
+        promo of model.detallePromocionesExtra;
+        track $index;
+        let i = $index
+      ) {
+        <div class="border border-slate-200 rounded-lg p-4">
+          <div class="flex justify-between items-center mb-3">
+            <h4 class="text-sm font-medium">Promoción {{ i + 1 }}</h4>
+            <button
+              type="button"
+              class="text-rose-600 hover:text-rose-800 text-sm"
+              (click)="removePromocionExtra(i)"
+            >
+              Eliminar
+            </button>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-600 mb-1">Título</label>
+              <input
+                class="w-full rounded border border-slate-300 px-3 py-1 text-sm"
+                [(ngModel)]="promo.title"
+              />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-600 mb-1">2x1</label>
+              <input type="checkbox" [(ngModel)]="promo.isTwoForOne" />
+            </div>
+            <div>
+              <label class="block text-xs text-slate-600 mb-1"
+                >Schedule Label</label
+              >
+              <input
+                class="w-full rounded border border-slate-300 px-3 py-1 text-sm"
+                [(ngModel)]="promo.scheduleLabel"
+              />
+            </div>
+          </div>
+        </div>
+      }
+
+      <button
+        type="button"
+        class="px-4 py-2 border border-dashed border-slate-300 rounded-lg text-sm hover:bg-slate-50"
+        (click)="addPromocionExtra()"
+      >
+        + Añadir promoción extra
+      </button>
+    </div>
+  </section>
+
+  <!-- IMÁGENES -->
+  <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+    <header class="flex items-center gap-3 mb-6">
+      <lucide-icon name="image" class="text-slate-600"></lucide-icon>
+      <h3 class="text-sm font-semibold text-slate-800">Imágenes</h3>
+    </header>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- IMAGEN PROMOCIÓN -->
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-2">
+          Imagen promoción
+        </label>
+        <div class="relative group">
+          @if (
+            model.detallePromocion.imageBase64 ||
+            model.detallePromocion.imageUrl
+          ) {
+            <img
+              [src]="
+                model.detallePromocion.imageBase64 ??
+                model.detallePromocion.imageUrl
+              "
+              class="h-40 w-full object-cover rounded-lg border border-slate-200"
+            />
+          } @else {
+            <div
+              class="h-40 w-full rounded-lg border border-dashed border-slate-300 flex items-center justify-center text-xs text-slate-400"
+            >
+              Sin imagen
+            </div>
+          }
+          <label
+            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg text-white text-xs cursor-pointer transition"
+          >
+            Cambiar imagen
+            <input
+              type="file"
+              class="hidden"
+              accept="image/*"
+              (change)="onFile($event, 'imageBase64')"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- LOGO -->
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-2">
+          Logo establecimiento
+        </label>
+        <div class="relative group">
+          @if (
+            model.detallePromocion.logoBase64 || model.detallePromocion.logoUrl
+          ) {
+            <img
+              [src]="
+                model.detallePromocion.logoBase64 ??
+                model.detallePromocion.logoUrl
+              "
+              class="h-40 w-full object-contain bg-slate-50 rounded-lg border border-slate-200 p-3"
+            />
+          } @else {
+            <div
+              class="h-40 w-full rounded-lg border border-dashed border-slate-300 flex items-center justify-center text-xs text-slate-400"
+            >
+              Sin logo
+            </div>
+          }
+          <label
+            class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg text-white text-xs cursor-pointer transition"
+          >
+            Cambiar logo
+            <input
+              type="file"
+              class="hidden"
+              accept="image/*"
+              (change)="onFile($event, 'logoBase64')"
+            />
+          </label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUARDAR -->
+  <div class="flex justify-end pt-6">
+    <button
+      class="px-6 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-slate-800 disabled:opacity-60"
+      [disabled]="loading"
+      (click)="submit()"
+    >
+      @if (loading) {
+        Guardando...
+      } @else {
+        {{ isEdit ? "Actualizar establecimiento" : "Crear establecimiento" }}
+      }
+    </button>
+  </div>
+</div>

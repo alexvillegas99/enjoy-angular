@@ -1,0 +1,52 @@
+<div
+  class="min-h-screen bg-[#eef2f5] flex items-center justify-center px-4"
+>
+  <div
+    class="w-full max-w-xl bg-white rounded-xl shadow-sm p-8 text-center space-y-6"
+  >
+    <!-- ICONO -->
+    <div
+      class="mx-auto w-14 h-14 flex items-center justify-center rounded-full"
+      [ngClass]="
+        estado === 'loading'
+          ? 'bg-primary/10'
+          : 'bg-green-100'
+      "
+    >
+      <lucide-icon
+        *ngIf="estado === 'loading'"
+        name="loader-circle"
+        class="w-7 h-7 text-primary animate-spin"
+      ></lucide-icon>
+
+      <lucide-icon
+        *ngIf="estado === 'success'"
+        name="check-icon"
+        class="w-7 h-7 text-green-600"
+      ></lucide-icon>
+    </div>
+
+    <!-- TEXTO -->
+    <div class="space-y-2">
+      <h2 class="text-lg font-semibold text-gray-900">
+        {{ mensaje }}
+      </h2>
+
+      <p class="text-sm text-gray-600">
+        {{ detalle }}
+      </p>
+    </div>
+
+    <!-- SEPARADOR -->
+    <div class="border-t pt-6"></div>
+
+    <!-- BOTÓN -->
+    <button
+      *ngIf="estado === 'success'"
+      class="w-full h-11 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition"
+      (click)="continuar()"
+    >
+      Continuar
+    </button>
+  </div>
+</div>

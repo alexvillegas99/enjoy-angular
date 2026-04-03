@@ -1,0 +1,22 @@
+<nav
+  class="fixed bottom-0 left-0 right-0 z-50
+         bg-slate-50 border-t border-slate-200
+         flex justify-around py-2 lg:hidden"
+>
+
+  @for (item of menu; track item.route) {
+    <button
+      [routerLink]="item.route"
+      routerLinkActive="text-indigo-600"
+      class="flex flex-col items-center gap-1 text-xs text-slate-600"
+    >
+      <lucide-icon
+        [name]="item.icon"
+        class="w-5 h-5"
+      ></lucide-icon>
+
+      <span>{{ item.label }}</span>
+    </button>
+  }
+
+</nav>

@@ -1,0 +1,108 @@
+<div class="min-h-screen bg-[#eef2f5] flex flex-col lg:flex-row">
+  <!-- IZQUIERDA -->
+  <div class="w-full lg:w-[62%] flex justify-center items-center py-10">
+    <div class="w-full max-w-[376px]">
+      <!-- LOGO -->
+      <div class="mb-6">
+        <img
+          [src]="institution.logoTexto"
+          alt="LOGO INSTITUCIONAL"
+          class="mx-auto w-52"
+        />
+      </div>
+
+      <!-- CARD -->
+      <div
+        class="bg-white rounded-lg px-6 py-8 shadow-sm min-h-[480px] flex flex-col"
+      >
+        <!-- TITULO -->
+        <h1 class="text-center text-2xl font-semibold text-gray-800 mt-4 mb-2">
+          {{ titulo }}
+        </h1>
+
+        <p class="text-center text-sm text-gray-600 mb-6">
+          {{ subtitulo }}
+        </p>
+
+        <p class="text-center text-sm text-gray-600 mb-8">
+          {{ mensaje }}
+        </p>
+
+        <!-- OTP -->
+        <div class="flex justify-center gap-2 sm:gap-3 mb-6">
+          @for (digit of otp; track $index) {
+            <input
+              maxlength="1"
+              inputmode="numeric"
+              class="w-9 h-11 text-base sm:w-10 sm:h-12 sm:text-lg text-center border border-gray-300 rounded-md focus:outline-none focus:border-primary"
+              [(ngModel)]="otp[$index]"
+              (input)="onInput($event, $index)"
+              (keydown)="onKeyDown($event, $index)"
+            />
+          }
+        </div>
+
+        <p class="text-center text-xs mb-6">
+          @if (!expirado) {
+            <span class="text-gray-500">
+              El código expira en <strong>{{ tiempoFormateado }}</strong>
+            </span>
+          } @else {
+            <span class="text-red-500 font-medium">
+              El código ha expirado
+            </span>
+          }
+        </p>
+
+        <!-- CONTINUAR -->
+        <button
+          class="w-full bg-primary text-white py-2 rounded mb-4"
+          [disabled]="otp.join('').length !== 5"
+          (click)="continuar()"
+        >
+          Continuar
+        </button>
+
+        <!-- REENVIAR -->
+        <button class="text-link text-sm text-center mb-4" (click)="reenviar()">
+          Reenviar código
+        </button>
+
+        <!-- CANCELAR -->
+        <button class="text-gray-500 text-sm text-center" (click)="volver()">
+          Cancelar operación
+        </button>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="text-center text-xs text-gray-500 mt-6">
+        {{ institution.Copyright }}
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSEJOS (Desktop derecha / Mobile abajo) -->
+  <div
+    class="w-full lg:w-[38%] bg-white flex items-center border-t lg:border-t-0 lg:border-l border-gray-200"
+  >
+    <div class="px-4 sm:px-6 lg:px-10 py-8 sm:py-10 lg:py-16 w-full">
+      <p class="text-xs text-gray-500 uppercase mb-1">Consejos</p>
+
+      <h2 class="text-lg font-semibold text-gray-800 mb-8">
+        Por tu seguridad:
+      </h2>
+
+      <div class="space-y-6 text-sm text-gray-600">
+        <div class="flex gap-4 items-start">
+          <lucide-icon name="lock" class="w-5 h-5 text-gray-500"></lucide-icon>
+          <p>Nunca compartas tu código de verificación.</p>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <lucide-icon name="clock" class="w-5 h-5 text-gray-500"></lucide-icon>
+          <p>El código OTP es válido por tiempo limitado.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

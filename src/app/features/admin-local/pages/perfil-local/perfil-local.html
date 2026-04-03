@@ -1,0 +1,249 @@
+@if(loading){
+
+<!-- SKELETON MODERNO -->
+<div class="p-4 md:p-6 space-y-6 animate-pulse">
+
+  <div class="h-28 bg-gray-200/70 rounded-3xl"></div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="h-52 bg-gray-200/70 rounded-3xl"></div>
+      <div class="h-40 bg-gray-200/70 rounded-3xl"></div>
+    </div>
+    <div class="space-y-6">
+      <div class="h-40 bg-gray-200/70 rounded-3xl"></div>
+      <div class="h-32 bg-gray-200/70 rounded-3xl"></div>
+    </div>
+  </div>
+
+</div>
+
+} @else if(data){
+
+<div class="w-full min-h-screen px-4 md:px-8 pb-28 lg:pb-10 space-y-6">
+
+  <!-- HEADER -->
+  <div class="backdrop-blur-xl bg-white/70 border border-gray-200/60 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">
+        {{ data.nombre }}
+      </h1>
+      <p class="text-sm text-gray-500">{{ data.email }}</p>
+    </div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+
+      <span class="px-3 py-1 text-xs rounded-full font-medium"
+            [ngClass]="getEstadoClass()">
+        {{ data.estado ? 'Activo' : 'Inactivo' }}
+      </span>
+
+      <div class="flex items-center gap-1 text-sm text-gray-700">
+        ⭐ <span class="font-medium">{{ data.promedioCalificacion || 0 }}</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- GRID -->
+  <div class="grid lg:grid-cols-3 gap-6">
+
+    <!-- MAIN -->
+    <div class="lg:col-span-2 space-y-6">
+
+      <!-- INFO CARD -->
+      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm">
+
+        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-5">
+          Información general
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+
+          <div>
+            <p class="text-gray-400">Identificación</p>
+            <p class="font-medium text-gray-900">{{ data.identificacion }}</p>
+          </div>
+
+          <div>
+            <p class="text-gray-400">Rol</p>
+            <p class="font-medium text-gray-900 uppercase">{{ data.rol }}</p>
+          </div>
+
+          <div>
+            <p class="text-gray-400">Horario</p>
+            <p class="font-medium text-gray-900">{{ data.horarioAtencion }}</p>
+          </div>
+
+          <div>
+            <p class="text-gray-400">Promoción</p>
+            <p class="font-medium text-gray-900">{{ data.promocion }}</p>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- PROMO PRINCIPAL -->
+      @if(data.detallePromocion){
+      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl overflow-hidden shadow-sm">
+
+        <div class="relative">
+          <img [src]="data.detallePromocion.imageUrl"
+               class="w-full h-48 md:h-64 object-cover"/>
+
+          <!-- overlay gradient -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+
+          <div class="absolute bottom-4 left-4 text-white">
+            <h3 class="text-lg font-semibold">
+              {{ data.detallePromocion.title }}
+            </h3>
+          </div>
+        </div>
+
+        <div class="p-6 space-y-4">
+
+          <p class="text-sm text-gray-600 leading-relaxed">
+            {{ data.detallePromocion.description }}
+          </p>
+
+          <div class="flex flex-wrap gap-2">
+            @for(tag of data.detallePromocion.tags; track tag){
+              <span class="text-xs bg-gray-100/80 px-3 py-1 rounded-full">
+                {{ tag }}
+              </span>
+            }
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs text-gray-600 pt-2">
+
+            <div>
+              <p class="text-gray-400">Horario</p>
+              <p class="font-medium text-gray-800">
+                {{ data.detallePromocion.scheduleLabel }}
+              </p>
+            </div>
+
+            <div>
+              <p class="text-gray-400">Dirección</p>
+              <p class="font-medium text-gray-800">
+                {{ data.detallePromocion.address }}
+              </p>
+            </div>
+
+            <div>
+              <p class="text-gray-400">Distancia</p>
+              <p class="font-medium text-gray-800">
+                {{ data.detallePromocion.distanceLabel }}
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+      }
+
+      <!-- PROMOS EXTRA -->
+      @if(data.detallePromocionesExtra?.length){
+      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm">
+
+        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-5">
+          Promociones adicionales
+        </h2>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+
+          @for(p of data.detallePromocionesExtra; track p.title){
+            <div class="bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-md transition">
+
+              <p class="font-medium text-sm text-gray-900">
+                {{ p.title }}
+              </p>
+
+              <p class="text-xs text-gray-500 mb-2">
+                {{ p.placeName }}
+              </p>
+
+              <div class="flex flex-wrap gap-1">
+                @for(tag of p.tags; track tag){
+                  <span class="text-[10px] bg-gray-100 px-2 py-1 rounded">
+                    {{ tag }}
+                  </span>
+                }
+              </div>
+
+            </div>
+          }
+
+        </div>
+
+      </div>
+      }
+
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="space-y-6">
+
+      <!-- MÉTRICAS -->
+      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm">
+
+        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
+          Métricas
+        </h3>
+
+        <div class="space-y-3 text-sm">
+
+          <div class="flex justify-between">
+            <span class="text-gray-500">Rating</span>
+            <span class="font-medium">{{ data.promedioCalificacion || 0 }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-gray-500">Comentarios</span>
+            <span class="font-medium">{{ data.totalComentarios || 0 }}</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="text-gray-500">Promos</span>
+            <span class="font-medium">
+              {{ data.detallePromocionesExtra?.length || 0 }}
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ACTIONS -->
+     <!--  <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm space-y-3">
+
+        <button class="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 text-white py-2.5 rounded-xl text-sm font-medium shadow hover:opacity-95 transition">
+          Editar perfil
+        </button>
+
+        <button class="w-full border border-gray-200 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition"
+                (click)="toggleEstado()">
+          Cambiar estado
+        </button>
+
+      </div> -->
+
+    </div>
+
+  </div>
+
+</div>
+
+} @else {
+
+<div class="p-6 text-center text-gray-500">
+  No se encontró información del perfil
+</div>
+
+}

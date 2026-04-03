@@ -1,0 +1,132 @@
+<div class="min-h-screen bg-[#eef2f5] flex flex-col lg:flex-row">
+  <!-- IZQUIERDA -->
+  <div class="w-full lg:w-[62%] flex justify-center items-center py-10">
+    <div class="w-full max-w-[376px]">
+      <!-- LOGO -->
+      <div class="mb-6">
+        <img
+          [src]="institution.logoTexto"
+          alt="LOGO INSTITUCIONAL"
+          class="mx-auto w-52"
+        />
+      </div>
+
+      <!-- CARD -->
+      <div
+        class="bg-white rounded-lg px-6 py-8 shadow-sm min-h-[480px] flex flex-col"
+      >
+        <!-- TITULO -->
+        <h1 class="text-center text-2xl font-semibold text-gray-800 mt-4 mb-3">
+          {{ data.titulo }}
+        </h1>
+
+        <!-- DESCRIPCIÓN -->
+        <p class="text-center text-sm text-gray-600 mb-8 leading-relaxed">
+          {{ data.subtitulo }}
+        </p>
+
+        <!-- CORREO -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Correo electrónico
+          </label>
+
+          <div
+            class="relative flex items-center border border-gray-300 rounded-md px-3 py-2 focus-within:border-primary transition-colors"
+          >
+            <input
+              type="email"
+              placeholder="ejemplo@correo.com"
+              [(ngModel)]="correo"
+              [disabled]="validating || correoValidado"
+              class="w-full bg-transparent outline-none text-sm text-gray-800 placeholder-gray-400 pr-8"
+            />
+
+            <lucide-icon
+              name="mail"
+              class="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            ></lucide-icon>
+          </div>
+
+          <p class="text-xs text-gray-500 mt-1">
+            Ingresa el correo asociado a tu cuenta Enjoy.
+          </p>
+        </div>
+
+        @if (!correoValidado) {
+          <button
+            class="w-full bg-primary text-white py-2 rounded mt-6 mb-4 transition hover:opacity-95"
+            [disabled]="!correo || validating"
+            (click)="validarCorreo()"
+          >
+            {{ validating ? "Validando correo..." : "Continuar" }}
+          </button>
+        }
+
+        @if (correoValidado) {
+          <button
+            class="w-full bg-primary text-white py-2 rounded mt-6"
+            (click)="continuar()"
+          >
+            Continuar
+          </button>
+        }
+
+        <!-- CANCELAR -->
+        <button
+          class="text-link text-sm text-center mb-6 mt-5"
+          (click)="volver()"
+        >
+          Cancelar
+        </button>
+
+        <!-- INFO -->
+        <p class="text-center text-xs text-gray-500 mt-auto leading-relaxed">
+          {{ data.info }}
+        </p>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="text-center text-xs text-gray-500 mt-6">
+        {{ institution.Copyright }}
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSEJOS (Desktop derecha / Mobile abajo) -->
+  <div
+    class="w-full lg:w-[38%] bg-white flex items-center border-t lg:border-t-0 lg:border-l border-gray-200"
+  >
+    <div class="px-4 sm:px-6 lg:px-10 py-8 sm:py-10 lg:py-16 w-full">
+      <p class="text-xs text-gray-500 uppercase mb-1">Consejos</p>
+
+      <h2 class="text-lg font-semibold text-gray-800 mb-8">
+        Por tu seguridad:
+      </h2>
+
+      <div class="space-y-6 text-sm text-gray-600">
+        <div class="flex gap-4 items-start">
+          <lucide-icon name="lock" class="w-5 h-5 text-gray-500"></lucide-icon>
+          <p>Nunca compartas tu contraseña con terceros.</p>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <lucide-icon
+            name="shield-check"
+            class="w-5 h-5 text-gray-500"
+          ></lucide-icon>
+          <p>Realiza el proceso desde un dispositivo y red seguros.</p>
+        </div>
+
+        <div class="flex gap-4 items-start">
+          <lucide-icon name="phone" class="w-5 h-5 text-gray-500"></lucide-icon>
+          <p>
+            Si tienes inconvenientes, comunícate al
+            <strong>{{ institution.callCenter }}</strong
+            >.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

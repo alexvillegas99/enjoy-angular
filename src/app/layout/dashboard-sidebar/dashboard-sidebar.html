@@ -1,0 +1,61 @@
+<aside
+  class="hidden lg:flex h-screen bg-slate-50 border-r border-slate-200 transition-all duration-200"
+  [class.w-20]="!expanded"
+  [class.w-60]="expanded"
+  (mouseenter)="expanded = true"
+  (mouseleave)="expanded = false"
+>
+  <div class="flex flex-col w-full">
+
+    <!-- LOGO -->
+    <div
+      class="h-16 flex items-center justify-center cursor-pointer px-4"
+      routerLink="/dashboard"
+    >
+      <img
+        [src]="expanded ? institucion.logoTexto : institucion.logoIcono"
+        alt="Logo"
+        class="h-8 object-contain transition-all duration-200"
+        [class.w-8]="!expanded"
+        [class.w-32]="expanded"
+      />
+    </div>
+
+    <!-- MENU -->
+    <nav class="flex-1 overflow-y-auto py-4 space-y-1">
+
+      @for (item of menu; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-slate-200 text-slate-900"
+          class="flex items-center gap-4 px-4 py-3 text-sm text-slate-700 hover:bg-slate-200 transition"
+        >
+          <lucide-icon
+            [name]="item.icon"
+            class="w-5 h-5"
+          ></lucide-icon>
+
+          @if (expanded) {
+            <span>{{ item.label }}</span>
+          }
+        </a>
+      }
+
+    </nav>
+
+    <!-- FOOTER -->
+    <div class="border-t border-slate-200 px-4 py-3">
+      <a
+        routerLink="/configuracion"
+        class="flex items-center gap-4 text-sm text-slate-600 hover:text-slate-800"
+      >
+        <lucide-icon name="settings" class="w-5 h-5"></lucide-icon>
+
+        @if (expanded) {
+          <span>Configuración</span>
+        }
+      </a>
+    </div>
+
+  </div>
+</aside>

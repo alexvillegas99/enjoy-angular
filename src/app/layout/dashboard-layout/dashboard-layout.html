@@ -1,0 +1,25 @@
+<div class="h-screen flex bg-[#f5f7fa] overflow-hidden">
+
+  <!-- SIDEBAR DESKTOP -->
+  <app-dashboard-sidebar></app-dashboard-sidebar>
+
+  <!-- CONTENIDO -->
+  <div class="flex-1 flex flex-col">
+
+    <!-- HEADER -->
+    <app-dashboard-header></app-dashboard-header>
+
+    <!-- MAIN (SCROLL AQUÍ) -->
+    <main
+      class="flex-1 p-6 pb-24 lg:pb-6
+             overflow-y-auto overflow-x-hidden"
+    >
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+  <!-- BOTTOM NAV MOBILE -->
+  <app-dashboard-bottom-nav></app-dashboard-bottom-nav>
+
+</div>

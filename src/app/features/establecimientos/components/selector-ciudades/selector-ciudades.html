@@ -1,0 +1,20 @@
+<div class="flex flex-wrap gap-3">
+
+  @for (c of ciudades; track c._id) {
+
+    <button
+      type="button"
+      class="px-4 py-2 rounded-lg border text-sm transition"
+      [class.bg-emerald-600]="isSelected(c._id)"
+      [class.text-white]="isSelected(c._id)"
+      [class.border-emerald-600]="isSelected(c._id)"
+      [class.border-slate-300]="!isSelected(c._id)"
+      (click)="toggle(c._id)">
+
+      {{ c.nombre }}
+
+    </button>
+
+  }
+
+</div>

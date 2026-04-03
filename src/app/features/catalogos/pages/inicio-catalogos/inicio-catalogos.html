@@ -1,0 +1,62 @@
+<div class="p-6 space-y-8">
+  <!-- Hero -->
+  <div
+    class="bg-white border rounded-2xl p-6 flex flex-col gap-2 shadow-sm"
+  >
+    <h1 class="text-xl font-semibold text-gray-800">
+      Administración de catálogos
+    </h1>
+    <p class="text-sm text-gray-600 max-w-2xl">
+      Gestiona los catálogos base del sistema. Estos valores controlan
+      configuraciones clave y se reflejan en toda la plataforma.
+    </p>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    @for (item of catalogos; track item.route) {
+      <div
+        class="group bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+      >
+        <!-- Header -->
+        <div class="flex items-start gap-4">
+          <div
+            class="w-14 h-14 rounded-xl flex items-center justify-center"
+            [ngClass]="item.color"
+          >
+            <lucide-icon
+              [name]="item.icono"
+              class="w-7 h-7"
+            />
+          </div>
+
+          <div>
+            <h2 class="text-base font-semibold text-gray-800">
+              {{ item.titulo }}
+            </h2>
+            <p class="text-sm text-gray-600 mt-1">
+              {{ item.descripcion }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="mt-8 flex items-center justify-between border-t pt-4"
+        >
+          <span class="text-xs text-gray-500">
+            Configuración del sistema
+          </span>
+
+          <a
+            [routerLink]="item.route"
+            class="inline-flex items-center gap-2 text-sm font-medium text-primary group-hover:underline"
+          >
+            Administrar
+            <lucide-icon name="arrow-right" class="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+</div>

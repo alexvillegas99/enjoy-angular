@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-[#eef2f5] flex flex-col lg:flex-row">
+
+  <!-- IZQUIERDA -->
+  <div class="w-full lg:w-[62%] flex justify-center items-center py-10">
+    <div class="w-full max-w-[420px]">
+
+      <div class="bg-white rounded-lg px-6 py-10 shadow-sm flex flex-col items-center text-center">
+
+        <!-- ICONO -->
+        <div
+          class="w-16 h-16 flex items-center justify-center rounded-full mb-6"
+          [ngClass]="{
+            'bg-green-100 text-green-600': data.estado === 'success',
+            'bg-yellow-100 text-yellow-600': data.estado === 'warning',
+            'bg-red-100 text-red-600': data.estado === 'error'
+          }"
+        >
+          <lucide-icon [name]="data.icono || 'check-icon'" class="w-8 h-8"></lucide-icon>
+        </div>
+
+        <!-- TITULO -->
+        <h1 class="text-2xl font-semibold text-gray-800 mb-3">
+          {{ data.titulo }}
+        </h1>
+
+        <!-- SUBTITULO -->
+        @if (data.subtitulo) {
+          <p class="text-sm text-gray-600 mb-3">
+            {{ data.subtitulo }}
+          </p>
+        }
+
+        <!-- MENSAJE -->
+        @if (data.mensaje) {
+          <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+            {{ data.mensaje }}
+          </p>
+        }
+
+        <!-- DETALLE -->
+        @if (data.detalle) {
+          <p class="text-xs text-gray-500 mb-8 leading-relaxed">
+            {{ data.detalle }}
+          </p>
+        }
+
+        <!-- BOTÓN -->
+        <button
+          class="w-full bg-primary text-white py-2 rounded mt-4"
+          (click)="continuar()"
+        >
+          {{ data.boton || 'Finalizar' }}
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DERECHA -->
+  <div
+    class="w-full lg:w-[38%] bg-white flex items-center
+           border-t lg:border-t-0 lg:border-l border-gray-200"
+  >
+    <div class="px-4 sm:px-6 lg:px-10 py-8 sm:py-10 lg:py-16 w-full">
+
+      <p class="text-xs text-gray-500 uppercase mb-1">
+        Estado del proceso
+      </p>
+
+      <h2 class="text-lg font-semibold text-gray-800 mb-6">
+        Información importante
+      </h2>
+<ul class="space-y-4 text-sm text-gray-600">
+
+  <li class="flex gap-3 items-start">
+    <lucide-icon
+      name="bookmark"
+      class="w-4 h-4 text-gray-500 mt-0.5"
+    ></lucide-icon>
+    <span>Guarda esta información para futuras referencias.</span>
+  </li>
+
+  <li class="flex gap-3 items-start">
+    <lucide-icon
+      name="lock"
+      class="w-4 h-4 text-gray-500 mt-0.5"
+    ></lucide-icon>
+    <span>Nunca compartas tus credenciales.</span>
+  </li>
+
+  <li class="flex gap-3 items-start">
+    <lucide-icon
+      name="phone"
+      class="w-4 h-4 text-gray-500 mt-0.5"
+    ></lucide-icon>
+    <span>Si tienes inconvenientes, contacta soporte.</span>
+  </li>
+
+</ul>
+
+
+    </div>
+  </div>
+
+</div>

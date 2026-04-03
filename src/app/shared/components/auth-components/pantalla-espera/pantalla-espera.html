@@ -1,0 +1,41 @@
+<div class="min-h-screen bg-[#eef2f5] flex flex-col lg:flex-row">
+
+  <!-- IZQUIERDA -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center p-6">
+    <div class="bg-white rounded-xl shadow-sm w-full max-w-md p-8 text-center">
+
+      <h1 class="text-xl font-semibold text-gray-800 mb-2">
+        {{ titulo }}
+      </h1>
+
+      <p class="text-sm text-gray-600 mb-8">
+        {{ subtitulo }}
+      </p>
+
+      <!-- Spinner -->
+      <div class="flex justify-center">
+        <div
+          class="h-10 w-10 border-4 border-gray-300 border-t-primary rounded-full animate-spin"
+        ></div>
+      </div>
+
+      <p class="mt-6 text-xs text-gray-500">
+        No cierres esta ventana
+      </p>
+
+    </div>
+  </div>
+
+  <!-- DERECHA -->
+  <div class="w-full lg:w-1/2 bg-white border-t lg:border-t-0 lg:border-l border-gray-200 p-8 flex items-center">
+    <div class="max-w-md space-y-4 text-sm text-gray-600">
+      <p>
+        Estamos validando tu información para garantizar la seguridad de tu cuenta.
+      </p>
+      <p>
+        Este proceso puede tardar solo unos segundos.
+      </p>
+    </div>
+  </div>
+
+</div>

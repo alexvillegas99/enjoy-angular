@@ -1,0 +1,174 @@
+<div class="max-w-7xl mx-auto space-y-6 pb-20">
+
+  <!-- HEADER -->
+  <div>
+    <h2 class="text-xl font-semibold text-slate-800">
+      Gestión de Clientes
+    </h2>
+    <p class="text-sm text-slate-500">
+      Administración de clientes registrados
+    </p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+
+    <div class="grid md:grid-cols-3 gap-4">
+
+      <input
+        type="text"
+        placeholder="Buscar por nombre, email o identificación"
+        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+        [(ngModel)]="filtros.q"
+        (keyup.enter)="buscar()"
+      />
+
+      <select
+        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+        [(ngModel)]="filtros.estado"
+        (change)="buscar()"
+      >
+        <option value="">Todos</option>
+        <option value="true">Activos</option>
+        <option value="false">Inactivos</option>
+      </select>
+
+      <button
+        class="bg-slate-900 text-white rounded-lg px-4 py-2 text-sm hover:bg-slate-800"
+        (click)="buscar()">
+        Buscar
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+
+    <div class="overflow-x-auto">
+
+      <table class="min-w-full text-sm">
+
+        <thead class="bg-slate-50 border-b border-slate-200 text-slate-600">
+          <tr>
+            <th class="text-left px-4 py-3">Nombre</th>
+            <th class="text-left px-4 py-3">Identificación</th>
+            <th class="text-left px-4 py-3">Email</th>
+            <th class="text-left px-4 py-3">Teléfono</th>
+            <th class="text-left px-4 py-3">Estado</th>
+            <th class="text-right px-4 py-3">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-slate-100">
+
+          @if (loading) {
+            <tr>
+              <td colspan="6" class="text-center py-6 text-slate-500">
+                Cargando...
+              </td>
+            </tr>
+          }
+
+          @for (c of clientes; track c._id) {
+
+            <tr class="hover:bg-slate-50">
+
+              <td class="px-4 py-3 font-medium text-slate-800">
+                {{ c.nombres }} {{ c.apellidos }}
+              </td>
+
+              <td class="px-4 py-3 text-slate-600">
+               {{ c.identificacion }}
+              </td>
+
+              <td class="px-4 py-3 text-slate-600">
+                {{ c.email }}
+              </td>
+
+              <td class="px-4 py-3 text-slate-600">
+                {{ c.telefono || '-' }}
+              </td>
+
+              <td class="px-4 py-3">
+                <span
+                  class="px-2 py-1 text-xs rounded-full"
+                  [class.bg-emerald-100]="c.estado"
+                  [class.text-emerald-700]="c.estado"
+                  [class.bg-rose-100]="!c.estado"
+                  [class.text-rose-700]="!c.estado"
+                >
+                  {{ c.estado ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+
+              <td class="px-4 py-3 text-right">
+                <div class="flex justify-end gap-2">
+
+                  <button
+                    class="px-3 py-1.5 text-xs font-medium rounded-md
+                           border border-slate-300 text-slate-700
+                           hover:bg-slate-100 transition"
+                    (click)="editar(c._id)">
+                    Editar
+                  </button>
+
+                  <button
+                    class="px-3 py-1.5 text-xs font-medium rounded-md
+                           border transition"
+                    [class.border-amber-300]="c.estado"
+                    [class.text-amber-700]="c.estado"
+                    [class.hover:bg-amber-50]="c.estado"
+                    [class.border-emerald-300]="!c.estado"
+                    [class.text-emerald-700]="!c.estado"
+                    [class.hover:bg-emerald-50]="!c.estado"
+                    (click)="toggleEstado(c)">
+                    {{ c.estado ? 'Desactivar' : 'Activar' }}
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+
+          }
+
+          @if (!loading && !clientes.length) {
+            <tr>
+              <td colspan="6" class="text-center py-6 text-slate-500">
+                No se encontraron registros.
+              </td>
+            </tr>
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- PAGINACIÓN -->
+  @if (totalPaginas > 1) {
+
+    <div class="flex justify-center gap-2">
+
+      @for (p of [].constructor(totalPaginas); track $index; let i = $index) {
+
+        <button
+          class="px-3 py-1 rounded border text-sm"
+          [class.bg-slate-900]="filtros.page === i + 1"
+          [class.text-white]="filtros.page === i + 1"
+          (click)="cambiarPagina(i + 1)">
+          {{ i + 1 }}
+        </button>
+
+      }
+
+    </div>
+
+  }
+
+</div>

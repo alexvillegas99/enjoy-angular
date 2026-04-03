@@ -1,0 +1,360 @@
+<!-- src/app/components/crear-cupon/crear-cupon.component.html -->
+<div class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm p-6 space-y-8">
+
+  <!-- 🧾 TÍTULO -->
+  <div>
+    <h2 class="text-lg font-semibold text-gray-800">Crear cupón</h2>
+    <p class="text-sm text-gray-500">
+      Selecciona el cliente y la versión de cuponera. El cupón se generará automáticamente.
+    </p>
+  </div>
+
+  <!-- 👤 BUSCAR CLIENTE (manteniendo tu código original) -->
+  <div class="space-y-2">
+    <label class="text-sm font-medium text-gray-700">
+      Buscar cliente
+    </label>
+
+    <div class="relative">
+      <input
+        type="text"
+        placeholder="Nombre, correo o cédula"
+        class="w-full h-11 rounded-lg border border-gray-300 px-3 text-sm
+               focus:outline-none focus:ring-2 focus:ring-primary/30"
+        [value]="searchCliente"
+        (input)="onSearchCliente($event.target.value)"
+        [disabled]="cliente"
+      />
+
+      @if (loadingClientes) {
+        <lucide-icon
+          name="loader"
+          class="absolute right-3 top-1/2 -translate-y-1/2
+                 w-4 h-4 text-gray-400 animate-spin"
+        ></lucide-icon>
+      }
+    </div>
+
+    @if (!cliente && clientes.length) {
+      <div class="border rounded-lg divide-y max-h-60 overflow-y-auto">
+        @for (c of clientes; track c._id) {
+          <button
+            type="button"
+            class="w-full px-3 py-2 text-left hover:bg-gray-50"
+            (click)="seleccionarCliente(c)"
+          >
+            <div class="font-medium">
+              {{ c.nombres }} {{ c.apellidos }}
+            </div>
+            <div class="text-xs text-gray-500">
+              {{ c.email }} · {{ c.identificacion }}
+            </div>
+          </button>
+        }
+      </div>
+    }
+
+    @if (cliente) {
+      <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 border">
+        <div>
+          <div class="font-medium">
+            {{ cliente.nombres }} {{ cliente.apellidos }}
+          </div>
+          <div class="text-xs text-gray-500">
+            {{ cliente.email }} · {{ cliente.identificacion }}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          class="text-xs text-red-500 hover:text-red-700"
+          (click)="limpiarCliente()"
+        >
+          Cambiar
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- 📦 BUSCAR VERSIÓN DE CUPONERA -->
+  <div class="space-y-2">
+    <label class="text-sm font-medium text-gray-700">
+      Buscar versión de cuponera
+    </label>
+
+    <div class="relative">
+      <input
+        type="text"
+        placeholder="Buscar por nombre (ej: 'ENJOY-AMB-2025')"
+        class="w-full h-11 rounded-lg border border-gray-300 px-3 text-sm
+               focus:outline-none focus:ring-2 focus:ring-primary/30"
+        [value]="searchVersion"
+        (input)="onSearchVersion($event.target.value)"
+        (focus)="mostrarDropdownVersiones = true"
+        (blur)="cerrarDropdownVersiones()"
+        [disabled]="version"
+      />
+
+      @if (loadingVersiones) {
+        <lucide-icon
+          name="loader"
+          class="absolute right-3 top-1/2 -translate-y-1/2
+                 w-4 h-4 text-gray-400 animate-spin"
+        ></lucide-icon>
+      }
+    </div>
+
+    @if (mostrarDropdownVersiones && !version && versiones.length) {
+      <div class="border rounded-lg divide-y max-h-96 overflow-y-auto shadow-lg z-10 bg-white">
+        @for (v of versiones; track v._id) {
+          <button
+            type="button"
+            class="w-full px-3 py-3 text-left hover:bg-gray-50"
+            (click)="seleccionarVersion(v)"
+          >
+            <!-- Encabezado con nombre y estado -->
+            <div class="flex justify-between items-start mb-2">
+              <div class="font-medium text-gray-900 truncate pr-2">
+                {{ v.nombre }}
+              </div>
+              <div class="flex-shrink-0">
+                @if (v.estado) {
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                    <lucide-icon name="check-circle" class="w-3 h-3 mr-1"></lucide-icon>
+                    Activa
+                  </span>
+                } @else {
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+                    <lucide-icon name="x-circle" class="w-3 h-3 mr-1"></lucide-icon>
+                    Inactiva
+                  </span>
+                }
+              </div>
+            </div>
+
+            <!-- Descripción -->
+            @if (v.descripcion) {
+              <div class="text-xs text-gray-600 mb-2 line-clamp-2">
+                {{ v.descripcion }}
+              </div>
+            }
+
+            <!-- Detalles: locales -->
+            <div class="flex items-center text-xs text-gray-500 mb-2">
+              <lucide-icon name="store" class="w-3 h-3 mr-1 text-gray-400"></lucide-icon>
+              <span class="font-medium">{{ v.numeroDeLocales }}</span>
+              <span class="ml-1">locales disponibles</span>
+            </div>
+
+            <!-- Ciudades disponibles -->
+            @if (v.ciudadesDisponibles && v.ciudadesDisponibles.length > 0) {
+              <div class="text-xs">
+                <div class="flex items-center text-gray-500 mb-1">
+                  <lucide-icon name="map-pin" class="w-3 h-3 mr-1 text-gray-400"></lucide-icon>
+                  <span>Disponible en:</span>
+                </div>
+                <div class="flex flex-wrap gap-1">
+                  @for (ciudad of v.ciudadesDisponibles; track $index) {
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-50 text-blue-700 border border-blue-100">
+                      {{ ciudad }}
+                    </span>
+                  }
+                  @if (v.ciudadesDisponibles.length > 5) {
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-50 text-gray-600">
+                      +{{ v.ciudadesDisponibles.length - 5 }} más
+                    </span>
+                  }
+                </div>
+              </div>
+            } @else {
+              <div class="flex items-center text-xs text-gray-400">
+                <lucide-icon name="map-pin" class="w-3 h-3 mr-1"></lucide-icon>
+                <span>Sin ciudades asignadas</span>
+              </div>
+            }
+          </button>
+        }
+
+        @if (versiones.length === 0 && !loadingVersiones) {
+          <div class="px-3 py-6 text-center">
+            <lucide-icon name="search" class="w-8 h-8 text-gray-300 mx-auto mb-2"></lucide-icon>
+            <div class="text-sm text-gray-500">No se encontraron versiones</div>
+            <div class="text-xs text-gray-400 mt-1">Intenta con otro término de búsqueda</div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (version) {
+      <div class="border rounded-lg p-4 bg-gray-50">
+        <!-- Encabezado -->
+        <div class="flex justify-between items-start mb-3">
+          <div>
+            <div class="font-medium text-gray-900">
+              {{ version.nombre }}
+            </div>
+            @if (version.descripcion) {
+              <div class="text-sm text-gray-600 mt-1">
+                {{ version.descripcion }}
+              </div>
+            }
+          </div>
+
+          <button
+            type="button"
+            class="text-xs text-red-500 hover:text-red-700 ml-4 whitespace-nowrap"
+            (click)="limpiarVersion()"
+          >
+            Cambiar
+          </button>
+        </div>
+
+        <!-- Detalles -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+          <!-- Locales -->
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+              <lucide-icon name="store" class="w-4 h-4 text-blue-600"></lucide-icon>
+            </div>
+            <div>
+              <div class="text-gray-500">Locales</div>
+              <div class="font-medium">{{ version.numeroDeLocales }} establecimientos</div>
+            </div>
+          </div>
+
+          <!-- Estado -->
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-2">
+              @if (version.estado) {
+                <lucide-icon name="check-circle" class="w-4 h-4 text-green-600"></lucide-icon>
+              } @else {
+                <lucide-icon name="x-circle" class="w-4 h-4 text-red-600"></lucide-icon>
+              }
+            </div>
+            <div>
+              <div class="text-gray-500">Estado</div>
+              <div class="font-medium">
+                @if (version.estado) {
+                  <span class="text-green-600">Activa</span>
+                } @else {
+                  <span class="text-red-600">Inactiva</span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ciudades disponibles -->
+        @if (version.ciudadesDisponibles && version.ciudadesDisponibles.length > 0) {
+          <div class="mt-4 pt-3 border-t">
+            <div class="flex items-center text-gray-700 mb-2">
+              <lucide-icon name="map-pin" class="w-4 h-4 mr-2"></lucide-icon>
+              <div class="font-medium">Ciudades disponibles</div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              @for (ciudad of version.ciudadesDisponibles; track $index) {
+                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm bg-blue-100 text-blue-800 border border-blue-200">
+                  <lucide-icon name="map-pin" class="w-3 h-3 mr-1.5"></lucide-icon>
+                  {{ ciudad }}
+                </span>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Fecha de creación (opcional) -->
+        @if (version.createdAt) {
+          <div class="mt-3 pt-3 border-t">
+            <div class="text-xs text-gray-500">
+              Creado el {{ version.createdAt | date:'dd/MM/yyyy' }}
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- 👁️ PREVIEW -->
+  @if (previewCupon) {
+    <div class="space-y-2">
+      <div class="text-sm font-medium text-gray-700">
+        Resumen del cupón a crear
+      </div>
+
+      <div class="border rounded-lg p-4 space-y-4">
+        <!-- Cliente -->
+        <div class="flex items-start">
+          <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center mr-3 flex-shrink-0">
+            <lucide-icon name="user" class="w-5 h-5 text-purple-600"></lucide-icon>
+          </div>
+          <div class="flex-1">
+            <div class="text-sm text-gray-500">Cliente</div>
+            <div class="font-medium">{{ previewCupon.clienteNombre }}</div>
+            <div class="text-xs text-gray-400 mt-0.5">
+              {{ cliente.email }} · {{ cliente.identificacion }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Versión -->
+        <div class="flex items-start">
+          <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 flex-shrink-0">
+            <lucide-icon name="package" class="w-5 h-5 text-blue-600"></lucide-icon>
+          </div>
+          <div class="flex-1">
+            <div class="text-sm text-gray-500">Versión</div>
+            <div class="font-medium">{{ previewCupon.versionNombre }}</div>
+            <div class="text-xs text-gray-400 mt-0.5 flex flex-wrap gap-1">
+              <span class="inline-flex items-center">
+                <lucide-icon name="store" class="w-3 h-3 mr-1"></lucide-icon>
+                {{ version.numeroDeLocales }} locales
+              </span>
+              @if (version.ciudadesDisponibles && version.ciudadesDisponibles.length > 0) {
+                <span class="inline-flex items-center">
+                  <lucide-icon name="map-pin" class="w-3 h-3 mr-1"></lucide-icon>
+                  {{ version.ciudadesDisponibles.length }} ciudades
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalles del cupón -->
+        <div class="grid grid-cols-2 gap-3 pt-3 border-t">
+          <div>
+            <div class="text-xs text-gray-500">Estado</div>
+            <div class="flex items-center mt-1">
+              <div class="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+              <span class="text-sm font-medium text-green-600">{{ previewCupon.estado }}</span>
+            </div>
+          </div>
+          <div>
+            <div class="text-xs text-gray-500">Fecha activación</div>
+            <div class="text-sm font-medium mt-1">
+              {{ previewCupon.fechaActivacion | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ✅ ACCIÓN -->
+  <div class="flex justify-end pt-4 border-t">
+    <button
+      type="button"
+      class="px-6 h-12 rounded-lg bg-gradient-to-r from-primary to-primary/90 text-white text-sm font-medium
+             hover:from-primary/90 hover:to-primary shadow-md hover:shadow-lg
+             disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md
+             transition-all duration-200"
+      [disabled]="!previewCupon"
+      (click)="crearCupon()"
+    >
+      <div class="flex items-center">
+        <lucide-icon name="plus-circle" class="w-4 h-4 mr-2"></lucide-icon>
+        Crear cupón
+      </div>
+    </button>
+  </div>
+
+</div>

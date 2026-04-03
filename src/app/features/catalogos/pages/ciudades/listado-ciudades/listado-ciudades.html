@@ -1,0 +1,147 @@
+<div class="p-4 lg:p-8 bg-gray-100 min-h-screen space-y-8">
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Ciudades</h1>
+      <p class="text-sm text-gray-500">
+        Administración de ciudades del sistema
+      </p>
+    </div>
+
+    <button
+      class="hidden sm:flex bg-black text-white px-5 py-2.5 rounded-xl text-sm font-medium gap-2"
+      (click)="abrirCrear()"
+    >
+      <lucide-icon name="plus" class="w-4 h-4" />
+      Nueva ciudad
+    </button>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="flex flex-col sm:flex-row gap-4">
+    <input
+      class="bg-white rounded-xl px-4 py-3 text-sm w-full sm:w-72"
+      placeholder="Buscar ciudad"
+      [(ngModel)]="filtroNombre"
+      (input)="onBuscar()"
+    />
+
+    <select
+      class="bg-white rounded-xl px-4 py-3 text-sm w-full sm:w-48"
+      [(ngModel)]="filtroEstado"
+      (change)="onBuscar()"
+    >
+      <option value="">Todas</option>
+      <option value="true">Activas</option>
+      <option value="false">Inactivas</option>
+    </select>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+    @for (c of ciudades; track c._id) {
+      <div
+        class="bg-white rounded-[28px] p-6
+               shadow-[0_20px_40px_-15px_rgba(0,0,0,0.25)]
+               hover:-translate-y-1 transition"
+      >
+        <div class="flex justify-between items-start">
+          <h3 class="text-base font-semibold text-gray-900">
+            {{ c.nombre }}
+          </h3>
+
+          <span
+            class="px-3 py-1 rounded-full text-xs font-medium"
+            [class.bg-green-100]="c.estado"
+            [class.text-green-700]="c.estado"
+            [class.bg-gray-200]="!c.estado"
+            [class.text-gray-700]="!c.estado"
+          >
+            {{ c.estado ? 'Activa' : 'Inactiva' }}
+          </span>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-2">
+          {{ c.visibleParaRegistro
+            ? 'Visible para registro'
+            : 'No visible para registro' }}
+        </p>
+
+        <div class="mt-6 flex gap-3">
+          <button
+            class="flex-1 bg-black text-white py-2.5 rounded-xl text-sm"
+            (click)="editar(c)"
+          >
+            Editar
+          </button>
+
+          <button
+            class="flex-1 bg-gray-200 text-gray-900 py-2.5 rounded-xl text-sm"
+            (click)="toggleEstado(c)"
+          >
+            {{ c.estado ? 'Desactivar' : 'Activar' }}
+          </button>
+        </div>
+
+        <button
+          class="w-full mt-3 text-xs text-red-600"
+          (click)="eliminar(c)"
+        >
+          Eliminar ciudad
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- FAB -->
+  <button
+    class="sm:hidden fixed bottom-6 right-6 bg-black text-white
+           w-14 h-14 rounded-full shadow-xl"
+    (click)="abrirCrear()"
+  >
+    <lucide-icon name="plus" class="w-6 h-6" />
+  </button>
+</div>
+
+<!-- MODAL -->
+@if (modalAbierto) {
+  <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-[28px] w-full max-w-md p-6 space-y-5">
+
+      <h2 class="text-lg font-semibold">
+        {{ editando ? 'Editar ciudad' : 'Nueva ciudad' }}
+      </h2>
+
+      <input
+        class="bg-gray-100 rounded-xl px-4 py-3 text-sm w-full"
+        placeholder="Nombre"
+        [(ngModel)]="form.nombre"
+      />
+
+      <label class="flex items-center gap-2 text-sm">
+        <input
+          type="checkbox"
+          [(ngModel)]="form.visibleParaRegistro"
+        />
+        Visible para registro
+      </label>
+
+      <div class="flex justify-end gap-3 pt-4">
+        <button
+          class="px-4 py-2 text-sm rounded-xl border"
+          (click)="cerrarModal()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          class="px-4 py-2 text-sm rounded-xl bg-black text-white"
+          (click)="guardar()"
+        >
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+}

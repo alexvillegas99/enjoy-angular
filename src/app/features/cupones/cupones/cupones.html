@@ -1,0 +1,175 @@
+<div class="bg-white rounded-xl shadow-sm p-4 space-y-4">
+
+<!-- 🔍 BUSCADOR -->
+<div class="relative">
+  <!-- Icono buscar -->
+  <lucide-icon
+    name="search"
+    class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2
+           w-4 h-4 text-gray-400"
+  ></lucide-icon>
+
+  <!-- Input -->
+  <input
+    type="text"
+    placeholder="Buscar por secuencial, estado o cliente"
+    class="w-full h-11 rounded-lg border border-gray-300
+           pl-10 pr-10 text-sm text-gray-900
+           placeholder:text-gray-400
+           focus:outline-none focus:ring-2 focus:ring-primary/30
+           focus:border-primary"
+    (input)="onSearchInput($event.target.value)"
+  />
+
+  <!-- Loader -->
+  @if (loading) {
+    <lucide-icon
+      name="loader"
+      class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2
+             w-4 h-4 text-gray-400 animate-spin"
+    ></lucide-icon>
+  }
+</div>
+
+
+  <!-- 🖥️ TABLA (DESKTOP) -->
+  <div class="hidden md:block overflow-x-auto">
+    <table class="min-w-full border-collapse text-sm">
+      <thead class="bg-gray-100 text-gray-700">
+        <tr>
+          <th class="px-4 py-3 text-left font-semibold">#</th>
+          <th class="px-4 py-3 text-left font-semibold">Estado</th>
+          <th class="px-4 py-3 text-left font-semibold">Cliente</th>
+          <th class="px-4 py-3 text-center font-semibold">Escaneos</th>
+          <th class="px-4 py-3 text-left font-semibold">Último escaneo</th>
+          <th class="px-4 py-3 text-left font-semibold">Vencimiento</th>
+          <th class="px-4 py-3 text-left font-semibold">Creación</th>
+          <th class="px-4 py-3 text-left font-semibold">Modificación</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-200">
+        @for (c of cupones; track c._id) {
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-4 py-3 font-medium">{{ c.secuencial }}</td>
+
+            <td class="px-4 py-3">
+              <span
+                class="px-2 py-1 rounded-full text-xs font-semibold"
+                [class.bg-green-100]="c.estado === 'activo'"
+                [class.text-green-700]="c.estado === 'activo'"
+                [class.bg-gray-200]="c.estado !== 'activo'"
+                [class.text-gray-600]="c.estado !== 'activo'"
+              >
+                {{ c.estado }}
+              </span>
+            </td>
+
+            <td class="px-4 py-3">
+              @if (c.cliente) {
+                <div>
+                  <div class="font-medium">
+                    {{ c.cliente.nombres }} {{ c.cliente.apellidos }}
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ c.cliente.email }}
+                  </div>
+                  <div class="text-xs text-gray-500">
+                    {{ c.cliente.identificacion }}
+                  </div>
+                </div>
+              } @else {
+                <span class="text-xs italic text-gray-400">
+                  No asignado
+                </span>
+              }
+            </td>
+
+            <td class="px-4 py-3 text-center font-medium">
+              {{ c.numeroDeEscaneos }}
+            </td>
+
+            <td class="px-4 py-3 text-xs text-gray-600">
+              {{ c.ultimoScaneo ? (c.ultimoScaneo | date:'dd/MM/yyyy HH:mm') : '—' }}
+            </td>
+
+            <td class="px-4 py-3 text-xs text-gray-600">
+              {{ c.fechaVencimiento ? (c.fechaVencimiento | date:'dd/MM/yyyy HH:mm') : '—' }}
+            </td>
+
+            <td class="px-4 py-3 text-xs text-gray-600">
+              {{ c.createdAt | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+
+            <td class="px-4 py-3 text-xs text-gray-600">
+              {{ c.updatedAt | date:'dd/MM/yyyy HH:mm' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 📱 CARDS (MOBILE) -->
+  <div class="md:hidden space-y-3">
+    @for (c of cupones; track c._id) {
+      <div class="border rounded-lg p-3 space-y-2">
+        <div class="flex justify-between items-center">
+          <span class="font-semibold">#{{ c.secuencial }}</span>
+          <span
+            class="text-xs px-2 py-1 rounded-full"
+            [class.bg-green-100]="c.estado === 'activo'"
+            [class.text-green-700]="c.estado === 'activo'"
+            [class.bg-gray-200]="c.estado !== 'activo'"
+          >
+            {{ c.estado }}
+          </span>
+        </div>
+
+        <div class="text-sm">
+          {{ c.cliente?.nombres }} {{ c.cliente?.apellidos || 'No asignado' }}
+        </div>
+
+        <div class="text-xs text-gray-500 flex justify-between">
+          <span>Escaneos: {{ c.numeroDeEscaneos }}</span>
+          <span>{{ c.fechaVencimiento | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- 🔢 PAGINACIÓN -->
+  <div class="flex items-center justify-between text-sm text-gray-600">
+    <span>Página {{ page }} de {{ totalPages }}</span>
+
+    <div class="flex items-center gap-1">
+      <button
+        class="px-3 py-1 rounded border disabled:opacity-40"
+        (click)="prevPage()"
+        [disabled]="page === 1"
+      >
+        ‹
+      </button>
+
+      @for (p of paginas; track p) {
+        <button
+          class="px-3 py-1 rounded border"
+          [class.bg-primary]="p === page"
+          [class.text-white]="p === page"
+          (click)="irPagina(p)"
+        >
+          {{ p }}
+        </button>
+      }
+
+      <button
+        class="px-3 py-1 rounded border disabled:opacity-40"
+        (click)="nextPage()"
+        [disabled]="page === totalPages"
+      >
+        ›
+      </button>
+    </div>
+  </div>
+
+</div>
