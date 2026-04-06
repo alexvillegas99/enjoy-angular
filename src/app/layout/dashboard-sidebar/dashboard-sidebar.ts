@@ -6,7 +6,8 @@ import { environment } from '../../../environments/environment';
 import {
   SidebarItem,
   SIDEBAR_MENU_ADMIN,
-  SIDEBAR_MENU_ADMIN_LOCAL
+  SIDEBAR_MENU_ADMIN_LOCAL,
+  SIDEBAR_MENU_FULL,
 } from '../../core/constants/sidebar.config';
 import { SecureStorageService } from '../../core/services/secure-storage.service';
 
@@ -25,17 +26,22 @@ export class DashboardSidebar implements OnInit {
   constructor(private storage: SecureStorageService) {}
 
   ngOnInit(): void {
-
     const user = this.storage.getJson<any>('user');
+    const permisos: string[] = user?.permisos ?? [];
 
-    console.log('Rol usuario:', user?.rol);
-
-    if (user?.rol === 'admin') {
-      this.menu = SIDEBAR_MENU_ADMIN;
-    }
-
-    if (user?.rol === 'admin-local') {
-      this.menu = SIDEBAR_MENU_ADMIN_LOCAL;
+    if (permisos.length > 0) {
+      // Nuevo: filtrar menú por permisos del usuario
+      this.menu = SIDEBAR_MENU_FULL.filter(
+        (item) => !item.permission || permisos.includes(item.permission),
+      );
+    } else {
+      // Legacy: fallback por rol string
+      if (user?.rol === 'admin') {
+        this.menu = SIDEBAR_MENU_ADMIN;
+      }
+      if (user?.rol === 'admin-local') {
+        this.menu = SIDEBAR_MENU_ADMIN_LOCAL;
+      }
     }
   }
 

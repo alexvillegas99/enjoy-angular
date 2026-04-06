@@ -9,6 +9,8 @@ import { routes } from './app.routes';
 import { LUCIDE_ICONS } from './core/icons/lucide-icons';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth-interceptor';
+import { errorInterceptor } from './core/interceptors/error-interceptor';
+import { loadingInterceptor } from './core/interceptors/loading-interceptor';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import * as echarts from 'echarts';
 import { provideEchartsCore } from 'ngx-echarts';
@@ -19,7 +21,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     importProvidersFrom(LUCIDE_ICONS),
     importProvidersFrom(NgApexchartsModule),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])),
     provideEchartsCore({ echarts }),
   ],
 };

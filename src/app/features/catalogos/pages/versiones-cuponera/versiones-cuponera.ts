@@ -95,7 +95,7 @@ export class VersionesCuponera implements OnInit {
 
   form: any = {
     nombre: '',
-    numeroDeLocales: null,
+    precio: '',
     descripcion: '',
   };
 
@@ -124,6 +124,7 @@ editar(v: any) {
   this.form = {
     nombre: v.nombre,
     descripcion: v.descripcion ?? '',
+    precio: v.precio ?? '',
     ciudadesDisponibles: ids,
   };
 
@@ -148,8 +149,8 @@ editar(v: any) {
   const payload = {
     nombre: this.form.nombre,
     descripcion: this.form.descripcion,
+    precio: this.form.precio,
     ciudadesDisponibles: this.form.ciudadesDisponibles,
-    numeroDeLocales: 1, // si el backend lo exige
   };
 
   const req = this.editando

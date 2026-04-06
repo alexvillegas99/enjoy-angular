@@ -7,7 +7,13 @@
       "Bash(comercio\")",
       "Bash(grep -r 'aggregate\\\\|$group\\\\|$match\\\\|$project\\\\|$sum\\\\|$count' /c/Users/alexv/Desktop/Cuponera/coponera-nest/src '--include=*.service.ts' -n)",
       "Bash(grep -E \"\\\\.dart$\")",
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(xargs grep:*)",
+      "Bash(npx tsc:*)",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
+      "Bash(grep -v \"//\")",
+      "Bash(dart analyze:*)",
+      "WebSearch"
     ]
   }
 }

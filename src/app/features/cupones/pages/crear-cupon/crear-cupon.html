@@ -139,12 +139,13 @@
               </div>
             }
 
-            <!-- Detalles: locales -->
-            <div class="flex items-center text-xs text-gray-500 mb-2">
-              <lucide-icon name="store" class="w-3 h-3 mr-1 text-gray-400"></lucide-icon>
-              <span class="font-medium">{{ v.numeroDeLocales }}</span>
-              <span class="ml-1">locales disponibles</span>
-            </div>
+            <!-- Precio -->
+            @if (v.precio) {
+              <div class="flex items-center text-xs text-gray-500 mb-2">
+                <lucide-icon name="ticket" class="w-3 h-3 mr-1 text-gray-400"></lucide-icon>
+                <span class="font-medium">${{ v.precio }}</span>
+              </div>
+            }
 
             <!-- Ciudades disponibles -->
             @if (v.ciudadesDisponibles && v.ciudadesDisponibles.length > 0) {
@@ -211,14 +212,14 @@
 
         <!-- Detalles -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-          <!-- Locales -->
+          <!-- Precio -->
           <div class="flex items-center">
             <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-2">
-              <lucide-icon name="store" class="w-4 h-4 text-primary"></lucide-icon>
+              <lucide-icon name="ticket" class="w-4 h-4 text-primary"></lucide-icon>
             </div>
             <div>
-              <div class="text-gray-500">Locales</div>
-              <div class="font-medium">{{ version.numeroDeLocales }} establecimientos</div>
+              <div class="text-gray-500">Precio</div>
+              <div class="font-medium">{{ version.precio ? '$' + version.precio : 'Sin precio' }}</div>
             </div>
           </div>
 
@@ -305,10 +306,12 @@
             <div class="text-sm text-gray-500">Versión</div>
             <div class="font-medium">{{ previewCupon.versionNombre }}</div>
             <div class="text-xs text-gray-400 mt-0.5 flex flex-wrap gap-1">
-              <span class="inline-flex items-center">
-                <lucide-icon name="store" class="w-3 h-3 mr-1"></lucide-icon>
-                {{ version.numeroDeLocales }} locales
-              </span>
+              @if (version.precio) {
+                <span class="inline-flex items-center">
+                  <lucide-icon name="ticket" class="w-3 h-3 mr-1"></lucide-icon>
+                  ${{ version.precio }}
+                </span>
+              }
               @if (version.ciudadesDisponibles && version.ciudadesDisponibles.length > 0) {
                 <span class="inline-flex items-center">
                   <lucide-icon name="map-pin" class="w-3 h-3 mr-1"></lucide-icon>

@@ -1,0 +1,155 @@
+<div class="max-w-4xl mx-auto space-y-6 pb-28">
+
+  <!-- HEADER -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h2 class="text-xl font-semibold text-slate-800">
+        {{ modo === 'crear' ? 'Crear Rol' : 'Editar Rol' }}
+      </h2>
+      <p class="text-sm text-slate-500">
+        {{ modo === 'crear' ? 'Define un nuevo rol con permisos personalizados' : 'Modifica los permisos del rol' }}
+      </p>
+    </div>
+
+    <button
+      (click)="volver()"
+      class="inline-flex items-center gap-2 border border-slate-300
+             px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition">
+      <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+      Volver
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="text-center py-12 text-slate-500">Cargando...</div>
+  } @else {
+
+    <!-- DATOS GENERALES -->
+    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+      <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+        Información del Rol
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Nombre *</label>
+          <input
+            type="text"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            [(ngModel)]="form.nombre"
+            [disabled]="esSistema"
+            placeholder="Ej: Vendedor"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm text-slate-600 mb-1">Slug</label>
+          <input
+            type="text"
+            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+            [(ngModel)]="form.slug"
+            [disabled]="modo === 'editar'"
+            placeholder="Se genera automáticamente"
+          />
+          @if (modo === 'crear') {
+            <p class="text-xs text-slate-400 mt-1">Identificador único. Si lo dejas vacío se genera del nombre.</p>
+          }
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-600 mb-1">Descripción</label>
+        <textarea
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          [(ngModel)]="form.descripcion"
+          rows="2"
+          placeholder="Descripción del rol..."
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- PERMISOS -->
+    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+      <div class="flex justify-between items-center">
+        <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+          Permisos ({{ form.permisos.length }} seleccionados)
+        </h3>
+
+        <div class="flex gap-2">
+          <button
+            class="text-xs px-3 py-1.5 border border-slate-300 rounded-md hover:bg-slate-50"
+            (click)="seleccionarTodos()">
+            Seleccionar todos
+          </button>
+          <button
+            class="text-xs px-3 py-1.5 border border-slate-300 rounded-md hover:bg-slate-50"
+            (click)="deseleccionarTodos()">
+            Deseleccionar todos
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        @for (grupo of gruposPermisos; track grupo.modulo) {
+          <div class="border border-slate-200 rounded-lg overflow-hidden">
+
+            <!-- Header del grupo -->
+            <div
+              class="flex items-center gap-3 px-4 py-3 bg-slate-50 cursor-pointer select-none"
+              (click)="toggleGrupo(grupo)">
+              <input
+                type="checkbox"
+                class="rounded border-slate-300 text-slate-900 w-4 h-4"
+                [checked]="grupoCompleto(grupo)"
+                [indeterminate]="grupoParcial(grupo)"
+                (click)="$event.stopPropagation(); toggleGrupo(grupo)"
+              />
+              <span class="text-sm font-medium text-slate-700">
+                {{ grupo.nombre }}
+              </span>
+              <span class="text-xs text-slate-400 ml-auto">
+                {{ grupo.modulo }}
+              </span>
+            </div>
+
+            <!-- Permisos del grupo -->
+            <div class="px-4 py-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              @for (p of grupo.permisos; track p.clave) {
+                <label class="flex items-center gap-2 cursor-pointer py-1 px-2 rounded hover:bg-slate-50">
+                  <input
+                    type="checkbox"
+                    class="rounded border-slate-300 text-slate-900 w-4 h-4"
+                    [checked]="tienePermiso(p.clave)"
+                    (change)="togglePermiso(p.clave)"
+                  />
+                  <div>
+                    <span class="text-sm text-slate-700">{{ p.nombre }}</span>
+                    <p class="text-xs text-slate-400">{{ p.clave }}</p>
+                  </div>
+                </label>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="flex justify-end gap-3">
+      <button
+        class="px-6 py-2.5 border border-slate-300 rounded-lg text-sm hover:bg-slate-50"
+        (click)="volver()">
+        Cancelar
+      </button>
+
+      <button
+        class="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50"
+        [disabled]="saving"
+        (click)="guardar()">
+        {{ saving ? 'Guardando...' : (modo === 'crear' ? 'Crear Rol' : 'Guardar Cambios') }}
+      </button>
+    </div>
+
+  }
+
+</div>

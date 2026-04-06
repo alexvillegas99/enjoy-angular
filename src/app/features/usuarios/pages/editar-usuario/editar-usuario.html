@@ -78,9 +78,9 @@
           class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
           [(ngModel)]="model.rol"
         >
-          <option value="admin">ADMIN</option>
-          <option value="admin-local">ADMIN LOCAL</option>
-          <option value="staff">STAFF</option>
+          @for (r of rolesDisponibles; track r.slug) {
+            <option [value]="r.slug">{{ r.nombre }}</option>
+          }
         </select>
       </div>
 

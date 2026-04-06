@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgxEchartsDirective } from 'ngx-echarts';
+import { AuthService } from '../../../auth/services/auth';
+import { AlertService } from '../../../../core/services/alert.service';
+import {
+  DashboardLocalService,
+  DashboardLocalResumen,
+} from '../../../../services/dashboard-local.service';
 
 @Component({
   selector: 'app-dashboard-local',
@@ -10,83 +16,130 @@ import { NgxEchartsDirective } from 'ngx-echarts';
   templateUrl: './dashboard-local.html',
 })
 export class DashboardLocal {
+  private svc = inject(DashboardLocalService);
+  private auth = inject(AuthService);
+  private alert = inject(AlertService);
 
+  loading = false;
   fechaInicio = '';
   fechaFin = '';
 
   // KPIs
-  totalCanjes = 420;
-  empleadosActivos = 5;
-  empleadoTop = 'Carlos M.';
-  promedioDiario = 35;
+  totalCanjes = 0;
+  empleadosActivos = 0;
+  empleadoTop = '—';
+  promedioDiario = 0;
 
-  // 📊 Ranking empleados
-  rankingOptions = {
-    xAxis: {
-      type: 'category',
-      data: ['Carlos', 'Ana', 'Luis', 'María', 'Pedro']
-    },
-    yAxis: { type: 'value' },
-    series: [
-      {
-        data: [120, 95, 80, 70, 55],
-        type: 'bar',
-        itemStyle: { borderRadius: 6 }
-      }
-    ]
-  };
+  rankingOptions: any = {};
+  tendenciaOptions: any = {};
+  distribucionOptions: any = {};
+  horasOptions: any = {};
 
-  // 📈 Tendencia
-  tendenciaOptions = {
-    tooltip: { trigger: 'axis' },
-    xAxis: {
-      type: 'category',
-      data: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-    },
-    yAxis: { type: 'value' },
-    series: [
-      {
-        data: [40, 35, 50, 60, 45, 70],
-        type: 'line',
-        smooth: true,
-        areaStyle: {}
-      }
-    ]
-  };
+  ngOnInit() {
+    // Últimos 14 días por defecto
+    const hoy = new Date();
+    const hace14 = new Date(hoy);
+    hace14.setDate(hace14.getDate() - 14);
+    this.fechaInicio = hace14.toISOString().split('T')[0];
+    this.fechaFin = hoy.toISOString().split('T')[0];
 
-  // 🍩 Distribución por empleado
-  distribucionOptions = {
-    series: [
-      {
-        type: 'pie',
-        radius: ['60%', '80%'],
-        data: [
-          { value: 120, name: 'Carlos' },
-          { value: 95, name: 'Ana' },
-          { value: 80, name: 'Luis' },
-          { value: 70, name: 'María' },
-          { value: 55, name: 'Pedro' }
-        ]
-      }
-    ]
-  };
+    this.cargar();
+  }
 
-  // ⏰ Horas pico
-  horasOptions = {
-    xAxis: {
-      type: 'category',
-      data: ['10h', '11h', '12h', '13h', '14h', '15h', '16h']
-    },
-    yAxis: { type: 'value' },
-    series: [
-      {
-        data: [15, 30, 45, 60, 55, 40, 25],
-        type: 'bar'
-      }
-    ]
-  };
+  cargar() {
+    const id = this.auth.user?._id;
+    if (!id) return;
+
+    this.loading = true;
+
+    this.svc
+      .cargarResumen(id, this.fechaInicio, this.fechaFin)
+      .subscribe({
+        next: (data) => {
+          this.aplicarDatos(data);
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.alert.error('Error', 'No se pudo cargar el dashboard.');
+        },
+      });
+  }
 
   filtrar() {
-    console.log(this.fechaInicio, this.fechaFin);
+    this.cargar();
+  }
+
+  private aplicarDatos(data: DashboardLocalResumen) {
+    this.totalCanjes = data.totalCanjes;
+    this.empleadosActivos = data.empleadosActivos;
+    this.empleadoTop = data.empleadoTop;
+    this.promedioDiario = data.promedioDiario;
+
+    // Ranking empleados (bar chart)
+    this.rankingOptions = {
+      xAxis: {
+        type: 'category',
+        data: data.rankingEmpleados.map((e) => e.nombre),
+      },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          data: data.rankingEmpleados.map((e) => e.canjes),
+          type: 'bar',
+          itemStyle: { borderRadius: 6 },
+        },
+      ],
+    };
+
+    // Tendencia por día (line chart)
+    this.tendenciaOptions = {
+      tooltip: { trigger: 'axis' },
+      xAxis: {
+        type: 'category',
+        data: data.canjesPorDia.map((d) => {
+          const parts = d.fecha.split('-');
+          return `${parts[2]}/${parts[1]}`;
+        }),
+      },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          data: data.canjesPorDia.map((d) => d.total),
+          type: 'line',
+          smooth: true,
+          areaStyle: {},
+        },
+      ],
+    };
+
+    // Distribución por empleado (pie chart)
+    this.distribucionOptions = {
+      series: [
+        {
+          type: 'pie',
+          radius: ['60%', '80%'],
+          data: data.rankingEmpleados.map((e) => ({
+            value: e.canjes,
+            name: e.nombre,
+          })),
+        },
+      ],
+    };
+
+    // Horas pico (bar chart)
+    this.horasOptions = {
+      xAxis: {
+        type: 'category',
+        data: data.canjesPorHora.map((h) => h.hora),
+      },
+      yAxis: { type: 'value' },
+      series: [
+        {
+          data: data.canjesPorHora.map((h) => h.total),
+          type: 'bar',
+        },
+      ],
+    };
   }
 }

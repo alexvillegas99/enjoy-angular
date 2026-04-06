@@ -46,7 +46,7 @@ export class UsuariosService {
   // OBTENER POR ID DE LOCAL
   // ===============================
   obtenerPorLocal(id: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/users-local/68b68090af6e4afed306d1b0`);
+    return this.http.get<any>(`${this.baseUrl}/users-local/${id}`);
   }
 
   // ===============================

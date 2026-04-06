@@ -53,6 +53,9 @@
               {{ v.nombre }}
             </h3>
             <p class="text-xs text-gray-500 mt-1">Versión de cuponera</p>
+            @if (v.precio) {
+              <p class="text-lg font-bold text-gray-900 mt-1">${{ v.precio }}</p>
+            }
           </div>
           <!-- DETALLE / DESCRIPCIÓN -->
 
@@ -155,6 +158,17 @@
         rows="3"
         [(ngModel)]="form.descripcion"
       ></textarea>
+
+      <!-- Precio -->
+      <div>
+        <label class="text-sm font-medium text-gray-700 mb-1 block">Precio (USD)</label>
+        <input
+          type="text"
+          class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm"
+          placeholder="Ej: 25.00"
+          [(ngModel)]="form.precio"
+        />
+      </div>
 
       <!-- CIUDADES -->
     <!-- CIUDADES -->

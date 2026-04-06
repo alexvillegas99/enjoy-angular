@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsuariosService } from '../../../../services/usuario.service';
 import { AlertService } from '../../../../core/services/alert.service';
+import { RolesService } from '../../../../core/services/roles.service';
 
 @Component({
   standalone: true,
@@ -17,6 +18,7 @@ export class EditarUsuario {
   private router = inject(Router);
   private svc = inject(UsuariosService);
   private alert = inject(AlertService);
+  private rolesSvc = inject(RolesService);
 
   modo: 'crear' | 'editar' = 'crear';
   id!: string;
@@ -24,6 +26,8 @@ export class EditarUsuario {
   loading = false;
 
   original: any = {};
+
+  rolesDisponibles: any[] = [];
 
   model: any = {
     nombre: '',
@@ -37,6 +41,8 @@ export class EditarUsuario {
 
   ngOnInit() {
 
+    this.cargarRoles();
+
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
@@ -45,6 +51,22 @@ export class EditarUsuario {
       this.cargar();
     }
 
+  }
+
+  cargarRoles() {
+    this.rolesSvc.listar().subscribe({
+      next: (roles) => {
+        this.rolesDisponibles = roles.filter((r: any) => r.estado);
+      },
+      error: () => {
+        // Fallback: roles hardcoded
+        this.rolesDisponibles = [
+          { slug: 'admin', nombre: 'Administrador' },
+          { slug: 'admin-local', nombre: 'Admin Local' },
+          { slug: 'staff', nombre: 'Staff' },
+        ];
+      },
+    });
   }
 
   cargar() {

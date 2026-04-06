@@ -94,7 +94,8 @@ const ICON_LIST = [
   'ToggleLeft',
   'LogOut',
   'ImagePlus',
-  'Landmark'
+  'Landmark',
+  'Shield'
 ] as const;
 
 export const LUCIDE_ICONS = LucideAngularModule.pick(

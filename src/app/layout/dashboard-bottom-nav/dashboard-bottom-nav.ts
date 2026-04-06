@@ -4,10 +4,9 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 import {
   SidebarItem,
-  SIDEBAR_MENU_ADMIN,
-  SIDEBAR_MENU_ADMIN_LOCAL,
   SIDEBAR_MENU_ADMIN_MOBILE,
-  SIDEBAR_MENU_ADMIN_LOCAL_MOBILE
+  SIDEBAR_MENU_ADMIN_LOCAL_MOBILE,
+  SIDEBAR_MENU_FULL,
 } from '../../core/constants/sidebar.config';
 import { SecureStorageService } from '../../core/services/secure-storage.service';
 
@@ -25,13 +24,21 @@ export class DashboardBottomNav implements OnInit {
 
   ngOnInit(): void {
     const user = this.storage.getJson<any>('user');
+    const permisos: string[] = user?.permisos ?? [];
 
-    if (user?.rol === 'admin') {
-      this.menu = SIDEBAR_MENU_ADMIN_MOBILE;
-    }
-
-    if (user?.rol === 'admin-local') {
-      this.menu = SIDEBAR_MENU_ADMIN_LOCAL_MOBILE;
+    if (permisos.length > 0) {
+      // Nuevo: filtrar solo items marcados como mobile
+      this.menu = SIDEBAR_MENU_FULL.filter(
+        (item) => item.mobile && (!item.permission || permisos.includes(item.permission)),
+      );
+    } else {
+      // Legacy: fallback por rol string
+      if (user?.rol === 'admin') {
+        this.menu = SIDEBAR_MENU_ADMIN_MOBILE;
+      }
+      if (user?.rol === 'admin-local') {
+        this.menu = SIDEBAR_MENU_ADMIN_LOCAL_MOBILE;
+      }
     }
   }
 }

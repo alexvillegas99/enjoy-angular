@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../services/auth';
 import { AlertService } from '../../../../core/services/alert.service';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,8 @@ export class Login {
     private authService: AuthService,
     private alert: AlertService,
   ) {}
+  private permService = inject(PermissionsService);
+
   institution = environment.institution;
   showPassword = false;
   password = '';
@@ -32,6 +35,14 @@ export class Login {
 
     this.authService.login(this.username, this.password).subscribe({
       next: () => {
+        // Validar permiso de acceso web
+        if (!this.permService.hasPermission('web.acceso')) {
+          this.authService.logout();
+          this.validating = false;
+          this.alert.error('Acceso denegado', 'No tienes permisos para acceder al panel web.');
+          return;
+        }
+
         setTimeout(() => {
           this.validating = false;
           this.router.navigate(['/dashboard']);

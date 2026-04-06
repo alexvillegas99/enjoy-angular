@@ -8,7 +8,7 @@ export interface VersionCuponera {
   _id: string;
   nombre: string;
   estado: boolean;
-  numeroDeLocales: number;
+  precio?: string;
   descripcion?: string;
   ciudadesDisponibles: string[];
   createdAt?: string;
@@ -80,7 +80,7 @@ export class VersionCuponeraService {
  */
 crear(data: {
   nombre: string;
-  numeroDeLocales: number;
+  precio?: string;
   descripcion?: string;
   ciudadesDisponibles?: string[]; // ids
 }): Observable<VersionCuponera> {
@@ -94,7 +94,7 @@ actualizar(
   id: string,
   data: Partial<{
     nombre: string;
-    numeroDeLocales: number;
+    precio?: string;
     descripcion?: string;
     ciudadesDisponibles?: string[];
     estado: boolean;

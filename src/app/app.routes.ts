@@ -64,31 +64,33 @@ export const routes: Routes = [
         (m) => m.DashboardLayout,
       ),
     children: [
-      // 🔹 DASHBOARD admin
+      // DASHBOARD admin
       {
         path: 'dashboard',
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { permissions: ['dashboard.ver'], roles: ['admin'] },
         loadChildren: () =>
           import('./features/dashboard/dashboard.routes').then(
             (m) => m.dashboardRoutes,
           ),
       },
 
-      // 🔹 DASHBOARD admin LOCAL
+      // DASHBOARD admin LOCAL
       {
         path: 'dashboard-local',
+        canActivate: [roleGuard],
+        data: { permissions: ['dashboard-local.ver'], roles: ['admin-local'] },
         loadChildren: () =>
           import('./features/admin-local/admin-local.routes').then(
             (m) => m.adminLocalRoutes,
           ),
       },
 
-      // 🔹 RUTAS SOLO admin
+      // USUARIOS
       {
         path: 'usuarios',
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { permissions: ['usuarios.ver'], roles: ['admin'] },
         loadChildren: () =>
           import('./features/usuarios/usuarios.routes').then(
             (m) => m.usuariosRoutes,
@@ -97,7 +99,7 @@ export const routes: Routes = [
       {
         path: 'clientes',
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { permissions: ['clientes.ver'], roles: ['admin'] },
         loadChildren: () =>
           import('./features/clientes/clientes.routes').then(
             (m) => m.clientesRoutes,
@@ -106,18 +108,18 @@ export const routes: Routes = [
       {
         path: 'reportes',
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { permissions: ['reportes.ver'], roles: ['admin'] },
         loadChildren: () =>
           import('./features/reportes/reportes.routes').then(
             (m) => m.reportesRoutes,
           ),
       },
 
-      // 🔹 RUTAS COMPARTIDAS
+      // RUTAS COMPARTIDAS
       {
         path: 'establecimientos',
         canActivate: [roleGuard],
-        data: { roles: ['admin', 'admin-local'] },
+        data: { permissions: ['establecimientos.ver'], roles: ['admin', 'admin-local'] },
         loadChildren: () =>
           import('./features/establecimientos/establecimientos.routes').then(
             (m) => m.ESTABLECIMIENTOS_ROUTES,
@@ -126,14 +128,14 @@ export const routes: Routes = [
       {
         path: 'cupones',
         canActivate: [roleGuard],
-        data: { roles: ['admin', 'admin-local'] },
+        data: { permissions: ['cupones.ver'], roles: ['admin', 'admin-local'] },
         loadComponent: () =>
           import('./features/cupones/cupones/cupones').then((m) => m.Cupones),
       },
       {
         path: 'cupones/nuevo',
         canActivate: [roleGuard],
-        data: { roles: ['admin', 'admin-local'] },
+        data: { permissions: ['cupones.crear'], roles: ['admin', 'admin-local'] },
         loadComponent: () =>
           import('./features/cupones/pages/crear-cupon/crear-cupon').then(
             (m) => m.CrearCupon,
@@ -142,7 +144,7 @@ export const routes: Routes = [
       {
         path: 'catalogos',
         canActivate: [roleGuard],
-        data: { roles: ['admin', 'admin-local'] },
+        data: { permissions: ['categorias.ver'], roles: ['admin', 'admin-local'] },
         loadChildren: () =>
           import('./features/catalogos/catalogos.routes').then(
             (m) => m.catalogosRoutes,
@@ -151,7 +153,7 @@ export const routes: Routes = [
       {
         path: 'solicitudes-cuponera',
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { permissions: ['solicitudes.ver'], roles: ['admin'] },
         loadChildren: () =>
           import('./features/solicitudes-cuponera/solicitudes-cuponera.routes').then(
             (m) => m.SOLICITUDES_CUPONERA_ROUTES,
@@ -160,10 +162,32 @@ export const routes: Routes = [
       {
         path: 'configuracion',
         canActivate: [roleGuard],
-        data: { roles: ['admin'] },
+        data: { permissions: ['configuracion.ver'], roles: ['admin'] },
         loadChildren: () =>
           import('./features/configuracion/configuracion.routes').then(
             (m) => m.CONFIGURACION_ROUTES,
+          ),
+      },
+
+      // PAGOS
+      {
+        path: 'pagos',
+        canActivate: [roleGuard],
+        data: { permissions: ['pagos.configurar'] },
+        loadChildren: () =>
+          import('./features/pagos/pagos.routes').then(
+            (m) => m.pagosRoutes,
+          ),
+      },
+
+      // ROLES Y PERMISOS
+      {
+        path: 'roles',
+        canActivate: [roleGuard],
+        data: { permissions: ['roles.ver'] },
+        loadChildren: () =>
+          import('./features/roles/roles.routes').then(
+            (m) => m.rolesRoutes,
           ),
       },
     ],
