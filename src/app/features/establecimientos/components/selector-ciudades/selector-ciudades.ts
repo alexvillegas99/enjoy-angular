@@ -30,8 +30,6 @@ export class SelectorCiudades {
 
   ngOnInit() {
     this.svc.listar({ estado: true, limit: 500 }).subscribe((res) => {
-      console.log('Ciudades obtenidas:', res); // Debug: Verificar la respuesta del backend
-      // ⚠️ si tu backend devuelve { data, total }
       this.ciudades = res.items ?? res;
 
       this.tryNormalize();

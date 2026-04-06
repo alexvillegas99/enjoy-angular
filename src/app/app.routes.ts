@@ -148,6 +148,24 @@ export const routes: Routes = [
             (m) => m.catalogosRoutes,
           ),
       },
+      {
+        path: 'solicitudes-cuponera',
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
+        loadChildren: () =>
+          import('./features/solicitudes-cuponera/solicitudes-cuponera.routes').then(
+            (m) => m.SOLICITUDES_CUPONERA_ROUTES,
+          ),
+      },
+      {
+        path: 'configuracion',
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] },
+        loadChildren: () =>
+          import('./features/configuracion/configuracion.routes').then(
+            (m) => m.CONFIGURACION_ROUTES,
+          ),
+      },
     ],
   },
 

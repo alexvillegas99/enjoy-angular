@@ -13,6 +13,8 @@ export const SIDEBAR_MENU_ADMIN: SidebarItem[] = [
   { label: 'Usuarios', route: '/usuarios', icon: 'users' },
   { label: 'Clientes', route: '/clientes', icon: 'user' },
   { label: 'Establecimientos', route: '/establecimientos', icon: 'store' },
+   { label: 'Configuración', route: '/configuracion', icon: 'settings' },
+    { label: 'Solicitudes', route: '/solicitudes-cuponera', icon: 'landmark' },
 ];
 export const SIDEBAR_MENU_ADMIN_LOCAL: SidebarItem[] = [
   {

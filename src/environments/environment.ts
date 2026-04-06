@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
 api:"https://enjoyback.avillegas.digital/api/",
+//api:"http://localhost:4000/api/",
   institution: {
     name: 'IMAK SMART',
     slogan: 'IMAK SMART',

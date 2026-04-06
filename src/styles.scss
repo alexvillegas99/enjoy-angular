@@ -3,35 +3,36 @@
 @import "tailwindcss";
 
 /* =========================
-   VARIABLES BASE
+   VARIABLES BASE (DESIGN_GUIDE.md)
    ========================= */
 :root {
-  /* Marca */
---color-primary: #0c44bd;
---color-primary-soft: #0c44bd;
---color-text-link: #0c44bd;
-
+  /* Brand - Colores Principales */
+  --color-primary: #152A47;          /* Azul Profundo */
+  --color-primary-soft: #1d3a61;     /* Azul Profundo hover */
+  --color-accent: #FF9F1C;           /* Naranja Acento */
+  --color-accent-hover: #e88f17;     /* Naranja hover */
+  --color-accent-light: #FFBF46;     /* Amarillo Acento */
 
   /* Superficies */
-  --surface-default: #ffffff;
-  --surface-muted: #f6f7f9;
-  --surface-hover: #f1f3f6;
-  --border-subtle: #e5e7eb;
+  --surface-default: #FFFFFF;
+  --surface-muted: #EFF2F7;          /* Gris Base (fondo principal) */
+  --surface-hover: #e6eaf1;
 
-  /* Servicios */
-  --service-transfer: #ffecec;     /* rojo suave */
-  --service-payments: #e8faf2;     /* verde menta */
-  --service-topup: #fff4e5;        /* ámbar */
-  --service-services: #f3f0ff;     /* violeta */
+  /* Texto */
+  --text-dark: #333333;              /* Títulos */
+  --text-body: #7A869A;              /* Cuerpo, subtítulos, labels */
+
+  /* Bordes */
+  --border-subtle: #e5e7eb;
 }
 
 /* =========================
    RESET / BASE
    ========================= */
 body {
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--surface-muted);
-  color: #1f2937;
+  color: var(--text-dark);
 }
 
 svg {
@@ -48,64 +49,87 @@ button {
 @theme {
   --color-primary: var(--color-primary);
   --color-primary-soft: var(--color-primary-soft);
-  --color-link: var(--color-text-link);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-light: var(--color-accent-light);
 
   --color-surface: var(--surface-default);
   --color-surface-muted: var(--surface-muted);
   --color-surface-hover: var(--surface-hover);
   --color-border-subtle: var(--border-subtle);
 
-  --font-family-inter: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
+  --color-text-dark: var(--text-dark);
+  --color-text-body: var(--text-body);
 
-/* =========================
-   BACKGROUNDS DE SERVICIO
-   ========================= */
-.bg-transfer {
-  background-color: var(--service-transfer);
-}
-.bg-payments {
-  background-color: var(--service-payments);
-}
-.bg-topup {
-  background-color: var(--service-topup);
-}
-.bg-international {
-  background-color: var(--service-services);
+  --font-family-roboto: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* =========================
    COMPONENTES REUTILIZABLES
    ========================= */
 
-/* Tiles de servicios */
-.service-tile {
-  @apply flex flex-col items-center justify-center gap-3 p-4
-         rounded-xl text-sm text-gray-700
-         transition-all duration-200
-         hover:bg-surface-hover hover:shadow-sm
-         focus-visible:outline-none focus-visible:ring-2
-         focus-visible:ring-primary/30;
-}
-
-/* Cards */
+/* Cards - Sin bordes, sombra suave */
 .card {
-  @apply bg-white rounded-xl p-6 shadow-sm border border-border-subtle;
+  background-color: #FFFFFF;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-
-/* Botón primario */
+/* Botón primario (CTA) - Naranja, pill shape */
 .btn-primary {
-  @apply bg-primary text-white text-sm font-medium
-         px-5 py-2 rounded-xl
-         hover:bg-primary-soft
-         focus-visible:outline-none focus-visible:ring-2
-         focus-visible:ring-primary/40
-         transition;
+  background-color: var(--color-accent);
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+.btn-primary:hover {
+  background-color: var(--color-accent-hover);
+}
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 159, 28, 0.4);
+}
+
+/* Botón secundario - Azul Profundo */
+.btn-secondary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+.btn-secondary:hover {
+  background-color: var(--color-primary-soft);
+}
+.btn-secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(21, 42, 71, 0.4);
 }
 
 /* Botón link */
 .btn-link {
-  @apply text-primary text-sm font-medium
-         hover:underline underline-offset-2;
+  color: var(--color-accent);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.btn-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Tiles de servicios */
+.service-tile {
+  @apply flex flex-col items-center justify-center gap-3 p-4
+         rounded-lg text-sm
+         transition-all duration-200
+         hover:bg-surface-hover hover:shadow-sm
+         focus-visible:outline-none focus-visible:ring-2
+         focus-visible:ring-accent/30;
+  color: var(--text-body);
 }

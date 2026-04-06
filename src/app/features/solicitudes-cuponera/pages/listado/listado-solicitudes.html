@@ -1,0 +1,250 @@
+<div class="p-6 space-y-6 max-w-7xl mx-auto pb-20">
+
+  <!-- HEADER -->
+  <div>
+    <h1 class="text-xl font-semibold text-text-dark">Solicitudes de Cuponera</h1>
+    <p class="text-sm text-text-body">Gestiona las solicitudes de compra de cuponeras</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Estado</label>
+        <select
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [(ngModel)]="filtros.estado"
+          (change)="filtros.page = 1; buscar()"
+        >
+          <option value="">Todos</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="APROBADO">Aprobado</option>
+          <option value="RECHAZADO">Rechazado</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Registros por pagina</label>
+        <select
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [(ngModel)]="filtros.limit"
+          (change)="filtros.page = 1; buscar()"
+        >
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+
+      <button class="btn-secondary flex items-center justify-center gap-2" (click)="filtros.page = 1; buscar()">
+        <lucide-icon name="search" class="w-4 h-4"></lucide-icon>
+        Buscar
+      </button>
+
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  @if (loading) {
+    <div class="flex items-center justify-center py-16">
+      <div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
+
+  <!-- LISTADO DE SOLICITUDES -->
+  @if (!loading) {
+    <div class="space-y-4">
+
+      @for (sol of solicitudes; track sol._id) {
+        <div class="card">
+          <div class="flex flex-col lg:flex-row gap-5">
+
+            <!-- INFO PRINCIPAL -->
+            <div class="flex-1 min-w-0 space-y-3">
+
+              <!-- Encabezado: Nombre + Badge -->
+              <div class="flex flex-wrap items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <lucide-icon name="user" class="w-5 h-5 text-primary"></lucide-icon>
+                </div>
+                <div>
+                  <h3 class="text-sm font-semibold text-text-dark">{{ sol.nombreCliente }}</h3>
+                  <p class="text-xs text-text-body">{{ sol.emailCliente }}</p>
+                </div>
+                <span
+                  class="px-2.5 py-0.5 text-xs font-medium rounded-full ml-auto"
+                  [ngClass]="getBadgeClasses(sol.estado)"
+                >
+                  {{ sol.estado }}
+                </span>
+              </div>
+
+              <!-- Detalles en grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+
+                @if (sol.telefonoCliente) {
+                  <div class="flex items-center gap-2">
+                    <lucide-icon name="phone" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                    <span class="text-text-body">{{ sol.telefonoCliente }}</span>
+                  </div>
+                }
+
+                <div class="flex items-center gap-2">
+                  <lucide-icon name="ticket" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                  <span class="text-text-dark font-medium">{{ sol.cuponeraNombre }}</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <lucide-icon name="credit-card" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                  <span class="text-text-body">Precio: <strong class="text-text-dark">${{ sol.cuponeraPrecio }}</strong></span>
+                </div>
+
+                @if (sol.montoTransferido) {
+                  <div class="flex items-center gap-2">
+                    <lucide-icon name="wallet" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                    <span class="text-text-body">Transferido: <strong class="text-text-dark">${{ sol.montoTransferido }}</strong></span>
+                  </div>
+                }
+
+                <div class="flex items-center gap-2">
+                  <lucide-icon name="calendar" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                  <span class="text-text-body">{{ formatFecha(sol.createdAt) }}</span>
+                </div>
+
+              </div>
+
+              <!-- Observaciones -->
+              @if (sol.observaciones) {
+                <div class="bg-surface-muted rounded-lg px-3 py-2">
+                  <p class="text-xs text-text-body"><strong>Observaciones:</strong> {{ sol.observaciones }}</p>
+                </div>
+              }
+
+              <!-- Nota admin (si ya existe) -->
+              @if (sol.notaAdmin) {
+                <div class="bg-rose-50 rounded-lg px-3 py-2">
+                  <p class="text-xs text-rose-700"><strong>Nota admin:</strong> {{ sol.notaAdmin }}</p>
+                </div>
+              }
+
+            </div>
+
+            <!-- COMPROBANTE -->
+            @if (sol.comprobanteUrl) {
+              <div class="flex-shrink-0 lg:w-36">
+                <p class="text-xs font-medium text-text-body mb-1.5">Comprobante</p>
+                <img
+                  [src]="sol.comprobanteUrl"
+                  alt="Comprobante de transferencia"
+                  class="w-full h-32 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition"
+                  (click)="abrirImagen(sol.comprobanteUrl)"
+                />
+              </div>
+            }
+
+          </div>
+
+          <!-- ACCIONES (solo si PENDIENTE) -->
+          @if (sol.estado === 'PENDIENTE') {
+            <div class="border-t border-gray-100 mt-4 pt-4 space-y-3">
+
+              <!-- Input nota admin -->
+              <div>
+                <label class="block text-xs font-medium text-text-body mb-1">Nota del administrador (opcional)</label>
+                <input
+                  type="text"
+                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+                  placeholder="Motivo del rechazo u observacion..."
+                  [ngModel]="notaAdminMap[sol._id] || ''"
+                  (ngModelChange)="notaAdminMap[sol._id] = $event"
+                />
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <button
+                  class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full
+                         bg-emerald-600 text-white hover:bg-emerald-700 transition"
+                  (click)="aprobar(sol)"
+                >
+                  <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
+                  Aprobar
+                </button>
+                <button
+                  class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full
+                         bg-rose-600 text-white hover:bg-rose-700 transition"
+                  (click)="rechazar(sol)"
+                >
+                  <lucide-icon name="circle-x" class="w-4 h-4"></lucide-icon>
+                  Rechazar
+                </button>
+              </div>
+
+            </div>
+          }
+
+        </div>
+      }
+
+      <!-- VACIO -->
+      @if (solicitudes.length === 0) {
+        <div class="card text-center py-10">
+          <lucide-icon name="file-text" class="w-10 h-10 text-gray-300 mx-auto mb-3"></lucide-icon>
+          <p class="text-sm text-text-body">No se encontraron solicitudes.</p>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- PAGINACION -->
+  @if (!loading && pages > 1) {
+    <div class="flex justify-center gap-2 pt-4">
+      @for (p of [].constructor(pages); track $index; let i = $index) {
+        <button
+          class="px-3 py-1 rounded-full border text-sm transition"
+          [class.bg-accent]="filtros.page === i + 1"
+          [class.text-white]="filtros.page === i + 1"
+          [class.border-accent]="filtros.page === i + 1"
+          [class.border-gray-300]="filtros.page !== i + 1"
+          [class.text-text-body]="filtros.page !== i + 1"
+          [class.hover:bg-surface-hover]="filtros.page !== i + 1"
+          (click)="cambiarPagina(i + 1)"
+        >
+          {{ i + 1 }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- INFO TOTAL -->
+  @if (!loading && total > 0) {
+    <p class="text-center text-xs text-text-body">
+      Mostrando {{ solicitudes.length }} de {{ total }} solicitudes
+    </p>
+  }
+
+</div>
+
+<!-- MODAL IMAGEN AMPLIADA -->
+@if (imagenAmpliada) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+    (click)="cerrarImagen()"
+  >
+    <div class="relative max-w-3xl max-h-[90vh]" (click)="$event.stopPropagation()">
+      <button
+        class="absolute -top-3 -right-3 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition"
+        (click)="cerrarImagen()"
+      >
+        <lucide-icon name="x" class="w-4 h-4 text-text-dark"></lucide-icon>
+      </button>
+      <img
+        [src]="imagenAmpliada"
+        alt="Comprobante ampliado"
+        class="max-h-[85vh] rounded-lg shadow-2xl object-contain"
+      />
+    </div>
+  </div>
+}

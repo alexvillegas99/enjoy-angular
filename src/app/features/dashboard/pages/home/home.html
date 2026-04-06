@@ -1,166 +1,218 @@
-<div class="space-y-8">
-  <!-- ================= ACCIONES RÁPIDAS ================= -->
-  <div class="bg-white rounded-2xl shadow-sm p-6">
-    <h3 class="text-lg font-semibold mb-4">
-      Acciones rápidas
-    </h3>
+<!-- LOADING -->
+@if (loading) {
+  <div class="flex items-center justify-center py-20">
+    <div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+  </div>
+}
 
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-      @for (accion of accionesRapidas; track accion.label) {
-        <button
-          [routerLink]="accion.route"
-          class="flex flex-col items-center justify-center
-                 bg-gray-50 hover:bg-gray-100
-                 rounded-xl p-4 transition"
+<!-- ERROR -->
+@if (error) {
+  <div class="card text-center py-10 mx-6">
+    <lucide-icon name="alert-circle" class="w-10 h-10 text-red-400 mx-auto mb-3"></lucide-icon>
+    <p class="text-sm text-text-body">{{ error }}</p>
+  </div>
+}
+
+@if (!loading && !error) {
+<div class="space-y-6">
+
+  <!-- ====== ACCIONES RÁPIDAS ====== -->
+  <div class="card">
+    <h3 class="text-sm font-semibold text-text-dark mb-4">Acciones rápidas</h3>
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+      @for (a of accionesRapidas; track a.label) {
+        <a
+          [routerLink]="a.route"
+          class="flex flex-col items-center justify-center gap-2 p-3 rounded-lg bg-surface-muted hover:bg-accent/10 transition cursor-pointer"
         >
-          <lucide-icon
-            [name]="accion.icono"
-            class="w-6 h-6 mb-2 text-primary">
-          </lucide-icon>
-
-          <span class="text-sm text-gray-700">
-            {{ accion.label }}
-          </span>
-        </button>
+          <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm">
+            <lucide-icon [name]="a.icono" class="w-4 h-4 text-accent"></lucide-icon>
+          </div>
+          <span class="text-xs text-text-body text-center leading-tight">{{ a.label }}</span>
+        </a>
       }
     </div>
   </div>
-  <!-- ================= KPI RESUMEN ================= -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs text-gray-500">Cupones Activos</p>
-          <h2 class="text-2xl font-semibold text-green-600">
-            {{ resumen.activos }}
-          </h2>
-        </div>
-        <lucide-icon name="badge-check" class="w-8 h-8 text-green-500"></lucide-icon>
+  <!-- ====== KPI CARDS ====== -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Establecimientos -->
+    <div class="card flex items-center gap-4">
+      <div class="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <lucide-icon name="store" class="w-5 h-5 text-primary"></lucide-icon>
+      </div>
+      <div>
+        <p class="text-xs text-text-body">Establecimientos</p>
+        <p class="text-2xl font-semibold text-text-dark">{{ totalEstablecimientos }}</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs text-gray-500">Vencidos</p>
-          <h2 class="text-2xl font-semibold text-red-600">
-            {{ resumen.vencidos }}
-          </h2>
-        </div>
-        <lucide-icon name="clock" class="w-8 h-8 text-red-500"></lucide-icon>
+    <!-- Clientes -->
+    <div class="card flex items-center gap-4">
+      <div class="w-11 h-11 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+        <lucide-icon name="users" class="w-5 h-5 text-accent"></lucide-icon>
+      </div>
+      <div>
+        <p class="text-xs text-text-body">Clientes</p>
+        <p class="text-2xl font-semibold text-text-dark">{{ totalClientes }}</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs text-gray-500">Redenciones Hoy</p>
-          <h2 class="text-2xl font-semibold text-blue-600">
-            {{ resumen.redencionesHoy }}
-          </h2>
-        </div>
-        <lucide-icon name="ticket" class="w-8 h-8 text-blue-500"></lucide-icon>
+    <!-- Cupones -->
+    <div class="card flex items-center gap-4">
+      <div class="w-11 h-11 rounded-lg bg-accent-light/20 flex items-center justify-center flex-shrink-0">
+        <lucide-icon name="ticket" class="w-5 h-5 text-accent"></lucide-icon>
+      </div>
+      <div>
+        <p class="text-xs text-text-body">Cupones</p>
+        <p class="text-2xl font-semibold text-text-dark">{{ totalCupones }}</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm p-5">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-xs text-gray-500">Usuarios</p>
-          <h2 class="text-2xl font-semibold text-purple-600">
-            {{ resumen.usuarios }}
-          </h2>
-        </div>
-        <lucide-icon name="users" class="w-8 h-8 text-purple-500"></lucide-icon>
+    <!-- Versiones -->
+    <div class="card flex items-center gap-4">
+      <div class="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <lucide-icon name="layers" class="w-5 h-5 text-primary"></lucide-icon>
+      </div>
+      <div>
+        <p class="text-xs text-text-body">Versiones</p>
+        <p class="text-2xl font-semibold text-text-dark">{{ totalVersiones }}</p>
       </div>
     </div>
-
   </div>
 
-  <!-- ================= GRÁFICOS ================= -->
+  <!-- ====== GRÁFICOS FILA 1 ====== -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Estado de cupones -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-semibold text-text-dark">Estado de cupones</h3>
+        <div class="flex gap-3 text-xs text-text-body">
+          <span class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-accent inline-block"></span>
+            Activos {{ cuponesActivos }}
+          </span>
+          <span class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+            Inactivos {{ cuponesInactivos }}
+          </span>
+          <span class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span>
+            Bloqueados {{ cuponesBloqueados }}
+          </span>
+        </div>
+      </div>
+      <div echarts [options]="estadoCuponesChart" class="h-64"></div>
+    </div>
+
+    <!-- Actividad de escaneos -->
+    <div class="card">
+      <h3 class="text-sm font-semibold text-text-dark mb-4">Escaneos últimos 14 días</h3>
+      <div echarts [options]="actividadChart" class="h-64"></div>
+    </div>
+  </div>
+
+  <!-- ====== GRÁFICO SOLICITUDES + TOP ESTABLECIMIENTOS ====== -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-    <!-- Estado Cupones -->
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-      <h3 class="text-lg font-semibold mb-4">
-        Estado de cupones
-      </h3>
-
-      <div
-        echarts
-        [options]="estadoCuponesChart"
-        class="h-72">
-      </div>
-    </div>
-
-    <!-- Actividad semanal -->
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-      <h3 class="text-lg font-semibold mb-4">
-        Actividad semanal
-      </h3>
-
-      <div
-        echarts
-        [options]="actividadChart"
-        class="h-72">
-      </div>
-    </div>
-
-  </div>
-
-
-
-  <!-- ================= CUPONES RECIENTES ================= -->
-  <div class="bg-white rounded-2xl shadow-sm p-6">
-    <h3 class="text-lg font-semibold mb-4">
-      Cupones recientes
-    </h3>
-
-    <div class="divide-y">
-      @for (cupon of cupones; track cupon.nombre) {
-        <div class="py-3 flex items-center justify-between">
-          <div>
-            <p class="text-sm font-medium text-gray-800">
-              {{ cupon.nombre }}
-            </p>
-            <p class="text-xs text-gray-500">
-              Vence: {{ cupon.vencimiento }}
-            </p>
-          </div>
-
-          <span
-            class="px-2 py-1 text-xs rounded-full"
-            [class.bg-green-100]="cupon.estado === 'activo'"
-            [class.text-green-700]="cupon.estado === 'activo'"
-            [class.bg-red-100]="cupon.estado === 'vencido'"
-            [class.text-red-700]="cupon.estado === 'vencido'"
-          >
-            {{ cupon.estado }}
-          </span>
+    <!-- Solicitudes de empresas -->
+    @if (solicitudes.length) {
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-sm font-semibold text-text-dark">Solicitudes de empresas</h3>
+          <span class="text-xs text-text-body">{{ solicitudes.length }} total</span>
         </div>
+        <div echarts [options]="solicitudesChart" class="h-48"></div>
+      </div>
+    }
+
+    <!-- Top establecimientos por calificación -->
+    <div class="card">
+      <h3 class="text-sm font-semibold text-text-dark mb-4">Top establecimientos</h3>
+      @if (establecimientos.length) {
+        <div class="space-y-3">
+          @for (e of establecimientos; track e._id; let i = $index) {
+            <div class="flex items-center gap-3">
+              <!-- Posición -->
+              <span class="w-6 h-6 rounded-full bg-surface-muted flex items-center justify-center text-xs font-semibold text-text-body flex-shrink-0">
+                {{ i + 1 }}
+              </span>
+
+              <!-- Avatar -->
+              @if (e.detallePromocion?.logoUrl) {
+                <img [src]="e.detallePromocion.logoUrl" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+              } @else {
+                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                  {{ e.nombre?.charAt(0) }}
+                </div>
+              }
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-text-dark truncate">{{ e.nombre }}</p>
+                <p class="text-xs text-text-body truncate">{{ e.ciudades?.join(', ') || '—' }}</p>
+              </div>
+
+              <!-- Rating -->
+              <div class="flex items-center gap-1 flex-shrink-0">
+                <lucide-icon name="star" class="w-3.5 h-3.5 text-accent-light"></lucide-icon>
+                <span class="text-sm font-semibold text-text-dark">{{ e.promedioCalificacion || 0 }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="text-sm text-text-body text-center py-6">Sin establecimientos registrados.</p>
       }
     </div>
   </div>
 
-  <!-- ================= ACTIVIDAD RECIENTE ================= -->
-  <div class="bg-white rounded-2xl shadow-sm p-6">
-    <h3 class="text-lg font-semibold mb-4">
-      Actividad reciente
-    </h3>
+  <!-- ====== CUPONES RECIENTES ====== -->
+  @if (cuponesRecientes.length) {
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-semibold text-text-dark">Cupones recientes</h3>
+        <a routerLink="/cupones" class="text-xs text-accent font-medium hover:underline">Ver todos</a>
+      </div>
 
-    <ul class="space-y-2 text-sm text-gray-600">
-      @for (item of actividad; track item) {
-        <li class="flex items-start gap-2">
-          <lucide-icon name="circle" class="w-3 h-3 mt-1 text-primary"></lucide-icon>
-          {{ item }}
-        </li>
-      }
-    </ul>
-
-    <div class="mt-4 text-xs text-gray-400">
-      Última sincronización: {{ estado.lastSync }}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-xs text-text-body border-b border-gray-100">
+              <th class="text-left py-2 font-medium">Secuencial</th>
+              <th class="text-left py-2 font-medium">Estado</th>
+              <th class="text-left py-2 font-medium hidden sm:table-cell">Escaneos</th>
+              <th class="text-left py-2 font-medium hidden md:table-cell">Activación</th>
+              <th class="text-left py-2 font-medium hidden md:table-cell">Vencimiento</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of cuponesRecientes; track c._id) {
+              <tr class="border-b border-gray-50 hover:bg-surface-muted/50 transition">
+                <td class="py-2.5 font-medium text-text-dark">{{ c.secuencial }}</td>
+                <td class="py-2.5">
+                  <span
+                    class="px-2 py-0.5 text-xs rounded-full font-medium"
+                    [class.bg-green-100]="c.estado === 'ACTIVO'"
+                    [class.text-green-700]="c.estado === 'ACTIVO'"
+                    [class.bg-gray-200]="c.estado === 'INACTIVO'"
+                    [class.text-gray-600]="c.estado === 'INACTIVO'"
+                    [class.bg-red-100]="c.estado === 'BLOQUEADO'"
+                    [class.text-red-700]="c.estado === 'BLOQUEADO'"
+                  >
+                    {{ c.estado }}
+                  </span>
+                </td>
+                <td class="py-2.5 text-text-body hidden sm:table-cell">{{ c.numeroDeEscaneos || 0 }}</td>
+                <td class="py-2.5 text-text-body hidden md:table-cell">{{ c.fechaActivacion | date:'dd/MM/yy' }}</td>
+                <td class="py-2.5 text-text-body hidden md:table-cell">{{ c.fechaVencimiento | date:'dd/MM/yy' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  }
 
 </div>
+}

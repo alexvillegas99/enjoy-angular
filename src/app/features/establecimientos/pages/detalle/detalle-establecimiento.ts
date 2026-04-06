@@ -1,6 +1,5 @@
-// app/establecimientos/establecimiento-detalle/establecimiento-detalle.component.ts
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { EstablecimientosService } from '../../../../services/establecimientos.service';
 import { LucideAngularModule } from 'lucide-angular';
@@ -8,7 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 @Component({
   selector: 'app-establecimiento-detalle',
   standalone: true,
-  imports: [CommonModule,LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, RouterLink],
   templateUrl: './detalle-establecimiento.html',
 })
 export class DetalleEstablecimiento implements OnInit {
@@ -25,10 +24,9 @@ export class DetalleEstablecimiento implements OnInit {
       next: (data) => {
         this.establecimiento = data;
         this.loading = false;
-        console.log(this.establecimiento)
       },
       error: () => {
-        this.error = 'No se pudo cargar el establecimiento';
+        this.error = 'No se pudo cargar el establecimiento.';
         this.loading = false;
       },
     });

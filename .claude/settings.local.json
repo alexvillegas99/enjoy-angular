@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx ng:*)",
+      "Bash(grep -E \"\\\\.\\(ts|html|scss\\)$\")",
+      "Bash(local)",
+      "Bash(comercio\")",
+      "Bash(grep -r 'aggregate\\\\|$group\\\\|$match\\\\|$project\\\\|$sum\\\\|$count' /c/Users/alexv/Desktop/Cuponera/coponera-nest/src '--include=*.service.ts' -n)",
+      "Bash(grep -E \"\\\\.dart$\")",
+      "Bash(flutter analyze:*)"
+    ]
+  }
+}

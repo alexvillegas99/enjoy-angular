@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { EstablecimientosService } from '../../../../services/establecimientos.service';
@@ -17,6 +17,7 @@ import { AlertService } from '../../../../core/services/alert.service';
     SelectorCategorias,
     SelectorCiudades,
     DatePipe,
+    RouterLink,
   ],
   templateUrl: './crear-editar-establecimiento.html',
 })
@@ -29,6 +30,49 @@ export class CrearEditarEstablecimiento {
   isEdit = false;
   loading = false;
 
+  dias = [
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+    'domingo',
+  ];
+
+  errors: Record<string, string> = {};
+
+  model: any = {
+    nombre: '',
+    email: '',
+    telefono: '',
+    identificacion: '',
+    rol: 'admin-local',
+    estado: true,
+    usuarioCreacion: null,
+    ciudades: [] as string[],
+    categorias: [] as string[],
+    detallePromocion: {
+      id: undefined,
+      title: '',
+      placeName: '',
+      description: '',
+      address: '',
+      isTwoForOne: false,
+      aplicaTodosLosDias: true,
+      diasAplicables: [] as string[],
+      horarioPorDia: {} as Record<string, { abre: string; cierra: string }>,
+      scheduleLabel: '',
+      tags: [] as string[],
+      fechasExcluidas: [] as Date[],
+      imageBase64: null,
+      logoBase64: null,
+      imageUrl: null,
+      logoUrl: null,
+    },
+    detallePromocionesExtra: [] as any[],
+  };
+
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
@@ -36,54 +80,48 @@ export class CrearEditarEstablecimiento {
 
       if (id) {
         this.loading = true;
-        this.svc.obtener(id).subscribe((e) => {
-          const categoriasIds = Array.isArray(e.categorias)
-            ? e.categorias.map((c: any) => (typeof c === 'object' ? c._id : c))
-            : [];
+        this.svc.obtener(id).subscribe({
+          next: (e) => {
+            const categoriasIds = Array.isArray(e.categorias)
+              ? e.categorias.map((c: any) => (typeof c === 'object' ? c._id : c))
+              : [];
 
-          const ciudadesIds = Array.isArray(e.ciudades)
-            ? e.ciudades.map((c: any) => (typeof c === 'object' ? c._id : c))
-            : [];
+            const ciudadesIds = Array.isArray(e.ciudades)
+              ? e.ciudades.map((c: any) => (typeof c === 'object' ? c._id : c))
+              : [];
 
-          this.model = {
-            ...this.model,
-            ...e,
-            categorias: categoriasIds,
-            ciudades: ciudadesIds,
-            detallePromocion: {
-              ...this.model.detallePromocion,
-              ...e.detallePromocion,
-            },
-            detallePromocionesExtra: e.detallePromocionesExtra || [],
-          };
+            this.model = {
+              ...this.model,
+              ...e,
+              categorias: categoriasIds,
+              ciudades: ciudadesIds,
+              detallePromocion: {
+                ...this.model.detallePromocion,
+                ...e.detallePromocion,
+              },
+              detallePromocionesExtra: (e.detallePromocionesExtra || []).map((p: any) => ({
+                ...p,
+                startDate: p.startDate ? new Date(p.startDate) : null,
+                endDate: p.endDate ? new Date(p.endDate) : null,
+              })),
+            };
 
-          this.convertirFechas();
-          this.loading = false;
+            this.convertirFechas();
+            this.loading = false;
+          },
+          error: (err) => {
+            this.loading = false;
+            this.alert.error(
+              'Error al cargar',
+              this.extraerMensajeError(err)
+            );
+          },
         });
       }
     });
   }
 
   convertirFechas() {
-    // Convertir fechas de string a Date
-    if (
-      this.model.detallePromocion.startDate &&
-      typeof this.model.detallePromocion.startDate === 'string'
-    ) {
-      this.model.detallePromocion.startDate = new Date(
-        this.model.detallePromocion.startDate,
-      );
-    }
-    if (
-      this.model.detallePromocion.endDate &&
-      typeof this.model.detallePromocion.endDate === 'string'
-    ) {
-      this.model.detallePromocion.endDate = new Date(
-        this.model.detallePromocion.endDate,
-      );
-    }
-
-    // Convertir fechas excluidas
     if (this.model.detallePromocion.fechasExcluidas) {
       this.model.detallePromocion.fechasExcluidas =
         this.model.detallePromocion.fechasExcluidas.map((fecha: any) =>
@@ -122,15 +160,6 @@ export class CrearEditarEstablecimiento {
     this.model.detallePromocion.fechasExcluidas.splice(i, 1);
   }
 
-  onDateChange(event: Event, field: 'startDate' | 'endDate') {
-    const input = event.target as HTMLInputElement;
-    if (input.value) {
-      this.model.detallePromocion[field] = new Date(input.value);
-    } else {
-      this.model.detallePromocion[field] = null;
-    }
-  }
-
   addPromocionExtra() {
     this.model.detallePromocionesExtra.push({
       title: '',
@@ -138,7 +167,10 @@ export class CrearEditarEstablecimiento {
       aplicaTodosLosDias: true,
       scheduleLabel: '',
       isTwoForOne: false,
+      isFlash: false,
       tags: [],
+      startDate: null as Date | null,
+      endDate: null as Date | null,
     });
   }
 
@@ -146,104 +178,113 @@ export class CrearEditarEstablecimiento {
     this.model.detallePromocionesExtra.splice(i, 1);
   }
 
-submit() {
-
-  if (!this.validate()) {
-    this.alert.warning('Formulario incompleto', 'Revisa los campos obligatorios.');
-    return;
+  onExtraDateChange(event: Event, index: number, field: 'startDate' | 'endDate') {
+    const input = event.target as HTMLInputElement;
+    this.model.detallePromocionesExtra[index][field] = input.value
+      ? new Date(input.value)
+      : null;
   }
 
-  const payload = structuredClone(this.model);
+  submit() {
+    if (!this.validate()) return;
 
-  payload.detallePromocion.placeName = payload.nombre;
+    const payload = structuredClone(this.model);
 
-  if (payload.detallePromocionesExtra?.length) {
-    payload.detallePromocionesExtra.forEach((promo: any) => {
-      promo.placeName = promo.placeName || payload.nombre;
+    // Formatear teléfono con código de país
+    if (payload.telefono?.trim()) {
+      payload.telefono = this.formatearTelefono(payload.telefono.trim());
+    }
+
+    payload.detallePromocion.placeName = payload.nombre;
+
+    if (payload.detallePromocionesExtra?.length) {
+      payload.detallePromocionesExtra.forEach((promo: any) => {
+        promo.placeName = promo.placeName || payload.nombre;
+      });
+    }
+
+    const isObjectId = (v: any) =>
+      typeof v === 'string' && /^[a-f\d]{24}$/i.test(v);
+
+    if (Array.isArray(payload.categorias)) {
+      payload.categorias = payload.categorias.filter(isObjectId);
+      if (!payload.categorias.length) delete payload.categorias;
+    } else {
+      delete payload.categorias;
+    }
+
+    if (Array.isArray(payload.ciudades)) {
+      payload.ciudades = payload.ciudades.filter(isObjectId);
+      if (!payload.ciudades.length) delete payload.ciudades;
+    } else {
+      delete payload.ciudades;
+    }
+
+    this.limpiarPayload(payload);
+
+    this.loading = true;
+
+    const req = this.isEdit
+      ? this.svc.update(payload._id, payload)
+      : this.svc.create(payload);
+
+    req.subscribe({
+      next: async () => {
+        this.loading = false;
+        await this.alert.success(
+          this.isEdit ? 'Establecimiento actualizado' : 'Establecimiento creado',
+          'La información se guardó correctamente.',
+        );
+        this.router.navigate(['/establecimientos']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.alert.error('Error al guardar', this.extraerMensajeError(err));
+      },
     });
   }
 
-  const isObjectId = (v: any) =>
-    typeof v === 'string' && /^[a-f\d]{24}$/i.test(v);
+  limpiarPayload(payload: any) {
+    const d = payload.detallePromocion;
 
-  if (Array.isArray(payload.categorias)) {
-    payload.categorias = payload.categorias.filter(isObjectId);
-    if (!payload.categorias.length) delete payload.categorias;
-  } else {
-    delete payload.categorias;
-  }
+    // Campos que no pertenecen a detallePromocion principal
+    delete d.rating;
+    delete d.distanceLabel;
+    delete d.startDate;
+    delete d.endDate;
+    delete d.isFlash;
 
-  if (Array.isArray(payload.ciudades)) {
-    payload.ciudades = payload.ciudades.filter(isObjectId);
-    if (!payload.ciudades.length) delete payload.ciudades;
-  } else {
-    delete payload.ciudades;
-  }
+    if (!d.imageBase64) delete d.imageBase64;
+    if (!d.logoBase64) delete d.logoBase64;
+    delete d.imageUrl;
+    delete d.logoUrl;
 
-  this.limpiarPayload(payload);
+    if (!d.tags?.length) delete d.tags;
+    if (!d.fechasExcluidas?.length) delete d.fechasExcluidas;
 
-  this.loading = true;
-
-  const req = this.isEdit
-    ? this.svc.update(payload._id, payload)
-    : this.svc.create(payload);
-
-  req.subscribe({
-    next: async () => {
-      this.loading = false;
-
-      await this.alert.success(
-        this.isEdit ? 'Establecimiento actualizado' : 'Establecimiento creado',
-        'La información se guardó correctamente.'
-      );
-
-      this.router.navigate(['/establecimientos']);
-    },
-    error: (err) => {
-      this.loading = false;
-
-      console.error(err);
-
-      this.alert.error(
-        'Error al guardar',
-        err?.error?.message || 'Ocurrió un error inesperado.'
-      );
+    if (d.aplicaTodosLosDias) {
+      delete d.diasAplicables;
+      delete d.horarioPorDia;
     }
-  });
-}
-limpiarPayload(payload: any) {
 
-  const d = payload.detallePromocion;
-
-  // 🔥 Ya no se usan en interfaz
-  delete d.rating;
-  delete d.distanceLabel;
-
-  // Imágenes base64 (solo si existen)
-  if (!d.imageBase64) delete d.imageBase64;
-  if (!d.logoBase64) delete d.logoBase64;
-
-  // El backend genera estas URLs
-  delete d.imageUrl;
-  delete d.logoUrl;
-
-  // Campos opcionales vacíos
-  if (!d.tags?.length) delete d.tags;
-  if (!d.fechasExcluidas?.length) delete d.fechasExcluidas;
-  if (!d.startDate) delete d.startDate;
-  if (!d.endDate) delete d.endDate;
-
-  // Horarios si aplica todos los días
-  if (d.aplicaTodosLosDias) {
-    delete d.diasAplicables;
-    delete d.horarioPorDia;
+    // Limpiar promos extra
+    if (payload.detallePromocionesExtra?.length) {
+      payload.detallePromocionesExtra = payload.detallePromocionesExtra.map((p: any) => {
+        const clean: any = { ...p };
+        if (!clean.startDate) delete clean.startDate;
+        if (!clean.endDate) delete clean.endDate;
+        if (!clean.tags?.length) delete clean.tags;
+        if (!clean.diasAplicables?.length) delete clean.diasAplicables;
+        if (clean.aplicaTodosLosDias) {
+          delete clean.diasAplicables;
+          delete clean.horarioPorDia;
+        }
+        return clean;
+      });
+    } else {
+      delete payload.detallePromocionesExtra;
+    }
   }
-
-  // Promociones extra
-  if (!payload.detallePromocionesExtra?.length) {
-    delete payload.detallePromocionesExtra;
-  }
-}
 
   onFile(event: Event, field: 'imageBase64' | 'logoBase64') {
     const input = event.target as HTMLInputElement;
@@ -251,16 +292,14 @@ limpiarPayload(payload: any) {
 
     const file = input.files[0];
 
-    // validar tipo
     if (!file.type.startsWith('image/')) {
-      alert('Solo se permiten imágenes');
+      this.alert.warning('Archivo inválido', 'Solo se permiten imágenes.');
       input.value = '';
       return;
     }
 
-    // validar tamaño (opcional, 5MB máximo)
     if (file.size > 5 * 1024 * 1024) {
-      alert('La imagen no debe superar los 5MB');
+      this.alert.warning('Archivo muy grande', 'La imagen no debe superar los 5 MB.');
       input.value = '';
       return;
     }
@@ -274,7 +313,6 @@ limpiarPayload(payload: any) {
 
   toggleAplicaTodosLosDias() {
     if (this.model.detallePromocion.aplicaTodosLosDias) {
-      // Limpiar días específicos si aplica a todos
       this.model.detallePromocion.diasAplicables = [];
       this.model.detallePromocion.horarioPorDia = {};
     }
@@ -282,7 +320,6 @@ limpiarPayload(payload: any) {
 
   toggleDia(dia: string) {
     const idx = this.model.detallePromocion.diasAplicables.indexOf(dia);
-
     if (idx >= 0) {
       this.model.detallePromocion.diasAplicables.splice(idx, 1);
       delete this.model.detallePromocion.horarioPorDia[dia];
@@ -295,81 +332,96 @@ limpiarPayload(payload: any) {
     }
   }
 
-  errors: any = {};
-
-  dias = [
-    'lunes',
-    'martes',
-    'miercoles',
-    'jueves',
-    'viernes',
-    'sabado',
-    'domingo',
-  ];
-
-  model: any = {
-    nombre: '',
-    email: '',
-    telefono: '',
-    identificacion: '',
-    rol: 'admin-local',
-    estado: true,
-    usuarioCreacion: null,
-
-    ciudades: [] as string[],
-    categorias: [] as string[], // aquí van los _id
-
-    promocion: '',
-    horarioAtencion: '',
-
-    detallePromocion: {
-      id: undefined,
-      title: '',
-      placeName: '',
-      description: '',
-      address: '',
-
-      isTwoForOne: false,
-      isFlash: false,
-      aplicaTodosLosDias: true,
-
-      diasAplicables: [] as string[],
-      horarioPorDia: {} as Record<string, { abre: string; cierra: string }>,
-
-      scheduleLabel: '',
-      distanceLabel: '',
-
-      startDate: null as Date | null,
-      endDate: null as Date | null,
-
-      rating: 0,
-      tags: [] as string[],
-
-      fechasExcluidas: [] as Date[],
-
-      imageBase64: null,
-      logoBase64: null,
-      imageUrl: null,
-      logoUrl: null,
-    },
-
-    detallePromocionesExtra: [] as any[],
-  };
-
   validate(): boolean {
     this.errors = {};
 
-    if (!this.model.nombre?.trim()) this.errors.nombre = 'Requerido';
-    if (!this.model.email?.trim()) this.errors.email = 'Requerido';
-    if (!this.model.identificacion?.trim())
-      this.errors.identificacion = 'Requerido';
-    if (!this.model.ciudades?.length)
-      this.errors.ciudades = 'Selecciona al menos una ciudad';
-    if (!this.model.categorias?.length)
-      this.errors.categorias = 'Selecciona al menos una categoría';
-    if (!this.model.detallePromocion.title?.trim())
-      this.errors.title = 'Título de promoción requerido';
+    // Nombre
+    if (!this.model.nombre?.trim()) {
+      this.errors['nombre'] = 'El nombre es obligatorio';
+    }
 
-    return Object.keys(this.errors).length === 0;
+    // Email
+    const email = this.model.email?.trim();
+    if (!email) {
+      this.errors['email'] = 'El email es obligatorio';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.errors['email'] = 'Ingresa un email válido';
+    }
+
+    // Teléfono
+    const tel = this.model.telefono?.trim();
+    if (tel && !/^[0-9]{7,10}$/.test(tel.replace(/^0/, ''))) {
+      this.errors['telefono'] = 'Ingresa un número válido (7-10 dígitos)';
+    }
+
+    // Identificación (CI: 10 dígitos, RUC: 13 dígitos)
+    const id = this.model.identificacion?.trim();
+    if (!id) {
+      this.errors['identificacion'] = 'La identificación es obligatoria';
+    } else if (!/^\d{10}(\d{3})?$/.test(id)) {
+      this.errors['identificacion'] = 'CI (10 dígitos) o RUC (13 dígitos)';
+    }
+
+    // Selecciones
+    if (!this.model.ciudades?.length)
+      this.errors['ciudades'] = 'Selecciona al menos una ciudad';
+    if (!this.model.categorias?.length)
+      this.errors['categorias'] = 'Selecciona al menos una categoría';
+
+    // Promoción principal
+    if (!this.model.detallePromocion.title?.trim())
+      this.errors['title'] = 'El título de la promoción es obligatorio';
+    if (!this.model.detallePromocion.scheduleLabel?.trim())
+      this.errors['scheduleLabel'] = 'El horario es obligatorio (ej: Lun-Dom 10:00–19:00)';
+
+    // Días específicos sin horario seleccionado
+    if (
+      !this.model.detallePromocion.aplicaTodosLosDias &&
+      !this.model.detallePromocion.diasAplicables?.length
+    ) {
+      this.errors['dias'] = 'Selecciona al menos un día o marca "Aplica todos los días"';
+    }
+
+    if (Object.keys(this.errors).length > 0) {
+      const mensajes = Object.values(this.errors).join('\n');
+      this.alert.warning('Formulario incompleto', mensajes);
+      return false;
+    }
+
+    return true;
+  }
+
+  private formatearTelefono(tel: string): string {
+    if (!tel) return tel;
+    let limpio = tel.replace(/\D/g, '');
+    // Si ya tiene código de país, devolverlo con +
+    if (limpio.startsWith('593')) return `+${limpio}`;
+    // Quitar el 0 inicial y agregar +593
+    if (limpio.startsWith('0')) limpio = limpio.substring(1);
+    return `+593${limpio}`;
+  }
+
+  private extraerMensajeError(err: any): string {
+    const body = err?.error;
+    const msg = body?.message;
+
+    // Backend responde { message: { message: "...", error: "...", statusCode: ... } }
+    if (msg && typeof msg === 'object' && !Array.isArray(msg)) {
+      if (typeof msg.message === 'string') return msg.message;
+      if (Array.isArray(msg.message)) return msg.message.join(', ');
+    }
+
+    // Backend responde { message: ["error1", "error2"] }
+    if (Array.isArray(msg)) return msg.join(', ');
+
+    // Backend responde { message: "texto" }
+    if (typeof msg === 'string') return msg;
+
+    if (body?.error && typeof body.error === 'string') return body.error;
+    if (err?.status === 0) return 'No se pudo conectar con el servidor.';
+    if (err?.status === 409) return 'Ya existe un registro con estos datos.';
+    if (err?.status === 404) return 'No se encontró el recurso solicitado.';
+    if (err?.status === 403) return 'No tienes permisos para esta acción.';
+    return 'Ocurrió un error inesperado. Intenta de nuevo.';
   }
 }

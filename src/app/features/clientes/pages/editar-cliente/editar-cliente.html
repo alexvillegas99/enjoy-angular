@@ -1,1 +1,184 @@
-<p>editar-cliente works!</p>
+<!-- LOADING -->
+@if (cargando) {
+  <div class="flex items-center justify-center py-20">
+    <div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+  </div>
+}
+
+@if (!cargando) {
+<div class="max-w-3xl mx-auto space-y-8 p-6 pb-20">
+
+  <!-- BACK -->
+  <a routerLink="/clientes" class="inline-flex items-center gap-1.5 text-sm text-text-body hover:text-accent transition">
+    <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+    Volver al listado
+  </a>
+
+  <!-- HEADER -->
+  <div>
+    <h1 class="text-xl font-semibold text-text-dark">
+      {{ isEdit ? 'Editar cliente' : 'Nuevo cliente' }}
+    </h1>
+    <p class="text-sm text-text-body mt-1">
+      {{ isEdit ? 'Modifica los datos del cliente.' : 'Completa los datos para registrar un nuevo cliente.' }}
+    </p>
+  </div>
+
+  <!-- DATOS PERSONALES -->
+  <section class="card">
+    <header class="flex items-center gap-3 mb-6">
+      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+        <lucide-icon name="user" class="w-4 h-4 text-primary"></lucide-icon>
+      </div>
+      <h3 class="text-sm font-semibold text-text-dark">Datos personales</h3>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <!-- Nombres -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Nombres</label>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [class.border-red-400]="errors['nombres']"
+          [(ngModel)]="model.nombres"
+          placeholder="Nombres"
+        />
+        @if (errors['nombres']) {
+          <p class="text-xs text-red-500 mt-1">{{ errors['nombres'] }}</p>
+        }
+      </div>
+
+      <!-- Apellidos -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Apellidos</label>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [class.border-red-400]="errors['apellidos']"
+          [(ngModel)]="model.apellidos"
+          placeholder="Apellidos"
+        />
+        @if (errors['apellidos']) {
+          <p class="text-xs text-red-500 mt-1">{{ errors['apellidos'] }}</p>
+        }
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Email</label>
+        <input
+          type="email"
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [class.border-red-400]="errors['email']"
+          [(ngModel)]="model.email"
+          placeholder="correo&#64;ejemplo.com"
+        />
+        @if (errors['email']) {
+          <p class="text-xs text-red-500 mt-1">{{ errors['email'] }}</p>
+        }
+      </div>
+
+      <!-- Teléfono -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Teléfono</label>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [class.border-red-400]="errors['telefono']"
+          [(ngModel)]="model.telefono"
+          placeholder="0999999999"
+        />
+        @if (errors['telefono']) {
+          <p class="text-xs text-red-500 mt-1">{{ errors['telefono'] }}</p>
+        }
+      </div>
+
+      <!-- Dirección -->
+      <div class="md:col-span-2">
+        <label class="block text-xs font-medium text-text-body mb-1">Dirección</label>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [(ngModel)]="model.direccion"
+          placeholder="Dirección (opcional)"
+        />
+      </div>
+
+      <!-- Fecha nacimiento -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Fecha de nacimiento</label>
+        <input
+          type="date"
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [value]="model.fechaNacimiento | date:'yyyy-MM-dd'"
+          (change)="onFechaNacimiento($event)"
+        />
+      </div>
+
+      <!-- Estado -->
+      <div class="flex items-end pb-1">
+        <label class="relative inline-flex items-center cursor-pointer gap-3">
+          <input type="checkbox" [(ngModel)]="model.estado" class="sr-only peer" />
+          <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-accent transition-colors"></div>
+          <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-4 transition-transform"></div>
+          <span class="text-sm text-text-dark ml-2">Activo</span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- IDENTIFICACIÓN -->
+  <section class="card">
+    <header class="flex items-center gap-3 mb-6">
+      <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+        <lucide-icon name="id-card" class="w-4 h-4 text-accent"></lucide-icon>
+      </div>
+      <h3 class="text-sm font-semibold text-text-dark">Identificación</h3>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <!-- Tipo -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Tipo de identificación</label>
+        <select
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition bg-white"
+          [(ngModel)]="model.tipoIdentificacion"
+        >
+          <option value="CEDULA">Cédula</option>
+          <option value="RUC">RUC</option>
+          <option value="PASAPORTE">Pasaporte</option>
+        </select>
+      </div>
+
+      <!-- Número -->
+      <div>
+        <label class="block text-xs font-medium text-text-body mb-1">Número de identificación</label>
+        <input
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          [class.border-red-400]="errors['identificacion']"
+          [(ngModel)]="model.identificacion"
+          [placeholder]="model.tipoIdentificacion === 'CEDULA' ? '1700000000' : model.tipoIdentificacion === 'RUC' ? '1700000000001' : 'Pasaporte'"
+        />
+        @if (errors['identificacion']) {
+          <p class="text-xs text-red-500 mt-1">{{ errors['identificacion'] }}</p>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- GUARDAR -->
+  <div class="flex justify-end gap-3 pt-4">
+    <a routerLink="/clientes" class="btn-secondary px-6 py-2.5">
+      Cancelar
+    </a>
+    <button
+      class="btn-primary px-6 py-2.5"
+      [disabled]="loading"
+      (click)="submit()"
+    >
+      @if (loading) {
+        Guardando...
+      } @else {
+        {{ isEdit ? 'Actualizar' : 'Crear cliente' }}
+      }
+    </button>
+  </div>
+</div>
+}

@@ -154,7 +154,7 @@
       @for (p of paginas; track p) {
         <button
           class="px-3 py-1 rounded border"
-          [class.bg-primary]="p === page"
+          [class.bg-accent]="p === page"
           [class.text-white]="p === page"
           (click)="irPagina(p)"
         >

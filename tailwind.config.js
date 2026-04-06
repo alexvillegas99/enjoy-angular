@@ -6,17 +6,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-
         'color-primary': 'var(--color-primary)',
         'color-primary-soft': 'var(--color-primary-soft)',
-        'color-text-link': 'var(--color-text-link)',
-        'service-transfer': 'var(--service-transfer)',
-        'service-payments': 'var(--service-payments)',
-        'service-topup': 'var(--service-topup)',
-        'service-services': 'var(--service-services)',
+        'color-accent': 'var(--color-accent)',
+        'color-accent-hover': 'var(--color-accent-hover)',
+        'color-accent-light': 'var(--color-accent-light)',
       },
       fontFamily: {
-        'inter': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'roboto': ['Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
       }
     },
   },
@@ -24,7 +21,7 @@ module.exports = {
     preflight: false,
   },
   plugins: [],
-   future: {
+  future: {
     useOklch: false,
   },
 }

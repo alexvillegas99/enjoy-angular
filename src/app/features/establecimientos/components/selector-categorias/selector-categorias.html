@@ -1,20 +1,16 @@
-<div class="flex flex-wrap gap-3">
-
+<div class="flex flex-wrap gap-2">
   @for (cat of categorias; track cat._id) {
-
     <button
       type="button"
-      class="px-4 py-2 rounded-lg border text-sm transition"
-      [class.bg-indigo-600]="isSelected(cat._id)"
+      class="px-4 py-1.5 rounded-full text-xs font-medium border transition"
+      [class.bg-accent]="isSelected(cat._id)"
       [class.text-white]="isSelected(cat._id)"
-      [class.border-indigo-600]="isSelected(cat._id)"
-      [class.border-slate-300]="!isSelected(cat._id)"
-      (click)="toggle(cat._id)">
-
+      [class.border-accent]="isSelected(cat._id)"
+      [class.border-gray-200]="!isSelected(cat._id)"
+      [class.text-text-body]="!isSelected(cat._id)"
+      (click)="toggle(cat._id)"
+    >
       {{ cat.nombre }}
-
     </button>
-
   }
-
 </div>

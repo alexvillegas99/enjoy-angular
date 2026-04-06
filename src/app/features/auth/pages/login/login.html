@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-[#eef2f5] flex flex-col lg:flex-row">
+<div class="min-h-screen bg-surface-muted flex flex-col lg:flex-row">
 
 <!-- IZQUIERDA -->
 <div class="w-full lg:w-[62%] flex justify-center items-center py-10">
@@ -17,62 +17,62 @@
     <div class="bg-white rounded-lg px-6 py-8 shadow-sm min-h-[520px] flex flex-col">
 
       <!-- TITULO -->
-      <h1 class="text-center text-2xl font-semibold text-gray-800 mt-4 mb-2">
+      <h1 class="text-center text-2xl font-semibold text-text-dark mt-4 mb-2">
         Bienvenido a Enjoy
       </h1>
 
-      <p class="text-center text-sm text-gray-500 mb-6">
+      <p class="text-center text-sm text-text-body mb-6">
         Accede a tus promociones y beneficios exclusivos
       </p>
 
       <!-- EMAIL -->
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700 mb-1">
+        <label class="block text-sm font-medium text-text-dark mb-1">
           Correo electrónico
         </label>
 
         <div
-          class="relative border border-gray-300 rounded-md px-3 py-2
-                 focus-within:border-primary transition-colors"
+          class="relative border border-border-subtle rounded-md px-3 py-2
+                 focus-within:border-accent transition-colors"
         >
           <input
             type="email"
             [(ngModel)]="username"
             placeholder="Ingresa tu correo"
             class="w-full bg-transparent outline-none text-sm pr-10
-                   placeholder-gray-400"
+                   placeholder-text-body"
           />
 
           <lucide-icon
             name="mail"
             class="absolute right-2 top-1/2 -translate-y-1/2
-                   w-5 h-5 text-gray-400"
+                   w-5 h-5 text-text-body"
           ></lucide-icon>
         </div>
       </div>
 
       <!-- PASSWORD -->
       <div class="mb-6">
-        <label class="block text-sm font-medium text-gray-700 mb-1">
+        <label class="block text-sm font-medium text-text-dark mb-1">
           Contraseña
         </label>
 
         <div
-          class="relative border border-gray-300 rounded-md px-3 py-2
-                 focus-within:border-primary transition-colors"
+          class="relative border border-border-subtle rounded-md px-3 py-2
+                 focus-within:border-accent transition-colors"
         >
           <input
             [type]="showPassword ? 'text' : 'password'"
             [(ngModel)]="password"
             placeholder="Ingresa tu contraseña"
             class="w-full bg-transparent outline-none text-sm pr-10
-                   placeholder-gray-400"
+                   placeholder-text-body"
           />
 
           <button
             type="button"
             class="absolute right-2 top-1/2 -translate-y-1/2
-                   text-gray-400 hover:text-gray-600"
+                   text-text-body hover:text-text-dark"
             (click)="showPassword = !showPassword"
           >
             <lucide-icon
@@ -85,7 +85,7 @@
 
       <!-- CTA PRINCIPAL -->
       <button
-        class="w-full bg-primary text-white py-2 rounded mb-4
+        class="w-full bg-accent hover:bg-accent-hover text-white py-2 rounded mb-4
                disabled:opacity-50"
         (click)="validarUsuario()"
         [disabled]="validating"
@@ -108,8 +108,9 @@
     </div>
 
     <!-- FOOTER -->
-    <div class="text-center text-xs text-gray-500 mt-6">
+    <div class="text-center text-xs text-text-body mt-6">
       <p>Accede únicamente desde el sitio oficial de Cuponera Enjoy.</p>
+      <a routerLink="/privacy-policy" class="block mt-2 text-accent hover:underline">Política de privacidad</a>
       <p class="mt-3">© 2026 Cuponera Enjoy. Todos los derechos reservados.</p>
     </div>
 
@@ -119,20 +120,20 @@
   <!-- CONSEJOS (Mobile abajo / Desktop derecha) -->
 <div
   class="w-full lg:w-[38%] bg-white flex items-center
-         border-t lg:border-t-0 lg:border-l border-gray-200"
+         border-t lg:border-t-0 lg:border-l border-border-subtle"
 >
   <div class="px-4 sm:px-6 lg:px-10 py-8 sm:py-10 lg:py-16 w-full">
 
-    <p class="text-xs text-gray-500 uppercase mb-1">Recomendaciones</p>
+    <p class="text-xs text-text-body uppercase mb-1">Recomendaciones</p>
 
-    <h2 class="text-lg font-semibold text-gray-800 mb-8">
+    <h2 class="text-lg font-semibold text-text-dark mb-8">
       Uso seguro de tu cuenta
     </h2>
 
-    <div class="space-y-6 text-sm text-gray-600">
+    <div class="space-y-6 text-sm text-text-body">
 
       <div class="flex gap-4 items-start">
-        <i-lucide name="shield-check" class="w-5 h-5 text-gray-500 mt-0.5"></i-lucide>
+        <i-lucide name="shield-check" class="w-5 h-5 text-text-body mt-0.5"></i-lucide>
         <p>
           Cuponera <strong>Enjoy</strong> nunca solicitará tu contraseña por
           correo, llamada o mensaje.
@@ -140,25 +141,25 @@
       </div>
 
       <div class="flex gap-4 items-start">
-        <i-lucide name="key-round" class="w-5 h-5 text-gray-500 mt-0.5"></i-lucide>
+        <i-lucide name="key-round" class="w-5 h-5 text-text-body mt-0.5"></i-lucide>
         <p>
           Mantén tu contraseña segura y no la compartas con terceros.
         </p>
       </div>
 
       <div class="flex gap-4 items-start">
-        <i-lucide name="link" class="w-5 h-5 text-gray-500 mt-0.5"></i-lucide>
+        <i-lucide name="link" class="w-5 h-5 text-text-body mt-0.5"></i-lucide>
         <p>
           Accede únicamente desde el sitio oficial:
-          <strong>{{"https://enjoy.com"}}</strong>
+          <strong>{{"https://ecuenjoy.com"}}</strong>
         </p>
       </div>
 
       <div class="flex gap-4 items-start">
-        <i-lucide name="headphones" class="w-5 h-5 text-gray-500 mt-0.5"></i-lucide>
+        <i-lucide name="headphones" class="w-5 h-5 text-text-body mt-0.5"></i-lucide>
         <p>
-          Si detectas actividad inusual en tu cuenta, comunícate con soporte
-          inmediatamente.
+          Si detectas actividad inusual en tu cuenta, comunícate con soporte:
+          <a href="mailto:info@ecuenjoy.com" class="text-accent hover:underline font-medium">info&#64;ecuenjoy.com</a>
         </p>
       </div>
 

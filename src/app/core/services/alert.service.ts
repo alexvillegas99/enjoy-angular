@@ -12,7 +12,7 @@ export class AlertService {
 
       actions: 'flex gap-3 justify-center mt-6',
 
-      confirmButton: 'bg-primary text-white px-4 py-2 rounded hover:opacity-95',
+      confirmButton: 'bg-accent text-white px-4 py-2 rounded-full hover:opacity-95',
       cancelButton:
         'bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200',
     },
