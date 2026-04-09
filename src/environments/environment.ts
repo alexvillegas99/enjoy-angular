@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
-api:"https://enjoyback.avillegas.digital/api/",
-//api:"http://localhost:4000/api/",
+//api:"https://enjoyback.avillegas.digital/api/",
+api:"http://localhost:4000/api/",
   institution: {
     name: 'IMAK SMART',
     slogan: 'IMAK SMART',
@@ -9,7 +9,7 @@ api:"https://enjoyback.avillegas.digital/api/",
     callCenter: '1800-244285',
     logoTexto: 'assets/logos/logoTexto.png',
     logoIcono: 'assets/logos/logoImagen.png',
-    Copyright: '© Copyright 2026 IMA SMART • V1.0.0',
+    Copyright: '© Copyright 2026 Enjoy • V1.0.0',
   },
 
   watermarkStyle: {

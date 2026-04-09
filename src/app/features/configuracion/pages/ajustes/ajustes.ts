@@ -35,11 +35,18 @@ export class Ajustes implements OnInit {
     this.cargar();
   }
 
+  private readonly CLAVES_PAGOS = [
+    'payphone_activo', 'payphone_token', 'payphone_store_id',
+    'paypal_activo', 'paypal_client_id', 'paypal_secret', 'paypal_sandbox',
+  ];
+
   cargar() {
     this.loading = true;
     this.svc.listar().subscribe({
       next: (data) => {
-        this.configs = data.map((c) => this.mapConfig(c));
+        this.configs = data
+          .filter((c) => !this.CLAVES_PAGOS.includes(c.clave))
+          .map((c) => this.mapConfig(c));
         this.loading = false;
       },
       error: () => {

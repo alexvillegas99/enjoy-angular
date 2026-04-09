@@ -23,6 +23,7 @@ export class ConfiguracionPagos {
   // PayPhone
   payphoneActivo = false;
   payphoneToken = '';
+  payphoneStoreId = '';
 
   // PayPal
   paypalActivo = false;
@@ -41,6 +42,7 @@ export class ConfiguracionPagos {
         for (const c of configs) {
           if (c.clave === 'payphone_activo') this.payphoneActivo = c.valor === 'true';
           if (c.clave === 'payphone_token') this.payphoneToken = c.valor ?? '';
+          if (c.clave === 'payphone_store_id') this.payphoneStoreId = c.valor ?? '';
           if (c.clave === 'paypal_activo') this.paypalActivo = c.valor === 'true';
           if (c.clave === 'paypal_client_id') this.paypalClientId = c.valor ?? '';
           if (c.clave === 'paypal_secret') this.paypalSecret = c.valor ?? '';
@@ -67,6 +69,10 @@ export class ConfiguracionPagos {
       this.http.patch(`${this.api}configuracion/payphone_token`, {
         valor: this.payphoneToken,
         descripcion: 'Token API de PayPhone',
+      }),
+      this.http.patch(`${this.api}configuracion/payphone_store_id`, {
+        valor: this.payphoneStoreId,
+        descripcion: 'StoreID de PayPhone (sucursal)',
       }),
       // PayPal
       this.http.patch(`${this.api}configuracion/paypal_activo`, {

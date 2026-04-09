@@ -41,17 +41,26 @@
       </div>
 
       @if (payphoneActivo) {
-        <div>
-          <label class="block text-sm text-slate-600 mb-1">API Token</label>
-          <input type="password"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
-            [(ngModel)]="payphoneToken"
-            placeholder="Bearer token de PayPhone" />
-          <p class="text-xs text-slate-400 mt-1">
-            Obtener desde
-            <a href="https://appdeveloper.payphonetodoesposible.com/" target="_blank"
-               class="text-blue-500 underline">portal de desarrolladores PayPhone</a>
-          </p>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">API Token</label>
+            <input type="password"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+              [(ngModel)]="payphoneToken"
+              placeholder="Bearer token de PayPhone" />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-600 mb-1">Store ID</label>
+            <input type="text"
+              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+              [(ngModel)]="payphoneStoreId"
+              placeholder="StoreID de tu sucursal" />
+            <p class="text-xs text-slate-400 mt-1">
+              Obtener Token y StoreID desde
+              <a href="https://appdeveloper.payphonetodoesposible.com/" target="_blank"
+                 class="text-blue-500 underline">portal de desarrolladores PayPhone</a>
+            </p>
+          </div>
         </div>
       }
     </div>

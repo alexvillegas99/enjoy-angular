@@ -13,7 +13,10 @@
       "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
       "Bash(grep -v \"//\")",
       "Bash(dart analyze:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:docs.payphone.app)",
+      "Bash(xargs cat:*)",
+      "Bash(flutter pub:*)"
     ]
   }
 }
