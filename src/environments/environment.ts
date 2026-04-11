@@ -1,11 +1,19 @@
 export const environment = {
   production: false,
-//api:"https://enjoyback.avillegas.digital/api/",
-api:"http://localhost:4000/api/",
+  api:"https://enjoyback.avillegas.digital/api/",
+  firebase: {
+    apiKey: "AIzaSyAhuZe3bBmBz_2DmAtnASD5FEJ_hGXhI5o",
+    authDomain: "mi-cuponera.firebaseapp.com",
+    projectId: "mi-cuponera",
+    storageBucket: "mi-cuponera.firebasestorage.app",
+    messagingSenderId: "193436032832",
+    appId: "1:193436032832:web:bf3f222df59965008be4a5"
+  },
+//api:"http://localhost:4000/api/",
   institution: {
-    name: 'IMAK SMART',
-    slogan: 'IMAK SMART',
-    url: 'https://enlinea.imaksmart.com',
+    name: 'Enjoy',
+    slogan: 'Enjoy',
+    url: 'https://ecuenjoy.com/',
     callCenter: '1800-244285',
     logoTexto: 'assets/logos/logoTexto.png',
     logoIcono: 'assets/logos/logoImagen.png',

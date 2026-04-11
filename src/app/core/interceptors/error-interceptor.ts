@@ -11,11 +11,16 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error) => {
       switch (error.status) {
-        case 401:
-          // Token inválido o expirado — limpiar sesión y redirigir
-          localStorage.removeItem('accessToken');
-          router.navigate(['/auth/login']);
+        case 401: {
+          // Solo redirigir si había sesión activa (token expirado), no en endpoints de auth
+          const hadToken = !!localStorage.getItem('accessToken');
+          const isAuthEndpoint = error.url?.includes('/auth/');
+          if (hadToken && !isAuthEndpoint) {
+            localStorage.removeItem('accessToken');
+            router.navigate(['/auth/login']);
+          }
           break;
+        }
 
         case 403:
           alert.error('Acceso denegado', 'No tienes permisos para esta acción.');

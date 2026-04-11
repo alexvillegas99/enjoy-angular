@@ -169,6 +169,91 @@
 
   </div>
 
+  <!-- GEOLOCALIZACIÓN -->
+  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
+
+    <div>
+      <h3 class="text-sm font-semibold text-slate-700">Ubicación del local</h3>
+      <p class="text-xs text-slate-400 mt-0.5">
+        Registra las coordenadas GPS del establecimiento para mostrarlo en el mapa.
+      </p>
+    </div>
+
+    <!-- Coordenadas actuales -->
+    @if (model.ubicacion) {
+      <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+        </svg>
+        <div class="flex-1 text-sm text-emerald-800 font-mono">
+          {{ model.ubicacion.lat }}, {{ model.ubicacion.lng }}
+        </div>
+        <a
+          [href]="'https://maps.google.com/?q=' + model.ubicacion.lat + ',' + model.ubicacion.lng"
+          target="_blank"
+          class="text-xs text-emerald-600 underline hover:text-emerald-800"
+        >Ver en mapa</a>
+        <button
+          class="text-xs text-slate-400 hover:text-red-500 transition"
+          (click)="limpiarUbicacion()"
+          title="Eliminar ubicación"
+        >✕</button>
+      </div>
+    }
+
+    <!-- Ingreso manual -->
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">Latitud</label>
+        <input
+          type="number"
+          step="0.0000001"
+          placeholder="Ej: -0.2298500"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+          [value]="model.ubicacion?.lat ?? ''"
+          (input)="onLatManual($event)"
+        />
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">Longitud</label>
+        <input
+          type="number"
+          step="0.0000001"
+          placeholder="Ej: -78.5249500"
+          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+          [value]="model.ubicacion?.lng ?? ''"
+          (input)="onLngManual($event)"
+        />
+      </div>
+    </div>
+
+    <!-- Error -->
+    @if (geoError) {
+      <p class="text-xs text-red-500">{{ geoError }}</p>
+    }
+
+    <!-- Botón obtener GPS -->
+    <button
+      type="button"
+      class="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-300 text-sm text-slate-700 hover:bg-slate-50 transition disabled:opacity-50"
+      [disabled]="geoLoading"
+      (click)="obtenerUbicacion()"
+    >
+      @if (geoLoading) {
+        <span class="w-4 h-4 border-2 border-slate-400 border-t-transparent rounded-full animate-spin"></span>
+        Obteniendo ubicación...
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+        </svg>
+        Usar mi ubicación actual (GPS)
+      }
+    </button>
+
+  </div>
+
   <!-- BOTÓN -->
   <div class="flex justify-end">
 

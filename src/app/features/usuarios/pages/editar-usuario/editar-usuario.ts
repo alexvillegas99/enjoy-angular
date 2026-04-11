@@ -24,6 +24,8 @@ export class EditarUsuario {
   id!: string;
 
   loading = false;
+  geoLoading = false;
+  geoError = '';
 
   original: any = {};
 
@@ -37,6 +39,7 @@ export class EditarUsuario {
     estado: true,
     clave: '',
     confirmarClave: '',
+    ubicacion: null as { lat: number; lng: number } | null,
   };
 
   ngOnInit() {
@@ -83,6 +86,7 @@ export class EditarUsuario {
           identificacion: res.identificacion,
           rol: res.rol,
           estado: res.estado,
+          ubicacion: res.ubicacion ?? null,
         };
 
         this.model = {
@@ -90,6 +94,7 @@ export class EditarUsuario {
           ...this.original,
           clave: '',
           confirmarClave: '',
+          ubicacion: res.ubicacion ?? null,
         };
 
         this.loading = false;
@@ -152,7 +157,7 @@ export class EditarUsuario {
 
     if (this.modo === 'crear') {
 
-      const payload = {
+      const payload: any = {
         nombre: this.model.nombre,
         email: this.model.email,
         identificacion: this.model.identificacion,
@@ -160,6 +165,10 @@ export class EditarUsuario {
         estado: this.model.estado,
         clave: this.model.clave,
       };
+
+      if (this.model.ubicacion) {
+        payload.ubicacion = this.model.ubicacion;
+      }
 
       this.svc.create(payload).subscribe({
 
@@ -198,6 +207,7 @@ export class EditarUsuario {
         'identificacion',
         'rol',
         'estado',
+        'ubicacion',
       ];
 
       campos.forEach((campo) => {
@@ -256,6 +266,53 @@ export class EditarUsuario {
 
     }
 
+  }
+
+  obtenerUbicacion() {
+    if (!navigator.geolocation) {
+      this.geoError = 'Tu navegador no soporta geolocalización.';
+      return;
+    }
+
+    this.geoLoading = true;
+    this.geoError = '';
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.model.ubicacion = {
+          lat: +pos.coords.latitude.toFixed(7),
+          lng: +pos.coords.longitude.toFixed(7),
+        };
+        this.geoLoading = false;
+      },
+      (err) => {
+        this.geoLoading = false;
+        this.geoError =
+          err.code === 1
+            ? 'Permiso denegado. Activa la ubicación en el navegador.'
+            : 'No se pudo obtener la ubicación. Intenta de nuevo.';
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  }
+
+  limpiarUbicacion() {
+    this.model.ubicacion = null;
+    this.geoError = '';
+  }
+
+  onLatManual(event: Event) {
+    const val = parseFloat((event.target as HTMLInputElement).value);
+    if (!isNaN(val)) {
+      this.model.ubicacion = { ...this.model.ubicacion, lat: val, lng: this.model.ubicacion?.lng ?? 0 };
+    }
+  }
+
+  onLngManual(event: Event) {
+    const val = parseFloat((event.target as HTMLInputElement).value);
+    if (!isNaN(val)) {
+      this.model.ubicacion = { ...this.model.ubicacion, lat: this.model.ubicacion?.lat ?? 0, lng: val };
+    }
   }
 
   volver() {

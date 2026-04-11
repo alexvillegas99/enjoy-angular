@@ -7,6 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { SelectorCategorias } from '../../components/selector-categorias/selector-categorias';
 import { SelectorCiudades } from '../../components/selector-ciudades/selector-ciudades';
 import { AlertService } from '../../../../core/services/alert.service';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   standalone: true,
@@ -26,9 +27,27 @@ export class CrearEditarEstablecimiento {
   private router = inject(Router);
   private svc = inject(EstablecimientosService);
   private alert = inject(AlertService);
+  private perms = inject(PermissionsService);
 
   isEdit = false;
   loading = false;
+  geoLoading = false;
+  geoError = '';
+  geocodeLoading = false;
+
+  /** Solo puede editar fotos (mkt-fotos) */
+  get soloFotos(): boolean {
+    return this.perms.hasPermission('establecimientos.fotos') &&
+      !this.perms.hasPermission('establecimientos.editar') &&
+      !this.perms.hasPermission('usuarios.editar');
+  }
+
+  /** Solo puede editar detalles sin fotos (vendedor) */
+  get soloDetalles(): boolean {
+    return this.perms.hasPermission('establecimientos.editar') &&
+      !this.perms.hasPermission('establecimientos.fotos') &&
+      !this.perms.hasPermission('usuarios.editar');
+  }
 
   dias = [
     'lunes',
@@ -50,6 +69,7 @@ export class CrearEditarEstablecimiento {
     rol: 'admin-local',
     estado: true,
     usuarioCreacion: null,
+    ubicacion: null as { lat: number; lng: number } | null,
     ciudades: [] as string[],
     categorias: [] as string[],
     detallePromocion: {
@@ -93,13 +113,14 @@ export class CrearEditarEstablecimiento {
             this.model = {
               ...this.model,
               ...e,
+              telefono: this.desformatearTelefono(e.telefono),
               categorias: categoriasIds,
               ciudades: ciudadesIds,
               detallePromocion: {
                 ...this.model.detallePromocion,
                 ...e.detallePromocion,
               },
-              detallePromocionesExtra: (e.detallePromocionesExtra || []).map((p: any) => ({
+              detallePromocionesExtra: (Array.isArray(e.detallePromocionesExtra) ? e.detallePromocionesExtra : []).map((p: any) => ({
                 ...p,
                 startDate: p.startDate ? new Date(p.startDate) : null,
                 endDate: p.endDate ? new Date(p.endDate) : null,
@@ -391,14 +412,105 @@ export class CrearEditarEstablecimiento {
     return true;
   }
 
+  obtenerUbicacion() {
+    if (!navigator.geolocation) {
+      this.geoError = 'Tu navegador no soporta geolocalización.';
+      return;
+    }
+    this.geoLoading = true;
+    this.geoError = '';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = +pos.coords.latitude.toFixed(7);
+        const lng = +pos.coords.longitude.toFixed(7);
+        this.model.ubicacion = { lat, lng };
+        this.geoLoading = false;
+        this.reverseGeocode(lat, lng);
+      },
+      (err) => {
+        this.geoLoading = false;
+        this.geoError =
+          err.code === 1
+            ? 'Permiso denegado. Activa la ubicación en el navegador.'
+            : 'No se pudo obtener la ubicación. Intenta de nuevo.';
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  }
+
+  private reverseGeocodeTimer: any = null;
+
+  private async reverseGeocode(lat: number, lng: number) {
+    this.geocodeLoading = true;
+    try {
+      const resp = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`,
+        { headers: { 'Accept-Language': 'es' } },
+      );
+      const data = await resp.json();
+      const a = data?.address ?? {};
+
+      const partes = [
+        a.road ?? a.pedestrian ?? a.footway ?? '',
+        a.house_number ?? '',
+        a.suburb ?? a.neighbourhood ?? a.quarter ?? '',
+        a.city ?? a.town ?? a.village ?? a.county ?? '',
+      ].filter(Boolean);
+
+      if (partes.length) {
+        this.model.detallePromocion.address = partes.join(', ');
+      }
+    } catch (_) {
+      // Si falla no pasa nada, el usuario puede escribir la dirección manual
+    } finally {
+      this.geocodeLoading = false;
+    }
+  }
+
+  limpiarUbicacion() {
+    this.model.ubicacion = null;
+    this.geoError = '';
+  }
+
+  onLatManual(event: Event) {
+    const val = parseFloat((event.target as HTMLInputElement).value);
+    if (!isNaN(val)) {
+      this.model.ubicacion = { lat: val, lng: this.model.ubicacion?.lng ?? 0 };
+      this.scheduleReverseGeocode();
+    }
+  }
+
+  onLngManual(event: Event) {
+    const val = parseFloat((event.target as HTMLInputElement).value);
+    if (!isNaN(val)) {
+      this.model.ubicacion = { lat: this.model.ubicacion?.lat ?? 0, lng: val };
+      this.scheduleReverseGeocode();
+    }
+  }
+
+  private scheduleReverseGeocode() {
+    clearTimeout(this.reverseGeocodeTimer);
+    this.reverseGeocodeTimer = setTimeout(() => {
+      const { lat, lng } = this.model.ubicacion ?? {};
+      if (lat && lng) this.reverseGeocode(lat, lng);
+    }, 800);
+  }
+
   private formatearTelefono(tel: string): string {
     if (!tel) return tel;
     let limpio = tel.replace(/\D/g, '');
-    // Si ya tiene código de país, devolverlo con +
     if (limpio.startsWith('593')) return `+${limpio}`;
-    // Quitar el 0 inicial y agregar +593
     if (limpio.startsWith('0')) limpio = limpio.substring(1);
     return `+593${limpio}`;
+  }
+
+  private desformatearTelefono(tel: string): string {
+    if (!tel) return tel;
+    // Quitar +593 o 593 del inicio y devolver con 0
+    let limpio = tel.replace(/\D/g, '');
+    if (limpio.startsWith('593')) limpio = limpio.substring(3);
+    if (!limpio.startsWith('0')) limpio = '0' + limpio;
+    return limpio;
   }
 
   private extraerMensajeError(err: any): string {

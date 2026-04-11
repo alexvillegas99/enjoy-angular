@@ -16,7 +16,20 @@
       "WebSearch",
       "WebFetch(domain:docs.payphone.app)",
       "Bash(xargs cat:*)",
-      "Bash(flutter pub:*)"
+      "Bash(flutter pub:*)",
+      "Bash(ls:*)",
+      "Bash(find \"C:\\\\Users\\\\alexv\\\\Desktop\\\\Cuponera\\\\cuponera_app\" -type f -name \"*.dart\" -exec grep -l \"GoRouter\\\\|router\\\\.go\" {} \\\\;)",
+      "Bash(npm install:*)",
+      "Bash(grep -i \"\\\\.ts$\")",
+      "Bash(grep -E \"\\(schema|\\\\.ts$\\)\")",
+      "Bash(grep -E \"\\\\.\\(ts|service|ts\\)$\")",
+      "Bash(grep -E \"\\\\.ts$\")",
+      "Bash(find /c/Users/alexv/Desktop/Cuponera/enjoy-angular -name \"*.ts\" -type f -exec grep -l \"obtenerPermisos\\\\|permisos\" {} \\\\;)",
+      "Bash(find /c/Users/alexv/Desktop/Cuponera/enjoy-angular -type f \\\\\\( -name \"*.interface.ts\" -o -name \"*.model.ts\" -o -name \"*.ts\" \\\\\\) -exec grep -l \"interface.*Rol\\\\|type.*Rol\\\\|class Rol\" {} \\\\;)",
+      "Bash(find:*)",
+      "Bash(grep -E \"\\\\.\\(ts|html\\)$\")",
+      "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(c.get\\('package_name'\\), [s.get\\('certificate_hash'\\) for s in c.get\\('certificate_hash_list',[]\\)]\\) for c in d.get\\('client',[]\\)]\")",
+      "Bash(keytool -list -v -keystore /c/Users/alexv/Desktop/Cuponera/cuponera.jks -alias cuponera -storepass cuponera)"
     ]
   }
 }

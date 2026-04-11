@@ -29,6 +29,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "apexcharts": "^5.7.0",
     "echarts": "^6.0.0",
+    "firebase": "^12.12.0",
     "html2canvas": "^1.4.1",
     "lucide-angular": "^0.562.0",
     "ng-apexcharts": "^2.2.0",
