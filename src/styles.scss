@@ -2,6 +2,9 @@
 /* Importar Tailwind v4 */
 @import "tailwindcss";
 
+/* Estilos de Leaflet (mapa para seleccionar ubicación) */
+@import "leaflet/dist/leaflet.css";
+
 /* =========================
    VARIABLES BASE (DESIGN_GUIDE.md)
    ========================= */

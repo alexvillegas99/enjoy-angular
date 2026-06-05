@@ -21,6 +21,7 @@ export const SIDEBAR_MENU_FULL: SidebarItem[] = [
   { label: 'Establecimientos', route: '/establecimientos', icon: 'store', permission: 'establecimientos.ver', mobile: true },
   { label: 'Configuración', route: '/configuracion', icon: 'settings', permission: 'configuracion.ver' },
   { label: 'Solicitudes', route: '/solicitudes-cuponera', icon: 'landmark', permission: 'solicitudes.ver' },
+  { label: 'Historial Cambios', route: '/historial-establecimientos', icon: 'history', permission: 'dashboard.ver' },
   { label: 'Pagos', route: '/pagos', icon: 'credit-card', permission: 'pagos.configurar' },
   { label: 'Roles', route: '/roles', icon: 'shield', permission: 'roles.ver' },
 ];

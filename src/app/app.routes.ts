@@ -180,6 +180,17 @@ export const routes: Routes = [
           ),
       },
 
+      // HISTORIAL DE CAMBIOS EN ESTABLECIMIENTOS
+      {
+        path: 'historial-establecimientos',
+        canActivate: [roleGuard],
+        data: { permissions: ['dashboard.ver'], roles: ['admin'] },
+        loadChildren: () =>
+          import('./features/historial-establecimientos/historial-establecimientos.routes').then(
+            (m) => m.HISTORIAL_ESTABLECIMIENTOS_ROUTES,
+          ),
+      },
+
       // ROLES Y PERMISOS
       {
         path: 'roles',

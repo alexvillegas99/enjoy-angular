@@ -96,7 +96,21 @@ const ICON_LIST = [
   'ImagePlus',
   'Landmark',
   'Shield',
-  'Locate'
+  'Locate',
+  'History',
+  'XCircle',
+  // Recorte de imágenes + galería
+  'ZoomIn',
+  'ZoomOut',
+  'RotateCw',
+  'RefreshCcw',
+  'Images',
+  'Play',
+  'Video',
+  'ChevronLeft',
+  'GripVertical',
+  'ShoppingBag',
+  'Check',
 ] as const;
 
 export const LUCIDE_ICONS = LucideAngularModule.pick(

@@ -27,4 +27,34 @@ export class PermissionsService {
     const userPermisos = this.getPermisos();
     return permissions.every((p) => userPermisos.includes(p));
   }
+
+  /**
+   * Mapa ordenado permiso -> ruta. El primero que el usuario tenga
+   * determina su pantalla de inicio. El orden define la prioridad.
+   */
+  private readonly routesByPermission: { permiso: string; ruta: string }[] = [
+    { permiso: 'dashboard.ver', ruta: '/dashboard' },
+    { permiso: 'dashboard-local.ver', ruta: '/dashboard-local' },
+    { permiso: 'establecimientos.ver', ruta: '/establecimientos' },
+    { permiso: 'cupones.ver', ruta: '/cupones' },
+    { permiso: 'clientes.ver', ruta: '/clientes' },
+    { permiso: 'usuarios.ver', ruta: '/usuarios' },
+    { permiso: 'categorias.ver', ruta: '/catalogos' },
+    { permiso: 'reportes.ver', ruta: '/reportes' },
+    { permiso: 'solicitudes.ver', ruta: '/solicitudes-cuponera' },
+    { permiso: 'pagos.configurar', ruta: '/pagos' },
+    { permiso: 'roles.ver', ruta: '/roles' },
+    { permiso: 'configuracion.ver', ruta: '/configuracion' },
+  ];
+
+  /**
+   * Devuelve la primera ruta a la que el usuario tiene acceso según sus
+   * permisos, o null si no tiene ninguna. Evita redirigir a rutas
+   * prohibidas (causa del bucle de navegación / refresh-token infinito).
+   */
+  getLandingRoute(): string | null {
+    const permisos = this.getPermisos();
+    const match = this.routesByPermission.find((r) => permisos.includes(r.permiso));
+    return match ? match.ruta : null;
+  }
 }

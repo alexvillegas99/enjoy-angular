@@ -29,7 +29,12 @@
       "Bash(find:*)",
       "Bash(grep -E \"\\\\.\\(ts|html\\)$\")",
       "Bash(python -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(c.get\\('package_name'\\), [s.get\\('certificate_hash'\\) for s in c.get\\('certificate_hash_list',[]\\)]\\) for c in d.get\\('client',[]\\)]\")",
-      "Bash(keytool -list -v -keystore /c/Users/alexv/Desktop/Cuponera/cuponera.jks -alias cuponera -storepass cuponera)"
+      "Bash(keytool -list -v -keystore /c/Users/alexv/Desktop/Cuponera/cuponera.jks -alias cuponera -storepass cuponera)",
+      "Bash(ssh *)",
+      "Bash(npm run *)",
+      "Bash(scp *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\alexv\\\\Desktop\\\\Cuponera\" -Directory)",
+      "Bash(Select-Object Name)"
     ]
   }
 }
