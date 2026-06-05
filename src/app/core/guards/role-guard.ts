@@ -15,19 +15,29 @@ export const roleGuard: CanActivateFn = (route) => {
     return false;
   }
 
+  // Redirige a una ruta PERMITIDA según los permisos del usuario.
+  // Nunca redirige a la ruta que se intentaba abrir (evita el bucle
+  // de navegación / refresh-token infinito). Si no hay ninguna ruta
+  // accesible, cierra sesión.
+  const intentada = route.routeConfig?.path ? `/${route.routeConfig.path}` : '';
+  const redirigirOSalir = () => {
+    const destino = permService.getLandingRoute();
+    if (destino && destino !== intentada) {
+      router.navigate([destino]);
+    } else {
+      auth.logout();
+      router.navigate(['/auth']);
+    }
+    return false;
+  };
+
   // Nuevo: verificación por permisos
   const requiredPerms = route.data?.['permissions'] as string[];
   if (requiredPerms?.length) {
     if (permService.hasAnyPermission(requiredPerms)) {
       return true;
     }
-    // Redirección inteligente
-    if (user.rol === 'admin-local') {
-      router.navigate(['/dashboard-local']);
-    } else {
-      router.navigate(['/dashboard']);
-    }
-    return false;
+    return redirigirOSalir();
   }
 
   // Legacy: verificación por roles string
@@ -41,11 +51,5 @@ export const roleGuard: CanActivateFn = (route) => {
     return true;
   }
 
-  if (user.rol === 'admin-local') {
-    router.navigate(['/dashboard-local']);
-  } else {
-    router.navigate(['/dashboard']);
-  }
-
-  return false;
+  return redirigirOSalir();
 };

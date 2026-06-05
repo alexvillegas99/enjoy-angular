@@ -37,9 +37,21 @@ export class Login {
       this.alert.error('Acceso denegado', 'No tienes permisos para acceder al panel web.');
       return;
     }
+
+    // Destino según los permisos del usuario (admin -> /dashboard,
+    // marketing -> /establecimientos, etc.). Evita redirigir a una ruta
+    // prohibida y caer en el bucle de refresh-token.
+    const destino = this.permService.getLandingRoute();
+    if (!destino) {
+      this.authService.logout();
+      this.validating = false;
+      this.alert.error('Acceso denegado', 'No tienes módulos asignados en el panel web.');
+      return;
+    }
+
     setTimeout(() => {
       this.validating = false;
-      this.router.navigate(['/dashboard']);
+      this.router.navigate([destino]);
     }, 1000);
   }
 
