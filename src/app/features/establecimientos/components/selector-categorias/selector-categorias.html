@@ -1,16 +1,55 @@
-<div class="flex flex-wrap gap-2">
-  @for (cat of categorias; track cat._id) {
-    <button
-      type="button"
-      class="px-4 py-1.5 rounded-full text-xs font-medium border transition"
-      [class.bg-accent]="isSelected(cat._id)"
-      [class.text-white]="isSelected(cat._id)"
-      [class.border-accent]="isSelected(cat._id)"
-      [class.border-gray-200]="!isSelected(cat._id)"
-      [class.text-text-body]="!isSelected(cat._id)"
-      (click)="toggle(cat._id)"
-    >
-      {{ cat.nombre }}
-    </button>
+<div class="space-y-3">
+  <!-- Buscador + contador -->
+  <div class="flex items-center gap-2">
+    <div class="relative flex-1">
+      <input
+        type="text"
+        [(ngModel)]="query"
+        placeholder="Buscar categoría…"
+        class="w-full border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+      />
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </div>
+    <span class="text-xs text-text-body whitespace-nowrap">{{ selectedIds.length }} seleccionada(s)</span>
+  </div>
+
+  <!-- Seleccionadas (resumen, siempre visibles) -->
+  @if (categoriasSeleccionadas.length) {
+    <div class="flex flex-wrap gap-2 pb-1 border-b border-gray-100">
+      @for (cat of categoriasSeleccionadas; track cat._id) {
+        <button
+          type="button"
+          class="px-3 py-1.5 rounded-full text-xs font-medium bg-accent text-white border border-accent flex items-center gap-1"
+          (click)="toggle(cat._id)"
+          title="Quitar"
+        >
+          {{ cat.nombre }}
+          <span class="text-white/80">✕</span>
+        </button>
+      }
+    </div>
   }
+
+  <!-- Lista filtrada (scrollable) -->
+  <div class="flex flex-wrap gap-2 max-h-56 overflow-y-auto pr-1">
+    @for (cat of categoriasFiltradas; track cat._id) {
+      <button
+        type="button"
+        class="px-4 py-1.5 rounded-full text-xs font-medium border transition"
+        [class.bg-accent]="isSelected(cat._id)"
+        [class.text-white]="isSelected(cat._id)"
+        [class.border-accent]="isSelected(cat._id)"
+        [class.border-gray-200]="!isSelected(cat._id)"
+        [class.text-text-body]="!isSelected(cat._id)"
+        (click)="toggle(cat._id)"
+      >
+        {{ cat.nombre }}
+      </button>
+    } @empty {
+      <p class="text-xs text-text-body py-2">No se encontraron categorías para “{{ query }}”.</p>
+    }
+  </div>
 </div>

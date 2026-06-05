@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { EstablecimientosService } from '../../../../services/establecimientos.service';
+import { PermissionsService } from '../../../../core/services/permissions.service';
 
 interface Establecimiento {
   _id: string;
@@ -29,6 +30,11 @@ interface Establecimiento {
 export class ListadoEstablecimientos implements OnInit {
   private srv = inject(EstablecimientosService);
   private router = inject(Router);
+  private perms = inject(PermissionsService);
+
+  get puedeCrear(): boolean {
+    return this.perms.hasPermission('establecimientos.crear');
+  }
 
   // data
   establecimientos: Establecimiento[] = [];

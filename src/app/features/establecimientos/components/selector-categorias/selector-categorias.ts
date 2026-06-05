@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CategoriasService } from '../../../../services/categorias.service';
 
 @Component({
   standalone: true,
   selector: 'app-selector-categorias',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './selector-categorias.html'
 })
 export class SelectorCategorias {
@@ -14,6 +15,29 @@ export class SelectorCategorias {
 
   categorias: any[] = [];
   selectedIds: string[] = [];
+
+  /** Texto de búsqueda para filtrar categorías */
+  query = '';
+
+  /** Normaliza texto (sin acentos, minúsculas) para buscar */
+  private norm(s: string): string {
+    return (s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '');
+  }
+
+  /** Categorías filtradas por el texto de búsqueda */
+  get categoriasFiltradas(): any[] {
+    const q = this.norm(this.query.trim());
+    if (!q) return this.categorias;
+    return this.categorias.filter((c) => this.norm(c.nombre).includes(q));
+  }
+
+  /** Categorías seleccionadas (para mostrarlas arriba como resumen) */
+  get categoriasSeleccionadas(): any[] {
+    return this.categorias.filter((c) => this.selectedIds.includes(c._id));
+  }
 
   private _value: string[] = [];
 

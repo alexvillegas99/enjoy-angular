@@ -15,6 +15,7 @@ export class SelectorCiudades {
   selectedIds: string[] = [];
 
   private _value: string[] = [];
+  private _provincia: string | null = null;
 
   @Input()
   set value(val: string[]) {
@@ -26,14 +27,31 @@ export class SelectorCiudades {
     return this._value;
   }
 
+  /** Filtra las ciudades por provincia. Al cambiar, recarga la lista. */
+  @Input()
+  set provincia(val: string | null) {
+    if (val === this._provincia) return;
+    this._provincia = val || null;
+    this.cargar();
+  }
+
   @Output() valueChange = new EventEmitter<string[]>();
 
   ngOnInit() {
-    this.svc.listar({ estado: true, limit: 500 }).subscribe((res) => {
-      this.ciudades = res.items ?? res;
+    this.cargar();
+  }
 
-      this.tryNormalize();
-    });
+  private cargar() {
+    this.svc
+      .listar({
+        estado: true,
+        limit: 500,
+        provincia: this._provincia ?? undefined,
+      })
+      .subscribe((res) => {
+        this.ciudades = res.items ?? res;
+        this.tryNormalize();
+      });
   }
 
   private tryNormalize() {

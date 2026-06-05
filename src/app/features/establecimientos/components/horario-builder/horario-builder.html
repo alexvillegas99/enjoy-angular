@@ -1,0 +1,62 @@
+<div class="space-y-3">
+  @for (b of bloques; track $index) {
+    <div class="rounded-lg border border-gray-200 p-3 space-y-3">
+      <!-- Días -->
+      <div class="flex flex-wrap gap-1.5">
+        @for (d of DIAS; track d.k) {
+          <button
+            type="button"
+            (click)="toggleDia(b, d.k)"
+            class="px-3 py-1 rounded-full text-xs font-medium border transition"
+            [class.bg-accent]="isDia(b, d.k)"
+            [class.text-white]="isDia(b, d.k)"
+            [class.border-accent]="isDia(b, d.k)"
+            [class.bg-gray-50]="!isDia(b, d.k)"
+            [class.text-text-body]="!isDia(b, d.k)"
+          >
+            {{ d.l }}
+          </button>
+        }
+      </div>
+      <!-- Rango de hora -->
+      <div class="flex items-center gap-2">
+        <input
+          type="time"
+          [(ngModel)]="b.desde"
+          (ngModelChange)="emit()"
+          class="rounded-lg border border-gray-200 px-2 py-1.5 text-sm"
+        />
+        <span class="text-xs text-text-body">a</span>
+        <input
+          type="time"
+          [(ngModel)]="b.hasta"
+          (ngModelChange)="emit()"
+          class="rounded-lg border border-gray-200 px-2 py-1.5 text-sm"
+        />
+        @if (bloques.length > 1) {
+          <button
+            type="button"
+            (click)="removeBloque($index)"
+            class="ml-auto text-red-500 hover:text-red-700 text-xs font-medium"
+          >
+            Quitar
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <button
+    type="button"
+    (click)="addBloque()"
+    class="text-xs font-medium text-accent hover:underline"
+  >
+    + Agregar otro bloque de horario
+  </button>
+
+  <!-- Vista previa -->
+  <div class="rounded-lg bg-gray-50 border border-gray-200 px-3 py-2">
+    <p class="text-[11px] text-text-body mb-0.5">Así se verá:</p>
+    <p class="text-sm font-medium text-text-dark">{{ value || '—' }}</p>
+  </div>
+</div>

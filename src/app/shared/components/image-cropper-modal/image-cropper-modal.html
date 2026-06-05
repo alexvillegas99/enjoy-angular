@@ -1,0 +1,48 @@
+<div class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 p-4">
+  <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <!-- Header -->
+    <header class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+      <h3 class="text-sm font-semibold text-text-dark">{{ title }}</h3>
+      <button type="button" class="text-text-body hover:text-text-dark" (click)="cancelar()">
+        <lucide-icon name="x" class="w-5 h-5"></lucide-icon>
+      </button>
+    </header>
+
+    <!-- Cropper -->
+    <div class="p-4 bg-surface-muted flex-1 overflow-auto">
+      <image-cropper
+        [imageFile]="imageFile ?? undefined"
+        [maintainAspectRatio]="false"
+        [containWithinAspectRatio]="false"
+        [onlyScaleDown]="false"
+        [transform]="transform"
+        [canvasRotation]="0"
+        format="png"
+        output="base64"
+        (imageCropped)="onCropped($event)"
+        class="max-h-[60vh]"
+      ></image-cropper>
+    </div>
+
+    <!-- Controles -->
+    <div class="flex items-center gap-2 px-5 py-3 border-t border-gray-100">
+      <button type="button" class="btn-secondary px-3 py-1.5 flex items-center gap-1" (click)="zoomOut()" title="Alejar">
+        <lucide-icon name="zoom-out" class="w-4 h-4"></lucide-icon>
+      </button>
+      <button type="button" class="btn-secondary px-3 py-1.5 flex items-center gap-1" (click)="zoomIn()" title="Acercar">
+        <lucide-icon name="zoom-in" class="w-4 h-4"></lucide-icon>
+      </button>
+      <button type="button" class="btn-secondary px-3 py-1.5 flex items-center gap-1" (click)="rotar()" title="Rotar">
+        <lucide-icon name="rotate-cw" class="w-4 h-4"></lucide-icon>
+      </button>
+      <button type="button" class="btn-secondary px-3 py-1.5 flex items-center gap-1" (click)="reset()" title="Restablecer">
+        <lucide-icon name="refresh-ccw" class="w-4 h-4"></lucide-icon>
+      </button>
+
+      <div class="ml-auto flex items-center gap-2">
+        <button type="button" class="btn-secondary px-4 py-2" (click)="cancelar()">Cancelar</button>
+        <button type="button" class="btn-primary px-4 py-2" (click)="aplicar()">Aplicar recorte</button>
+      </div>
+    </div>
+  </div>
+</div>

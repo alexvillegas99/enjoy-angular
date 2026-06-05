@@ -219,6 +219,24 @@
     </div>
   }
 
+  <!-- GALERÍA DEL LOCAL -->
+  @if (establecimiento.detallePromocion?.galeria?.length) {
+    <div class="card">
+      <h2 class="text-xs font-semibold text-text-body uppercase tracking-wide mb-4">Galería del local</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        @for (item of establecimiento.detallePromocion.galeria; track $index) {
+          <div class="rounded-lg overflow-hidden border border-gray-200 aspect-square bg-surface-muted">
+            @if (item.type === 'video') {
+              <video [src]="item.url" class="h-full w-full object-cover" controls playsinline [poster]="item.thumbnailUrl"></video>
+            } @else {
+              <img [src]="item.url" class="h-full w-full object-cover" />
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
   <!-- PROMOCIONES EXTRA -->
   @if (establecimiento.detallePromocionesExtra?.length) {
     <div>

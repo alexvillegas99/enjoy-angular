@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from '../../core/guards/role-guard';
 
 export const ESTABLECIMIENTOS_ROUTES: Routes = [
   {
@@ -9,6 +10,8 @@ export const ESTABLECIMIENTOS_ROUTES: Routes = [
   },
   {
     path: 'nuevo',
+    canActivate: [roleGuard],
+    data: { permissions: ['establecimientos.crear'] },
     loadComponent: () =>
       import('./pages/crear-editar/crear-editar-establecimiento')
         .then(m => m.CrearEditarEstablecimiento),
