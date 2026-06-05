@@ -11,6 +11,7 @@ export interface VersionCuponera {
   precio?: string;
   descripcion?: string;
   ciudadesDisponibles: string[];
+  provinciasDisponibles?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -83,6 +84,7 @@ crear(data: {
   precio?: string;
   descripcion?: string;
   ciudadesDisponibles?: string[]; // ids
+  provinciasDisponibles?: string[]; // ids
 }): Observable<VersionCuponera> {
   return this.http.post<VersionCuponera>(this.baseUrl, data);
 }
@@ -97,6 +99,7 @@ actualizar(
     precio?: string;
     descripcion?: string;
     ciudadesDisponibles?: string[];
+    provinciasDisponibles?: string[];
     estado: boolean;
   }>,
 ): Observable<VersionCuponera> {
