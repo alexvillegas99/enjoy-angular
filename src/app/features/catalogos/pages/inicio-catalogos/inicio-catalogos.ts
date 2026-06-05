@@ -28,6 +28,14 @@ catalogos = [
       route: '/catalogos/ciudades',
     },
     {
+      titulo: 'Provincias',
+      descripcion:
+        'Administra las provincias del Ecuador y agrúpalas con sus ciudades.',
+      icono: 'map',
+      color: 'bg-sky-50 text-sky-600',
+      route: '/catalogos/provincias',
+    },
+    {
       titulo: 'Categorías',
       descripcion:
         'Define y organiza las categorías usadas en el sistema.',

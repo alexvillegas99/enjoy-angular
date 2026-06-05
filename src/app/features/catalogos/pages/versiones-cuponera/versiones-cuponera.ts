@@ -9,6 +9,7 @@ import {
   VersionCuponera,
 } from '../../../../services/version-cuponera.service';
 import { CiudadesService } from '../../../../services/ciudad.service';
+import { ProvinciasService } from '../../../../services/provincia.service';
 
 @Component({
   selector: 'app-versiones-cuponera',
@@ -20,7 +21,9 @@ export class VersionesCuponera implements OnInit {
   private service = inject(VersionCuponeraService);
   private alert = inject(AlertService);
   private ciudadesService = inject(CiudadesService);
+  private provinciasService = inject(ProvinciasService);
   versiones: VersionCuponera[] = [];
+  provincias: any[] = [];
   loading = false;
 
   filtroNombre = '';
@@ -33,6 +36,10 @@ export class VersionesCuponera implements OnInit {
 
     this.cargar();
     this.cargarCiudades();
+    this.provinciasService.getActivas().subscribe({
+      next: (res) => (this.provincias = res || []),
+      error: () => {},
+    });
   }
   cargarCiudades() {
     this.loadingCiudades = true;
@@ -107,7 +114,9 @@ export class VersionesCuponera implements OnInit {
     this.form = {
       nombre: '',
       descripcion: '',
+      precio: '',
       ciudadesDisponibles: [],
+      provinciasDisponibles: [],
     };
     this.modalAbierto = true;
   }
@@ -120,12 +129,16 @@ editar(v: any) {
   const ids = this.ciudades
     .filter(c => v.ciudadesDisponibles?.includes(c.nombre))
     .map(c => c._id);
+  const provIds = this.provincias
+    .filter(p => v.provinciasDisponibles?.includes(p.nombre))
+    .map(p => p._id);
 
   this.form = {
     nombre: v.nombre,
     descripcion: v.descripcion ?? '',
     precio: v.precio ?? '',
     ciudadesDisponibles: ids,
+    provinciasDisponibles: provIds,
   };
 
   this.modalAbierto = true;
@@ -144,6 +157,14 @@ editar(v: any) {
     : this.form.ciudadesDisponibles.push(id);
 }
 
+ toggleProvincia(id: string) {
+  if (!this.form.provinciasDisponibles) this.form.provinciasDisponibles = [];
+  const idx = this.form.provinciasDisponibles.indexOf(id);
+  idx >= 0
+    ? this.form.provinciasDisponibles.splice(idx, 1)
+    : this.form.provinciasDisponibles.push(id);
+}
+
 
  guardar() {
   const payload = {
@@ -151,6 +172,7 @@ editar(v: any) {
     descripcion: this.form.descripcion,
     precio: this.form.precio,
     ciudadesDisponibles: this.form.ciudadesDisponibles,
+    provinciasDisponibles: this.form.provinciasDisponibles ?? [],
   };
 
   const req = this.editando

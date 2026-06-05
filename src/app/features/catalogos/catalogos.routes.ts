@@ -51,6 +51,16 @@ export const catalogosRoutes: Routes = [
           crear: '/catalogos/ciudades/nuevo',
         },
       },
+      {
+        path: 'provincias',
+        loadComponent: () =>
+          import('./pages/provincias/listado-provincias/listado-provincias').then(
+            (m) => m.ListadoProvincias,
+          ),
+        data: {
+          titulo: 'Provincias',
+        },
+      },
     ],
   },
 ];

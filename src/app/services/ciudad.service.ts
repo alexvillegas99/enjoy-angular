@@ -18,6 +18,7 @@ export class CiudadesService {
   listar(params?: {
     q?: string;
     estado?: boolean;
+    provincia?: string;
     page?: number;
     limit?: number;
   }): Observable<any> {
@@ -26,6 +27,8 @@ export class CiudadesService {
     if (params?.q) httpParams = httpParams.set('q', params.q);
     if (params?.estado !== undefined)
       httpParams = httpParams.set('estado', String(params.estado));
+    if (params?.provincia)
+      httpParams = httpParams.set('provincia', params.provincia);
     if (params?.page) httpParams = httpParams.set('page', params.page);
     if (params?.limit) httpParams = httpParams.set('limit', params.limit);
 

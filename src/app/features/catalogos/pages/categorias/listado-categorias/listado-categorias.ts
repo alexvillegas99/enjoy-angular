@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlertService } from '../../../../../core/services/alert.service';
 import { CategoriasService } from '../../../../../services/categorias.service';
+import { CATEGORIA_ICON_OPTIONS } from '../../../../../core/constants/categoria-icons.constant';
 interface CategoriaForm {
   nombre: string;
   descripcion: string;
@@ -22,6 +23,8 @@ export class ListadoCategorias implements OnInit {
   private alert = inject(AlertService);
 
   categorias: any[] = [];
+
+  readonly iconOptions = CATEGORIA_ICON_OPTIONS;
 
   modalAbierto = false;
   editando = false;
