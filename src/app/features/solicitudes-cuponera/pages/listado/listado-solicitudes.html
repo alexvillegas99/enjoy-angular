@@ -1,19 +1,24 @@
 <div class="p-6 space-y-6 max-w-7xl mx-auto pb-20">
 
   <!-- HEADER -->
-  <div>
-    <h1 class="text-xl font-semibold text-text-dark">Solicitudes de Cuponera</h1>
-    <p class="text-sm text-text-body">Gestiona las solicitudes de compra de cuponeras</p>
+  <div class="flex items-center gap-4 animate-in">
+    <span class="icon-badge icon-badge-primary">
+      <lucide-icon name="ticket" class="w-5 h-5"></lucide-icon>
+    </span>
+    <div>
+      <h1 class="page-title">Solicitudes de Cuponera</h1>
+      <p class="subtle">Gestiona las solicitudes de compra de cuponeras</p>
+    </div>
   </div>
 
   <!-- FILTROS -->
-  <div class="card">
+  <div class="card animate-in">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
 
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Estado</label>
+        <label class="form-label">Estado</label>
         <select
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input"
           [(ngModel)]="filtros.estado"
           (change)="filtros.page = 1; buscar()"
         >
@@ -25,9 +30,9 @@
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Registros por pagina</label>
+        <label class="form-label">Registros por pagina</label>
         <select
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input"
           [(ngModel)]="filtros.limit"
           (change)="filtros.page = 1; buscar()"
         >
@@ -38,7 +43,7 @@
         </select>
       </div>
 
-      <button class="btn-secondary flex items-center justify-center gap-2" (click)="filtros.page = 1; buscar()">
+      <button class="btn-secondary btn-block flex items-center justify-center gap-2" (click)="filtros.page = 1; buscar()">
         <lucide-icon name="search" class="w-4 h-4"></lucide-icon>
         Buscar
       </button>
@@ -58,23 +63,23 @@
     <div class="space-y-4">
 
       @for (sol of solicitudes; track sol._id) {
-        <div class="card">
+        <div class="card animate-in">
           <div class="flex flex-col lg:flex-row gap-5">
 
             <!-- INFO PRINCIPAL -->
-            <div class="flex-1 min-w-0 space-y-3">
+            <div class="flex-1 min-w-0 space-y-4">
 
               <!-- Encabezado: Nombre + Badge -->
               <div class="flex flex-wrap items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <lucide-icon name="user" class="w-5 h-5 text-primary"></lucide-icon>
-                </div>
+                <span class="icon-badge icon-badge-primary flex-shrink-0">
+                  <lucide-icon name="user" class="w-5 h-5"></lucide-icon>
+                </span>
                 <div>
                   <h3 class="text-sm font-semibold text-text-dark">{{ sol.nombreCliente }}</h3>
                   <p class="text-xs text-text-body">{{ sol.emailCliente }}</p>
                 </div>
                 <span
-                  class="px-2.5 py-0.5 text-xs font-medium rounded-full ml-auto"
+                  class="badge ml-auto"
                   [ngClass]="getBadgeClasses(sol.estado)"
                 >
                   {{ sol.estado }}
@@ -86,30 +91,30 @@
 
                 @if (sol.telefonoCliente) {
                   <div class="flex items-center gap-2">
-                    <lucide-icon name="phone" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                    <lucide-icon name="phone" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
                     <span class="text-text-body">{{ sol.telefonoCliente }}</span>
                   </div>
                 }
 
                 <div class="flex items-center gap-2">
-                  <lucide-icon name="ticket" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                  <lucide-icon name="ticket" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
                   <span class="text-text-dark font-medium">{{ sol.cuponeraNombre }}</span>
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <lucide-icon name="credit-card" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                  <lucide-icon name="credit-card" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
                   <span class="text-text-body">Precio: <strong class="text-text-dark">${{ sol.cuponeraPrecio }}</strong></span>
                 </div>
 
                 @if (sol.montoTransferido) {
                   <div class="flex items-center gap-2">
-                    <lucide-icon name="wallet" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                    <lucide-icon name="wallet" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
                     <span class="text-text-body">Transferido: <strong class="text-text-dark">${{ sol.montoTransferido }}</strong></span>
                   </div>
                 }
 
                 <div class="flex items-center gap-2">
-                  <lucide-icon name="calendar" class="w-4 h-4 text-text-body flex-shrink-0"></lucide-icon>
+                  <lucide-icon name="calendar" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
                   <span class="text-text-body">{{ formatFecha(sol.createdAt) }}</span>
                 </div>
 
@@ -117,15 +122,15 @@
 
               <!-- Observaciones -->
               @if (sol.observaciones) {
-                <div class="bg-surface-muted rounded-lg px-3 py-2">
-                  <p class="text-xs text-text-body"><strong>Observaciones:</strong> {{ sol.observaciones }}</p>
+                <div class="surface-sunken rounded-lg px-3 py-2 border border-border-subtle">
+                  <p class="text-xs text-text-body"><strong class="text-text-dark">Observaciones:</strong> {{ sol.observaciones }}</p>
                 </div>
               }
 
               <!-- Nota admin (si ya existe) -->
               @if (sol.notaAdmin) {
-                <div class="bg-rose-50 rounded-lg px-3 py-2">
-                  <p class="text-xs text-rose-700"><strong>Nota admin:</strong> {{ sol.notaAdmin }}</p>
+                <div class="bg-danger-soft rounded-lg px-3 py-2 border border-danger/20">
+                  <p class="text-xs text-danger"><strong>Nota admin:</strong> {{ sol.notaAdmin }}</p>
                 </div>
               }
 
@@ -138,7 +143,7 @@
                 <img
                   [src]="sol.comprobanteUrl"
                   alt="Comprobante de transferencia"
-                  class="w-full h-32 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition"
+                  class="w-full h-32 object-cover rounded-xl border border-border-soft cursor-pointer hover:opacity-80 transition shadow-card"
                   (click)="abrirImagen(sol.comprobanteUrl)"
                 />
               </div>
@@ -148,14 +153,14 @@
 
           <!-- ACCIONES (solo si PENDIENTE) -->
           @if (sol.estado === 'PENDIENTE') {
-            <div class="border-t border-gray-100 mt-4 pt-4 space-y-3">
+            <div class="divider mt-4 pt-4 space-y-3">
 
               <!-- Input nota admin -->
               <div>
-                <label class="block text-xs font-medium text-text-body mb-1">Nota del administrador (opcional)</label>
+                <label class="form-label">Nota del administrador (opcional)</label>
                 <input
                   type="text"
-                  class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+                  class="input"
                   placeholder="Motivo del rechazo u observacion..."
                   [ngModel]="notaAdminMap[sol._id] || ''"
                   (ngModelChange)="notaAdminMap[sol._id] = $event"
@@ -164,16 +169,21 @@
 
               <div class="flex flex-wrap gap-2">
                 <button
-                  class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full
-                         bg-emerald-600 text-white hover:bg-emerald-700 transition"
+                  class="btn-primary btn-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="procesandoId === sol._id"
                   (click)="aprobar(sol)"
                 >
-                  <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
-                  Aprobar
+                  @if (procesandoId === sol._id) {
+                    <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Procesando…
+                  } @else {
+                    <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
+                    Aprobar
+                  }
                 </button>
                 <button
-                  class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full
-                         bg-rose-600 text-white hover:bg-rose-700 transition"
+                  class="btn-outline btn-sm flex items-center gap-2 text-danger! border-danger/40! disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="procesandoId === sol._id"
                   (click)="rechazar(sol)"
                 >
                   <lucide-icon name="circle-x" class="w-4 h-4"></lucide-icon>
@@ -189,9 +199,12 @@
 
       <!-- VACIO -->
       @if (solicitudes.length === 0) {
-        <div class="card text-center py-10">
-          <lucide-icon name="file-text" class="w-10 h-10 text-gray-300 mx-auto mb-3"></lucide-icon>
-          <p class="text-sm text-text-body">No se encontraron solicitudes.</p>
+        <div class="card text-center py-12 animate-in">
+          <span class="icon-badge icon-badge-primary mx-auto mb-4">
+            <lucide-icon name="file-text" class="w-6 h-6"></lucide-icon>
+          </span>
+          <p class="section-title">No se encontraron solicitudes</p>
+          <p class="subtle mt-1">Ajusta los filtros para ver mas resultados.</p>
         </div>
       }
 
@@ -203,12 +216,14 @@
     <div class="flex justify-center gap-2 pt-4">
       @for (p of [].constructor(pages); track $index; let i = $index) {
         <button
-          class="px-3 py-1 rounded-full border text-sm transition"
+          class="min-w-9 h-9 px-3 rounded-lg border text-sm font-medium transition"
           [class.bg-accent]="filtros.page === i + 1"
           [class.text-white]="filtros.page === i + 1"
           [class.border-accent]="filtros.page === i + 1"
-          [class.border-gray-300]="filtros.page !== i + 1"
+          [class.shadow-card]="filtros.page === i + 1"
+          [class.border-border-soft]="filtros.page !== i + 1"
           [class.text-text-body]="filtros.page !== i + 1"
+          [class.bg-surface]="filtros.page !== i + 1"
           [class.hover:bg-surface-hover]="filtros.page !== i + 1"
           (click)="cambiarPagina(i + 1)"
         >
@@ -235,7 +250,7 @@
   >
     <div class="relative max-w-3xl max-h-[90vh]" (click)="$event.stopPropagation()">
       <button
-        class="absolute -top-3 -right-3 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-100 transition"
+        class="absolute -top-3 -right-3 w-9 h-9 bg-surface rounded-full shadow-float flex items-center justify-center hover:bg-surface-hover transition"
         (click)="cerrarImagen()"
       >
         <lucide-icon name="x" class="w-4 h-4 text-text-dark"></lucide-icon>

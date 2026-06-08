@@ -178,7 +178,7 @@ export class CrearEditarEstablecimiento {
           description: d.description,
           address: d.address,
           scheduleLabel: d.scheduleLabel,
-          isTwoForOne: d.isTwoForOne,
+          isTwoForOne: true, // siempre 2x1 (no editable)
           aplicaTodosLosDias: d.aplicaTodosLosDias,
         };
         if (d.tags?.length) dp.tags = d.tags;
@@ -264,7 +264,7 @@ export class CrearEditarEstablecimiento {
       placeName: '',
       description: '',
       address: '',
-      isTwoForOne: false,
+      isTwoForOne: true,
       aplicaTodosLosDias: true,
       diasAplicables: [] as string[],
       horarioPorDia: {} as Record<string, { abre: string; cierra: string }>,
@@ -403,7 +403,7 @@ export class CrearEditarEstablecimiento {
       placeName: this.model.nombre,
       aplicaTodosLosDias: true,
       scheduleLabel: '',
-      isTwoForOne: false,
+      isTwoForOne: true,
       isFlash: false,
       tags: [],
       startDate: null as Date | null,
@@ -484,6 +484,9 @@ export class CrearEditarEstablecimiento {
   limpiarPayload(payload: any) {
     const d = payload.detallePromocion;
 
+    // Todas las promos son 2x1 (no editable) → siempre true.
+    d.isTwoForOne = true;
+
     // Campos que no pertenecen a detallePromocion principal
     delete d.rating;
     delete d.distanceLabel;
@@ -551,6 +554,7 @@ export class CrearEditarEstablecimiento {
     if (payload.detallePromocionesExtra?.length) {
       payload.detallePromocionesExtra = payload.detallePromocionesExtra.map((p: any) => {
         const clean: any = { ...p };
+        clean.isTwoForOne = true; // siempre 2x1 (no editable)
         if (!clean.startDate) delete clean.startDate;
         if (!clean.endDate) delete clean.endDate;
         if (!clean.tags?.length) delete clean.tags;

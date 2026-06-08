@@ -1,20 +1,26 @@
-<div class="max-w-5xl mx-auto space-y-8 pb-20">
+<div class="max-w-5xl mx-auto space-y-8 pb-20 animate-in">
 
   <!-- BACK -->
-  <a routerLink="/establecimientos" class="inline-flex items-center gap-1.5 text-sm text-text-body hover:text-accent transition">
+  <a routerLink="/establecimientos" class="btn-link inline-flex items-center gap-1.5 text-sm">
     <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
     Volver al listado
   </a>
 
+  <!-- HEADER -->
+  <div class="space-y-1">
+    <h1 class="page-title">{{ isEdit ? "Editar establecimiento" : "Nuevo establecimiento" }}</h1>
+    <p class="subtle text-sm">Completa los pasos para {{ isEdit ? "actualizar" : "registrar" }} el local.</p>
+  </div>
+
   <!-- Solo fotos: banner informativo -->
   @if (soloFotos) {
-    <div class="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm text-blue-800">
+    <div class="flex items-center gap-3 bg-info-soft border border-info/20 rounded-xl px-4 py-3 text-sm text-info">
       <lucide-icon name="image" class="w-4 h-4 shrink-0"></lucide-icon>
       Tu rol solo te permite actualizar las fotos del establecimiento.
     </div>
   }
   @if (soloDetalles) {
-    <div class="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
+    <div class="flex items-center gap-3 bg-warning-soft border border-warning/20 rounded-xl px-4 py-3 text-sm text-warning">
       <lucide-icon name="pencil" class="w-4 h-4 shrink-0"></lucide-icon>
       Tu rol te permite editar los datos del establecimiento pero no las fotos.
     </div>
@@ -24,14 +30,14 @@
   <div class="card">
     <div class="flex items-center justify-between mb-4">
       <div>
-        <h2 class="text-base font-semibold text-text-dark">
-          {{ isEdit ? "Editar establecimiento" : "Nuevo establecimiento" }}
+        <h2 class="section-title text-base">
+          Paso {{ currentStep + 1 }} de {{ pasos.length }}
         </h2>
-        <p class="text-xs text-text-body mt-0.5">
-          Paso {{ currentStep + 1 }} de {{ pasos.length }} · {{ pasos[currentStep]?.label }}
+        <p class="subtle text-xs mt-0.5">
+          {{ pasos[currentStep]?.label }}
         </p>
       </div>
-      <span class="text-xs font-medium text-accent">{{ pasos[currentStep]?.label }}</span>
+      <span class="badge badge-accent">{{ pasos[currentStep]?.label }}</span>
     </div>
 
     <!-- Pasos clickeables -->
@@ -48,7 +54,7 @@
             [class.text-white]="i === currentStep"
             [class.border-accent]="i <= currentStep"
             [class.text-accent]="i < currentStep"
-            [class.border-gray-200]="i > currentStep"
+            [class.border-border-soft]="i > currentStep"
             [class.text-text-body]="i > currentStep"
           >
             @if (i < currentStep) {
@@ -64,7 +70,7 @@
           >{{ p.label }}</span>
         </button>
         @if (!$last) {
-          <span class="h-px w-3 sm:w-6 bg-gray-200 shrink-0"></span>
+          <span class="h-px w-3 sm:w-6 bg-border-soft shrink-0"></span>
         }
       }
     </div>
@@ -74,70 +80,70 @@
   @if (esPaso('datos')) {
   <section class="card">
     <header class="flex items-center gap-3 mb-6">
-      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-        <lucide-icon name="store" class="w-4 h-4 text-primary"></lucide-icon>
+      <div class="icon-badge icon-badge-primary">
+        <lucide-icon name="store" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Establecimiento</h3>
+      <h3 class="section-title text-sm">Establecimiento</h3>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Nombre</label>
+        <label class="form-label">Nombre</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['nombre']"
+          class="input"
+          [class.border-danger!]="errors['nombre']"
           [(ngModel)]="model.nombre"
           placeholder="Nombre del establecimiento"
         />
         @if (errors['nombre']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['nombre'] }}</p>
+          <p class="form-hint text-danger">{{ errors['nombre'] }}</p>
         }
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Email</label>
+        <label class="form-label">Email</label>
         <input
           type="email"
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['email']"
+          class="input"
+          [class.border-danger!]="errors['email']"
           [(ngModel)]="model.email"
           placeholder="correo&#64;ejemplo.com"
         />
         @if (errors['email']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['email'] }}</p>
+          <p class="form-hint text-danger">{{ errors['email'] }}</p>
         }
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Teléfono</label>
+        <label class="form-label">Teléfono</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['telefono']"
+          class="input"
+          [class.border-danger!]="errors['telefono']"
           [(ngModel)]="model.telefono"
           placeholder="0999999999"
         />
         @if (errors['telefono']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['telefono'] }}</p>
+          <p class="form-hint text-danger">{{ errors['telefono'] }}</p>
         }
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Identificación</label>
+        <label class="form-label">Identificación</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['identificacion']"
+          class="input"
+          [class.border-danger!]="errors['identificacion']"
           [(ngModel)]="model.identificacion"
           placeholder="CI / RUC"
         />
         @if (errors['identificacion']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['identificacion'] }}</p>
+          <p class="form-hint text-danger">{{ errors['identificacion'] }}</p>
         }
       </div>
 
       <div class="md:col-span-2 lg:col-span-4 flex items-center gap-3 pt-2">
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" [(ngModel)]="model.estado" class="sr-only peer" />
-          <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-accent transition-colors"></div>
+          <div class="w-9 h-5 bg-surface-sunken rounded-full peer peer-checked:bg-accent transition-colors"></div>
           <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-4 transition-transform"></div>
         </label>
         <span class="text-sm text-text-dark">Activo</span>
@@ -150,13 +156,13 @@
   @if (esPaso('ubicacion')) {
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-        <lucide-icon name="tags" class="w-4 h-4 text-accent"></lucide-icon>
+      <div class="icon-badge icon-badge-accent">
+        <lucide-icon name="tags" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Categorías</h3>
+      <h3 class="section-title text-sm">Categorías</h3>
     </header>
     @if (errors['categorias']) {
-      <p class="text-xs text-red-500 mb-3">{{ errors['categorias'] }}</p>
+      <p class="form-hint text-danger mb-3">{{ errors['categorias'] }}</p>
     }
     <app-selector-categorias
       [value]="model.categorias"
@@ -167,16 +173,16 @@
   <!-- PROVINCIA (obligatoria) -->
   <section class="card">
     <header class="flex items-center gap-3 mb-2">
-      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-        <lucide-icon name="map-pin" class="w-4 h-4 text-primary"></lucide-icon>
+      <div class="icon-badge icon-badge-primary">
+        <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
       </div>
       <div>
-        <h3 class="text-sm font-semibold text-text-dark">Provincia <span class="text-red-500">*</span></h3>
-        <p class="text-xs text-text-body">Elige la provincia; luego sus ciudades.</p>
+        <h3 class="section-title text-sm">Provincia <span class="text-danger">*</span></h3>
+        <p class="subtle text-xs">Elige la provincia; luego sus ciudades.</p>
       </div>
     </header>
     @if (errors['provincia']) {
-      <p class="text-xs text-red-500 mb-3">{{ errors['provincia'] }}</p>
+      <p class="form-hint text-danger mb-3">{{ errors['provincia'] }}</p>
     }
     <app-selector-provincias
       [value]="provinciaSel"
@@ -187,16 +193,16 @@
   <!-- CIUDADES -->
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-        <lucide-icon name="map-pin" class="w-4 h-4 text-accent"></lucide-icon>
+      <div class="icon-badge icon-badge-accent">
+        <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Ciudades <span class="text-red-500">*</span></h3>
+      <h3 class="section-title text-sm">Ciudades <span class="text-danger">*</span></h3>
     </header>
     @if (errors['ciudades']) {
-      <p class="text-xs text-red-500 mb-3">{{ errors['ciudades'] }}</p>
+      <p class="form-hint text-danger mb-3">{{ errors['ciudades'] }}</p>
     }
     @if (!provinciaSel) {
-      <p class="text-xs text-text-body">Selecciona primero una provincia.</p>
+      <p class="subtle text-xs">Selecciona primero una provincia.</p>
     } @else {
       <app-selector-ciudades
         [value]="model.ciudades"
@@ -211,27 +217,27 @@
   @if (esPaso('ubicacion')) {
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-        <lucide-icon name="map-pin" class="w-4 h-4 text-primary"></lucide-icon>
+      <div class="icon-badge icon-badge-primary">
+        <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
       </div>
       <div>
-        <h3 class="text-sm font-semibold text-text-dark">Ubicación del local</h3>
-        <p class="text-xs text-text-body mt-0.5">Las coordenadas GPS cargarán automáticamente el campo de dirección.</p>
+        <h3 class="section-title text-sm">Ubicación del local</h3>
+        <p class="subtle text-xs mt-0.5">Las coordenadas GPS cargarán automáticamente el campo de dirección.</p>
       </div>
     </header>
 
     @if (model.ubicacion) {
-      <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 mb-4">
-        <lucide-icon name="map-pin" class="w-4 h-4 text-emerald-600 shrink-0"></lucide-icon>
-        <span class="flex-1 text-sm text-emerald-800 font-mono">{{ model.ubicacion.lat }}, {{ model.ubicacion.lng }}</span>
+      <div class="flex items-center gap-3 bg-success-soft border border-success/20 rounded-xl px-4 py-3 mb-4">
+        <lucide-icon name="map-pin" class="w-4 h-4 text-success shrink-0"></lucide-icon>
+        <span class="flex-1 text-sm text-success font-mono">{{ model.ubicacion.lat }}, {{ model.ubicacion.lng }}</span>
         <a
           [href]="'https://maps.google.com/?q=' + model.ubicacion.lat + ',' + model.ubicacion.lng"
           target="_blank"
-          class="text-xs text-emerald-600 underline hover:text-emerald-800"
+          class="text-xs text-success underline hover:opacity-80"
         >Ver en mapa</a>
         <button
           type="button"
-          class="text-xs text-slate-400 hover:text-red-500 transition"
+          class="text-xs text-text-faint hover:text-danger transition"
           (click)="limpiarUbicacion()"
           title="Eliminar ubicación"
         >✕</button>
@@ -241,23 +247,23 @@
     <!-- Ingreso manual -->
     <div class="grid grid-cols-2 gap-3 mb-3">
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Latitud</label>
+        <label class="form-label">Latitud</label>
         <input
           type="number"
           step="0.0000001"
           placeholder="Ej: -0.2298500"
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input font-mono"
           [value]="model.ubicacion?.lat ?? ''"
           (input)="onLatManual($event)"
         />
       </div>
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Longitud</label>
+        <label class="form-label">Longitud</label>
         <input
           type="number"
           step="0.0000001"
           placeholder="Ej: -78.5249500"
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input font-mono"
           [value]="model.ubicacion?.lng ?? ''"
           (input)="onLngManual($event)"
         />
@@ -265,18 +271,18 @@
     </div>
 
     @if (geoError) {
-      <p class="text-xs text-red-500 mb-3">{{ geoError }}</p>
+      <p class="form-hint text-danger mb-3">{{ geoError }}</p>
     }
 
     <div class="flex items-center gap-3 flex-wrap">
       <button
         type="button"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm text-text-body hover:bg-surface-muted transition disabled:opacity-50"
+        class="btn-outline btn-sm flex items-center gap-2"
         [disabled]="geoLoading"
         (click)="obtenerUbicacion()"
       >
         @if (geoLoading) {
-          <span class="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+          <span class="w-4 h-4 border-2 border-text-faint border-t-transparent rounded-full animate-spin"></span>
           Obteniendo ubicación...
         } @else {
           <lucide-icon name="locate" class="w-4 h-4"></lucide-icon>
@@ -286,7 +292,7 @@
 
       <button
         type="button"
-        class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm text-text-body hover:bg-surface-muted transition"
+        class="btn-outline btn-sm flex items-center gap-2"
         (click)="abrirMapa()"
       >
         <lucide-icon name="map" class="w-4 h-4"></lucide-icon>
@@ -295,7 +301,7 @@
 
       @if (geocodeLoading) {
         <span class="flex items-center gap-1.5 text-xs text-text-body">
-          <span class="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></span>
+          <span class="w-3 h-3 border-2 border-text-faint border-t-transparent rounded-full animate-spin"></span>
           Cargando dirección...
         </span>
       }
@@ -309,21 +315,21 @@
       (click)="cerrarMapa()"
     >
       <div
-        class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden"
+        class="bg-surface rounded-2xl shadow-pop w-full max-w-2xl overflow-hidden"
         (click)="$event.stopPropagation()"
       >
-        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200">
-          <h3 class="text-sm font-semibold text-text-dark">Seleccionar ubicación en el mapa</h3>
-          <button type="button" class="text-slate-400 hover:text-red-500 transition" (click)="cerrarMapa()">✕</button>
+        <div class="flex items-center justify-between px-5 py-3 border-b border-border-soft">
+          <h3 class="section-title text-sm">Seleccionar ubicación en el mapa</h3>
+          <button type="button" class="text-text-faint hover:text-danger transition" (click)="cerrarMapa()">✕</button>
         </div>
 
-        <p class="px-5 pt-3 text-xs text-text-body">
+        <p class="px-5 pt-3 subtle text-xs">
           Toca el mapa para colocar el marcador. Podés arrastrarlo para ajustar la posición.
         </p>
 
         <div id="mapa-ubicacion" class="w-full h-80 mt-3"></div>
 
-        <div class="flex items-center justify-between gap-3 px-5 py-3 border-t border-gray-200">
+        <div class="flex items-center justify-between gap-3 px-5 py-3 border-t border-border-soft">
           <span class="text-xs font-mono text-text-body">
             @if (mapSeleccion) {
               {{ mapSeleccion.lat }}, {{ mapSeleccion.lng }}
@@ -334,12 +340,12 @@
           <div class="flex gap-2">
             <button
               type="button"
-              class="px-4 py-2 rounded-lg border border-gray-200 text-sm text-text-body hover:bg-surface-muted transition"
+              class="btn-outline btn-sm"
               (click)="cerrarMapa()"
             >Cancelar</button>
             <button
               type="button"
-              class="px-4 py-2 rounded-lg bg-primary text-white text-sm hover:bg-primary/90 transition disabled:opacity-50"
+              class="btn-secondary btn-sm"
               [disabled]="!mapSeleccion"
               (click)="confirmarMapa()"
             >Confirmar ubicación</button>
@@ -354,38 +360,38 @@
   @if (esPaso('promocion')) {
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-        <lucide-icon name="ticket" class="w-4 h-4 text-accent"></lucide-icon>
+      <div class="icon-badge icon-badge-accent">
+        <lucide-icon name="ticket" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Detalle de la promoción principal</h3>
+      <h3 class="section-title text-sm">Detalle de la promoción principal</h3>
     </header>
 
     <div class="grid md:grid-cols-2 gap-5">
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Título de la promoción</label>
+        <label class="form-label">Título de la promoción</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['title']"
+          class="input"
+          [class.border-danger!]="errors['title']"
           [(ngModel)]="model.detallePromocion.title"
           placeholder="Ej: 2x1 en colonche"
         />
         @if (errors['title']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['title'] }}</p>
+          <p class="form-hint text-danger">{{ errors['title'] }}</p>
         }
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Dirección</label>
+        <label class="form-label">Dirección</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input"
           [(ngModel)]="model.detallePromocion.address"
           placeholder="Ej: Marcos Montalvo e Isaías Sánchez"
         />
       </div>
 
       <div class="md:col-span-2">
-        <label class="block text-xs font-medium text-text-body mb-1">Horario de la promoción</label>
-        <p class="text-xs text-text-body mb-2">Selecciona los días y el rango de hora; el texto se arma solo en un formato estándar.</p>
+        <label class="form-label">Horario de la promoción</label>
+        <p class="form-hint mb-2">Selecciona los días y el rango de hora; el texto se arma solo en un formato estándar.</p>
         @if (model.detallePromocion.scheduleLabel) {
           <p class="text-xs text-text-body mb-1">Actual: <span class="font-medium text-text-dark">{{ model.detallePromocion.scheduleLabel }}</span></p>
         }
@@ -394,14 +400,14 @@
           (valueChange)="model.detallePromocion.scheduleLabel = $event"
         ></app-horario-builder>
         @if (errors['scheduleLabel']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['scheduleLabel'] }}</p>
+          <p class="form-hint text-danger">{{ errors['scheduleLabel'] }}</p>
         }
       </div>
 
       <div class="md:col-span-2">
-        <label class="block text-xs font-medium text-text-body mb-1">Descripción del local</label>
+        <label class="form-label">Descripción del local</label>
         <textarea
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[90px] focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input min-h-[90px]"
           [(ngModel)]="model.detallePromocion.description"
           placeholder="Describe la promoción..."
         ></textarea>
@@ -409,25 +415,25 @@
 
       <!-- Tags -->
       <div class="md:col-span-2">
-        <label class="block text-xs font-medium text-text-body mb-2">Etiquetas</label>
+        <label class="form-label">Etiquetas</label>
         <div class="flex flex-wrap gap-2 mb-3">
           @for (tag of model.detallePromocion.tags; track tag; let i = $index) {
-            <span class="px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium flex items-center gap-1.5">
+            <span class="badge badge-accent flex items-center gap-1.5">
               {{ tag }}
-              <button type="button" class="hover:text-red-500 transition" (click)="removeTag(i)">×</button>
+              <button type="button" class="hover:text-danger transition" (click)="removeTag(i)">×</button>
             </span>
           }
         </div>
         <div class="flex gap-2">
           <input
             #tagInput
-            class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 transition"
+            class="input flex-1"
             placeholder="Nueva etiqueta"
             (keyup.enter)="addTag(tagInput)"
           />
           <button
             type="button"
-            class="btn-secondary text-xs px-4"
+            class="btn-secondary btn-sm"
             (click)="addTag(tagInput)"
           >
             Añadir
@@ -437,10 +443,7 @@
 
       <!-- Checkboxes -->
       <div class="md:col-span-2 flex flex-wrap gap-6">
-        <label class="flex items-center gap-2 text-sm text-text-dark cursor-pointer">
-          <input type="checkbox" class="accent-accent w-4 h-4" [(ngModel)]="model.detallePromocion.isTwoForOne" />
-          2x1
-        </label>
+        <!-- 2x1 ya no es editable: todas las promos son 2x1 (siempre true). -->
         <label class="flex items-center gap-2 text-sm text-text-dark cursor-pointer">
           <input type="checkbox" class="accent-accent w-4 h-4" [(ngModel)]="model.detallePromocion.aplicaTodosLosDias" (change)="toggleAplicaTodosLosDias()" />
           Aplica todos los días
@@ -452,10 +455,10 @@
   <!-- FECHAS EXCLUIDAS -->
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center">
-        <lucide-icon name="calendar-x" class="w-4 h-4 text-red-500"></lucide-icon>
+      <div class="icon-badge bg-danger-soft text-danger">
+        <lucide-icon name="calendar-x" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Fechas excluidas</h3>
+      <h3 class="section-title text-sm">Fechas excluidas</h3>
     </header>
 
     @if (model.detallePromocion.fechasExcluidas.length) {
@@ -464,7 +467,7 @@
           <div class="flex items-center gap-3 px-3 py-2 bg-surface-muted rounded-lg">
             <lucide-icon name="calendar" class="w-4 h-4 text-text-body"></lucide-icon>
             <span class="text-sm text-text-dark flex-1">{{ fecha | date: "dd/MM/yyyy" }}</span>
-            <button type="button" class="text-red-500 hover:text-red-700 text-xs font-medium transition" (click)="removeFechaExcluida(i)">
+            <button type="button" class="text-danger hover:opacity-80 text-xs font-medium transition" (click)="removeFechaExcluida(i)">
               Eliminar
             </button>
           </div>
@@ -476,11 +479,11 @@
       <input
         #fechaExcluidaInput
         type="date"
-        class="rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 transition"
+        class="input w-auto"
       />
       <button
         type="button"
-        class="btn-secondary text-xs px-4"
+        class="btn-secondary btn-sm"
         (click)="addFechaExcluida(fechaExcluidaInput)"
       >
         Añadir fecha
@@ -492,22 +495,18 @@
   @if (!model.detallePromocion.aplicaTodosLosDias) {
     <section class="card">
       <header class="flex items-center gap-3 mb-5">
-        <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-          <lucide-icon name="calendar-clock" class="w-4 h-4 text-primary"></lucide-icon>
+        <div class="icon-badge icon-badge-primary">
+          <lucide-icon name="calendar-clock" class="w-4 h-4"></lucide-icon>
         </div>
-        <h3 class="text-sm font-semibold text-text-dark">Días y horarios específicos</h3>
+        <h3 class="section-title text-sm">Días y horarios específicos</h3>
       </header>
 
       <div class="flex flex-wrap gap-2 mb-5">
         @for (dia of dias; track dia) {
           <button
             type="button"
-            class="px-4 py-1.5 rounded-full text-xs font-medium border transition"
-            [class.bg-accent]="model.detallePromocion.diasAplicables.includes(dia)"
-            [class.text-white]="model.detallePromocion.diasAplicables.includes(dia)"
-            [class.border-accent]="model.detallePromocion.diasAplicables.includes(dia)"
-            [class.border-gray-200]="!model.detallePromocion.diasAplicables.includes(dia)"
-            [class.text-text-body]="!model.detallePromocion.diasAplicables.includes(dia)"
+            class="chip"
+            [class.is-active]="model.detallePromocion.diasAplicables.includes(dia)"
             (click)="toggleDia(dia)"
           >
             {{ dia }}
@@ -522,11 +521,11 @@
               <span class="w-24 capitalize text-sm font-medium text-text-dark">{{ dia }}</span>
               <div class="flex items-center gap-2">
                 <label class="text-xs text-text-body">Abre</label>
-                <input type="time" class="rounded-md border border-gray-200 px-2 py-1 text-xs" [(ngModel)]="model.detallePromocion.horarioPorDia[dia].abre" />
+                <input type="time" class="input w-auto px-2 py-1 text-xs" [(ngModel)]="model.detallePromocion.horarioPorDia[dia].abre" />
               </div>
               <div class="flex items-center gap-2">
                 <label class="text-xs text-text-body">Cierra</label>
-                <input type="time" class="rounded-md border border-gray-200 px-2 py-1 text-xs" [(ngModel)]="model.detallePromocion.horarioPorDia[dia].cierra" />
+                <input type="time" class="input w-auto px-2 py-1 text-xs" [(ngModel)]="model.detallePromocion.horarioPorDia[dia].cierra" />
               </div>
             </div>
           }
@@ -538,29 +537,29 @@
   <!-- PROMOCIONES EXTRA -->
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-accent-light/20 flex items-center justify-center">
-        <lucide-icon name="ticket-plus" class="w-4 h-4 text-accent"></lucide-icon>
+      <div class="icon-badge icon-badge-accent">
+        <lucide-icon name="ticket-plus" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Promociones extra</h3>
+      <h3 class="section-title text-sm">Promociones extra</h3>
     </header>
 
     <div class="space-y-5">
       @for (promo of model.detallePromocionesExtra; track $index; let i = $index) {
-        <div class="rounded-lg border border-gray-200 p-5 bg-surface-muted/50">
+        <div class="rounded-xl border border-border-soft p-5 bg-surface-muted/50">
           <div class="flex justify-between items-center mb-4">
             <h4 class="text-sm font-semibold text-text-dark">Promoción {{ i + 1 }}</h4>
-            <button type="button" class="text-red-500 hover:text-red-700 text-xs font-medium transition" (click)="removePromocionExtra(i)">
+            <button type="button" class="text-danger hover:opacity-80 text-xs font-medium transition" (click)="removePromocionExtra(i)">
               Eliminar
             </button>
           </div>
 
           <div class="grid md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-medium text-text-body mb-1">Título</label>
-              <input class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 transition" [(ngModel)]="promo.title" />
+              <label class="form-label">Título</label>
+              <input class="input" [(ngModel)]="promo.title" />
             </div>
             <div class="md:col-span-2">
-              <label class="block text-xs font-medium text-text-body mb-1">Horario</label>
+              <label class="form-label">Horario</label>
               @if (promo.scheduleLabel) {
                 <p class="text-xs text-text-body mb-1">Actual: <span class="font-medium text-text-dark">{{ promo.scheduleLabel }}</span></p>
               }
@@ -570,18 +569,15 @@
               ></app-horario-builder>
             </div>
             <div>
-              <label class="block text-xs font-medium text-text-body mb-1">Fecha inicio</label>
-              <input type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 transition" [value]="promo.startDate | date: 'yyyy-MM-dd'" (change)="onExtraDateChange($event, i, 'startDate')" />
+              <label class="form-label">Fecha inicio</label>
+              <input type="date" class="input" [value]="promo.startDate | date: 'yyyy-MM-dd'" (change)="onExtraDateChange($event, i, 'startDate')" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-text-body mb-1">Fecha fin</label>
-              <input type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 transition" [value]="promo.endDate | date: 'yyyy-MM-dd'" (change)="onExtraDateChange($event, i, 'endDate')" />
+              <label class="form-label">Fecha fin</label>
+              <input type="date" class="input" [value]="promo.endDate | date: 'yyyy-MM-dd'" (change)="onExtraDateChange($event, i, 'endDate')" />
             </div>
             <div class="md:col-span-2 flex flex-wrap gap-6">
-              <label class="flex items-center gap-2 text-sm text-text-dark cursor-pointer">
-                <input type="checkbox" class="accent-accent w-4 h-4" [(ngModel)]="promo.isTwoForOne" />
-                2x1
-              </label>
+              <!-- 2x1 ya no es editable: todas las promos son 2x1 (siempre true). -->
               <label class="flex items-center gap-2 text-sm text-text-dark cursor-pointer">
                 <input type="checkbox" class="accent-accent w-4 h-4" [(ngModel)]="promo.isFlash" />
                 Promoción flash
@@ -597,7 +593,7 @@
 
       <button
         type="button"
-        class="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-sm text-text-body hover:border-accent hover:text-accent transition"
+        class="w-full px-4 py-3 border-2 border-dashed border-border-soft rounded-xl text-sm text-text-body hover:border-accent hover:text-accent hover:bg-accent-soft transition"
         (click)="addPromocionExtra()"
       >
         + Añadir promoción extra
@@ -610,10 +606,10 @@
   @if (esPaso('imagenes')) {
   <section class="card">
     <header class="flex items-center gap-3 mb-6">
-      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-        <lucide-icon name="image" class="w-4 h-4 text-primary"></lucide-icon>
+      <div class="icon-badge icon-badge-primary">
+        <lucide-icon name="image" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Imágenes del local</h3>
+      <h3 class="section-title text-sm">Imágenes del local</h3>
     </header>
 
     <div class="flex flex-col gap-7">
@@ -623,10 +619,10 @@
           @if (model.detallePromocion.logoBase64 || model.detallePromocion.logoUrl) {
             <img
               [src]="model.detallePromocion.logoBase64 ?? model.detallePromocion.logoUrl"
-              class="h-28 w-28 object-contain bg-surface-muted rounded-xl p-2 border border-gray-200"
+              class="h-28 w-28 object-contain bg-surface-muted rounded-xl p-2 border border-border-soft"
             />
           } @else {
-            <div class="h-28 w-28 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-text-body gap-1">
+            <div class="h-28 w-28 rounded-xl border-2 border-dashed border-border-soft flex flex-col items-center justify-center text-text-body gap-1">
               <lucide-icon name="image-plus" class="w-5 h-5"></lucide-icon>
               <span class="text-[11px]">Logo</span>
             </div>
@@ -643,16 +639,16 @@
       </div>
 
       <!-- Galería -->
-      <div class="border-t border-gray-100 pt-6">
+      <div class="border-t border-border-soft pt-6">
         <div class="flex items-center justify-between mb-1">
           <label class="block text-sm font-medium text-text-dark">Galería del local</label>
-          <span class="text-xs text-text-body font-medium">{{ model.detallePromocion.galeria.length }}/{{ MAX_GALERIA }}</span>
+          <span class="badge badge-muted">{{ model.detallePromocion.galeria.length }}/{{ MAX_GALERIA }}</span>
         </div>
-        <p class="text-xs text-text-body mb-4">Hasta {{ MAX_GALERIA }} fotos o videos. Usa ◀ ▶ para ordenar cómo se muestran. Si hay <b>video</b>, se reproduce primero (de fondo) al entrar al detalle.</p>
+        <p class="form-hint mb-4">Hasta {{ MAX_GALERIA }} fotos o videos. Usa ◀ ▶ para ordenar cómo se muestran. Si hay <b>video</b>, se reproduce primero (de fondo) al entrar al detalle.</p>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           @for (item of model.detallePromocion.galeria; track $index) {
-            <div class="relative group rounded-xl overflow-hidden border border-gray-200 aspect-square bg-surface-muted">
+            <div class="relative group rounded-xl overflow-hidden border border-border-soft aspect-square bg-surface-muted">
               @if (item.type === 'video') {
                 <video [src]="galeriaPreview(item)" class="h-full w-full object-cover" muted playsinline></video>
                 <span class="absolute bottom-1 left-1 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
@@ -713,12 +709,12 @@
 
           @if (model.detallePromocion.galeria.length < MAX_GALERIA) {
             <div class="flex flex-col gap-2 aspect-square">
-              <label class="flex-1 rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition">
+              <label class="flex-1 rounded-xl border-2 border-dashed border-border-soft hover:border-primary hover:bg-primary-tint flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition">
                 <lucide-icon name="image-plus" class="w-5 h-5"></lucide-icon>
                 <span class="text-[11px] font-medium">Foto</span>
                 <input type="file" class="hidden" accept="image/*" (change)="onGaleriaImagen($event)" />
               </label>
-              <label class="flex-1 rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition">
+              <label class="flex-1 rounded-xl border-2 border-dashed border-border-soft hover:border-primary hover:bg-primary-tint flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition">
                 <lucide-icon name="video" class="w-5 h-5"></lucide-icon>
                 <span class="text-[11px] font-medium">Video</span>
                 <input type="file" class="hidden" accept="video/*" (change)="onGaleriaVideo($event)" />
@@ -728,7 +724,7 @@
         </div>
 
         @if (!model.detallePromocion.galeria.length) {
-          <p class="text-xs text-amber-600 mt-3 flex items-center gap-1">
+          <p class="text-xs text-warning mt-3 flex items-center gap-1">
             <lucide-icon name="alert-triangle" class="w-3.5 h-3.5"></lucide-icon>
             Agrega al menos una foto: será la portada del local en las tarjetas.
           </p>
@@ -743,22 +739,22 @@
   <section class="card">
     <header class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-          <lucide-icon name="shopping-bag" class="w-4 h-4 text-primary"></lucide-icon>
+        <div class="icon-badge icon-badge-primary">
+          <lucide-icon name="shopping-bag" class="w-4 h-4"></lucide-icon>
         </div>
         <div>
-          <h3 class="text-sm font-semibold text-text-dark">Catálogo</h3>
-          <p class="text-xs text-text-body">Productos o servicios que ofrece el local. Sin límite.</p>
+          <h3 class="section-title text-sm">Catálogo</h3>
+          <p class="subtle text-xs">Productos o servicios que ofrece el local. Sin límite.</p>
         </div>
       </div>
-      <span class="text-xs text-text-body font-medium">{{ model.detallePromocion.productos.length }}</span>
+      <span class="badge badge-muted">{{ model.detallePromocion.productos.length }}</span>
     </header>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       @for (prod of model.detallePromocion.productos; track $index) {
-        <div class="relative rounded-xl border border-gray-200 p-3 flex flex-col gap-3 bg-surface-muted">
+        <div class="relative rounded-xl border border-border-soft p-3 flex flex-col gap-3 bg-surface-muted">
           <!-- Foto del producto -->
-          <div class="relative group rounded-lg overflow-hidden aspect-video bg-white border border-gray-100">
+          <div class="relative group rounded-lg overflow-hidden aspect-video bg-surface border border-border-soft">
             @if (productoPreview(prod)) {
               <img [src]="productoPreview(prod)" class="h-full w-full object-cover" />
             } @else {
@@ -777,14 +773,14 @@
           <!-- Nombre + descripción -->
           <input
             type="text"
-            class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition bg-white"
+            class="input bg-surface"
             placeholder="Nombre del producto"
             [(ngModel)]="prod.nombre"
             [ngModelOptions]="{ standalone: true }"
           />
           <textarea
             rows="2"
-            class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition resize-none bg-white"
+            class="input resize-none bg-surface"
             placeholder="Descripción (opcional)"
             [(ngModel)]="prod.descripcion"
             [ngModelOptions]="{ standalone: true }"
@@ -795,7 +791,7 @@
             <div class="flex gap-1">
               <button
                 type="button"
-                class="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 disabled:opacity-30"
+                class="p-1.5 rounded-lg border border-border-soft hover:bg-surface-hover disabled:opacity-30"
                 [disabled]="$index === 0"
                 (click)="moveProducto($index, -1)"
                 title="Mover antes"
@@ -804,7 +800,7 @@
               </button>
               <button
                 type="button"
-                class="p-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 disabled:opacity-30"
+                class="p-1.5 rounded-lg border border-border-soft hover:bg-surface-hover disabled:opacity-30"
                 [disabled]="$index === model.detallePromocion.productos.length - 1"
                 (click)="moveProducto($index, 1)"
                 title="Mover después"
@@ -814,7 +810,7 @@
             </div>
             <button
               type="button"
-              class="p-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
+              class="p-1.5 rounded-lg border border-danger/30 text-danger hover:bg-danger-soft"
               (click)="removeProducto($index)"
               title="Quitar producto"
             >
@@ -827,7 +823,7 @@
       <!-- Botón agregar -->
       <button
         type="button"
-        class="rounded-xl border-2 border-dashed border-gray-300 hover:border-primary hover:bg-primary/5 flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition min-h-[180px]"
+        class="rounded-xl border-2 border-dashed border-border-soft hover:border-primary hover:bg-primary-tint flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition min-h-[180px]"
         (click)="addProducto()"
       >
         <lucide-icon name="plus" class="w-6 h-6"></lucide-icon>
@@ -841,29 +837,29 @@
   @if (esPaso('resumen')) {
   <section class="card">
     <header class="flex items-center gap-3 mb-5">
-      <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
-        <lucide-icon name="check-circle" class="w-4 h-4 text-emerald-600"></lucide-icon>
+      <div class="icon-badge bg-success-soft text-success">
+        <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
       </div>
       <div>
-        <h3 class="text-sm font-semibold text-text-dark">Resumen</h3>
-        <p class="text-xs text-text-body mt-0.5">Revisa antes de {{ isEdit ? "guardar" : "crear" }}.</p>
+        <h3 class="section-title text-sm">Resumen</h3>
+        <p class="subtle text-xs mt-0.5">Revisa antes de {{ isEdit ? "guardar" : "crear" }}.</p>
       </div>
     </header>
 
     @if (faltantes.length) {
-      <div class="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4">
-        <p class="text-sm font-medium text-amber-800 flex items-center gap-2 mb-2">
+      <div class="bg-warning-soft border border-warning/20 rounded-xl px-4 py-3 mb-4">
+        <p class="text-sm font-medium text-warning flex items-center gap-2 mb-2">
           <lucide-icon name="alert-triangle" class="w-4 h-4"></lucide-icon>
           Falta completar:
         </p>
-        <ul class="list-disc list-inside text-xs text-amber-700 space-y-0.5">
+        <ul class="list-disc list-inside text-xs text-warning space-y-0.5">
           @for (f of faltantes; track f) {
             <li>{{ f }}</li>
           }
         </ul>
       </div>
     } @else {
-      <div class="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-3 mb-4 text-sm text-emerald-800 flex items-center gap-2">
+      <div class="bg-success-soft border border-success/20 rounded-xl px-4 py-3 mb-4 text-sm text-success flex items-center gap-2">
         <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
         Todo listo para {{ isEdit ? "guardar los cambios" : "crear el establecimiento" }}.
       </div>
@@ -871,19 +867,19 @@
 
     @if (!soloFotos) {
       <div class="grid sm:grid-cols-2 gap-3 text-sm">
-        <div class="rounded-lg border border-gray-200 p-3">
+        <div class="rounded-xl border border-border-soft p-3">
           <p class="text-xs text-text-body mb-1">Nombre</p>
           <p class="text-text-dark font-medium">{{ model.nombre || "—" }}</p>
         </div>
-        <div class="rounded-lg border border-gray-200 p-3">
+        <div class="rounded-xl border border-border-soft p-3">
           <p class="text-xs text-text-body mb-1">Email</p>
           <p class="text-text-dark font-medium">{{ model.email || "—" }}</p>
         </div>
-        <div class="rounded-lg border border-gray-200 p-3">
+        <div class="rounded-xl border border-border-soft p-3">
           <p class="text-xs text-text-body mb-1">Ciudades / Categorías</p>
           <p class="text-text-dark font-medium">{{ model.ciudades.length }} ciudad(es) · {{ model.categorias.length }} categoría(s)</p>
         </div>
-        <div class="rounded-lg border border-gray-200 p-3">
+        <div class="rounded-xl border border-border-soft p-3">
           <p class="text-xs text-text-body mb-1">Promoción</p>
           <p class="text-text-dark font-medium">{{ model.detallePromocion.title || "—" }}</p>
         </div>
@@ -891,11 +887,11 @@
     }
     @if (!soloDetalles) {
       <div class="grid sm:grid-cols-2 gap-3 text-sm mt-3">
-        <div class="rounded-lg border border-gray-200 p-3">
+        <div class="rounded-xl border border-border-soft p-3">
           <p class="text-xs text-text-body mb-1">Galería</p>
           <p class="text-text-dark font-medium">{{ model.detallePromocion.galeria.length }} elemento(s)</p>
         </div>
-        <div class="rounded-lg border border-gray-200 p-3">
+        <div class="rounded-xl border border-border-soft p-3">
           <p class="text-xs text-text-body mb-1">Catálogo</p>
           <p class="text-text-dark font-medium">{{ model.detallePromocion.productos.length }} producto(s)</p>
         </div>
@@ -907,7 +903,7 @@
   <!-- NAVEGACIÓN DEL WIZARD -->
   <div class="flex items-center justify-between gap-3 pt-2">
     <button
-      class="btn-secondary px-5 py-2.5"
+      class="btn-outline"
       type="button"
       [routerLink]="['/establecimientos']"
     >
@@ -917,7 +913,7 @@
     <div class="flex items-center gap-3">
       @if (currentStep > 0) {
         <button
-          class="px-5 py-2.5 rounded-full border border-gray-300 text-sm text-text-body hover:bg-surface-muted transition flex items-center gap-1.5"
+          class="btn-secondary flex items-center gap-1.5"
           type="button"
           (click)="prevStep()"
         >
@@ -929,7 +925,7 @@
       <!-- Guardar solo esta sección (solo en edición, fuera del resumen) -->
       @if (isEdit && pasoActual !== 'resumen') {
         <button
-          class="px-5 py-2.5 rounded-full border border-accent text-sm text-accent hover:bg-accent/5 transition flex items-center gap-1.5 disabled:opacity-50"
+          class="btn-outline flex items-center gap-1.5"
           type="button"
           [disabled]="loading"
           (click)="guardarSeccion()"
@@ -941,7 +937,7 @@
 
       @if (!esUltimoPaso) {
         <button
-          class="btn-primary px-6 py-2.5 flex items-center gap-1.5"
+          class="btn-primary flex items-center gap-1.5"
           type="button"
           (click)="nextStep()"
         >
@@ -950,7 +946,7 @@
         </button>
       } @else {
         <button
-          class="btn-primary px-6 py-2.5"
+          class="btn-primary"
           type="button"
           [disabled]="loading"
           (click)="submit()"

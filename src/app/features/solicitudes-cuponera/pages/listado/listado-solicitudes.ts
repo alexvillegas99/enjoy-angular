@@ -32,6 +32,9 @@ export class ListadoSolicitudes implements OnInit {
   // Nota admin para rechazo
   notaAdminMap: Record<string, string> = {};
 
+  // Id de la solicitud que se está procesando (evita doble click en aprobar/rechazar)
+  procesandoId: string | null = null;
+
   ngOnInit() {
     this.buscar();
   }
@@ -81,16 +84,22 @@ export class ListadoSolicitudes implements OnInit {
       icon: 'question',
     });
     if (!ok) return;
+    if (this.procesandoId) return; // ya hay una operación en curso
+    this.procesandoId = sol._id;
 
     this.svc
       .actualizarEstado(sol._id, { estado: 'APROBADO' })
       .subscribe({
         next: () => {
+          this.procesandoId = null;
           this.alert.success('Aprobada', 'La solicitud fue aprobada exitosamente.');
           this.buscar();
         },
-        error: () => {
-          this.alert.error('Error', 'No se pudo aprobar la solicitud.');
+        error: (e) => {
+          this.procesandoId = null;
+          const msg = e?.error?.message || 'No se pudo aprobar la solicitud.';
+          this.alert.error('Error', msg);
+          this.buscar();
         },
       });
   }
@@ -107,18 +116,24 @@ export class ListadoSolicitudes implements OnInit {
       icon: 'warning',
     });
     if (!ok) return;
+    if (this.procesandoId) return; // ya hay una operación en curso
+    this.procesandoId = sol._id;
 
     const data: any = { estado: 'RECHAZADO' };
     if (nota) data.notaAdmin = nota;
 
     this.svc.actualizarEstado(sol._id, data).subscribe({
       next: () => {
+        this.procesandoId = null;
         this.alert.success('Rechazada', 'La solicitud fue rechazada.');
         this.notaAdminMap[sol._id] = '';
         this.buscar();
       },
-      error: () => {
-        this.alert.error('Error', 'No se pudo rechazar la solicitud.');
+      error: (e) => {
+        this.procesandoId = null;
+        const msg = e?.error?.message || 'No se pudo rechazar la solicitud.';
+        this.alert.error('Error', msg);
+        this.buscar();
       },
     });
   }
