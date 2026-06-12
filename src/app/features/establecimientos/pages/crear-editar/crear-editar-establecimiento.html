@@ -149,10 +149,9 @@
       </div>
 
       <div class="md:col-span-2 lg:col-span-4 flex items-center gap-3 pt-2">
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" [(ngModel)]="model.estado" class="sr-only peer" />
-          <div class="w-9 h-5 bg-surface-sunken rounded-full peer peer-checked:bg-accent transition-colors"></div>
-          <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-4 transition-transform"></div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="model.estado" />
+          <span class="toggle-switch-track"></span>
         </label>
         <span class="text-sm text-text-dark">Activo</span>
       </div>
