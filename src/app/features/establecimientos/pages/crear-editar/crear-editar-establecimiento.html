@@ -1,97 +1,152 @@
-<section class="page animate-in" style="max-width: 1040px;">
+<section class="establishment-editor animate-in">
 
-  <!-- HEADER UNIFICADO -->
-  <div class="page-header">
-    <a routerLink="/establecimientos" class="btn-icon" title="Volver al listado" aria-label="Volver">
-      <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
-    </a>
-    <div class="icon-badge icon-badge-primary">
-      <lucide-icon name="store" style="width:22px; height:22px;"></lucide-icon>
+  <header class="editor-hero">
+    <div class="editor-hero-main">
+      <a routerLink="/establecimientos" class="btn-icon" title="Volver al listado" aria-label="Volver">
+        <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+      </a>
+      <div class="icon-badge icon-badge-primary editor-hero-icon">
+        <lucide-icon name="store" class="w-5 h-5"></lucide-icon>
+      </div>
+      <div class="editor-hero-copy">
+        <div class="editor-eyebrow">{{ isEdit ? 'Administración del local' : 'Registro de local' }}</div>
+        <h1 class="page-title">{{ isEdit ? "Editar establecimiento" : "Nuevo establecimiento" }}</h1>
+        <p class="subtle">
+          {{ model.nombre || (isEdit ? 'Actualiza la información del establecimiento.' : 'Completa la información para registrar el establecimiento.') }}
+        </p>
+      </div>
     </div>
-    <div class="page-header-title">
-      <h1 class="page-title">{{ isEdit ? "Editar establecimiento" : "Nuevo establecimiento" }}</h1>
-      <p class="subtle">Completa los pasos para {{ isEdit ? "actualizar" : "registrar" }} el local.</p>
+
+    <div class="editor-hero-status">
+      <span
+        class="badge"
+        [class.badge-success]="model.estado"
+        [class.badge-muted]="!model.estado"
+      >
+        {{ model.estado ? 'Local activo' : 'Local inactivo' }}
+      </span>
+      <span class="editor-progress-label">{{ progresoPorcentaje }}% completado</span>
     </div>
-  </div>
+  </header>
 
   <!-- Banners informativos según rol -->
   @if (soloFotos) {
-    <div
-      class="card mb-4"
-      style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-color: rgba(91,164,240,0.35); background: rgba(91,164,240,0.08); color: var(--blue); font-size: 13.5px;"
-    >
-      <lucide-icon name="image" style="width:16px; height:16px; flex-shrink:0;"></lucide-icon>
-      Tu rol solo te permite actualizar las fotos del establecimiento.
+    <div class="editor-notice editor-notice-info">
+      <lucide-icon name="image" class="w-4 h-4 shrink-0"></lucide-icon>
+      <div>
+        <strong>Edición de contenido visual</strong>
+        <span>Tu rol solo permite actualizar las fotos y el catálogo del establecimiento.</span>
+      </div>
     </div>
   }
   @if (soloDetalles) {
-    <div
-      class="card mb-4"
-      style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-color: rgba(255,191,70,0.35); background: rgba(255,191,70,0.08); color: var(--yellow); font-size: 13.5px;"
-    >
-      <lucide-icon name="pencil" style="width:16px; height:16px; flex-shrink:0;"></lucide-icon>
-      Tu rol te permite editar los datos del establecimiento pero no las fotos.
+    <div class="editor-notice editor-notice-warning">
+      <lucide-icon name="pencil" class="w-4 h-4 shrink-0"></lucide-icon>
+      <div>
+        <strong>Edición de información</strong>
+        <span>Tu rol permite editar los datos del establecimiento, pero no sus imágenes.</span>
+      </div>
     </div>
   }
 
-  <!-- PROGRESO DEL WIZARD -->
-  <div class="card">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="section-title text-base">
-          Paso {{ currentStep + 1 }} de {{ pasos.length }}
-        </h2>
-        <p class="subtle text-xs mt-0.5">
-          {{ pasos[currentStep]?.label }}
-        </p>
-      </div>
-      <span class="badge badge-accent">{{ pasos[currentStep]?.label }}</span>
-    </div>
+  <div class="editor-layout">
+    <aside class="editor-sidebar">
+      <div class="editor-sidebar-card">
+        <div class="editor-sidebar-head">
+          <span class="editor-sidebar-kicker">Progreso</span>
+          <strong>{{ currentStep + 1 }} de {{ pasos.length }}</strong>
+        </div>
+        <div class="editor-progress-track" aria-hidden="true">
+          <span [style.width.%]="progresoPorcentaje"></span>
+        </div>
 
-    <!-- Pasos clickeables -->
-    <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-1">
-      @for (p of pasos; track p.id; let i = $index) {
-        <button
-          type="button"
-          class="flex items-center gap-2 shrink-0 transition"
-          (click)="goStep(i)"
-        >
-          <span
-            class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold border transition"
-            [class.bg-accent]="i === currentStep"
-            [class.text-white]="i === currentStep"
-            [class.border-accent]="i <= currentStep"
-            [class.text-accent]="i < currentStep"
-            [class.border-border-soft]="i > currentStep"
-            [class.text-text-body]="i > currentStep"
-          >
-            @if (i < currentStep) {
-              <lucide-icon name="check" class="w-3.5 h-3.5"></lucide-icon>
+        <nav class="editor-step-list" aria-label="Secciones del establecimiento">
+          @for (p of pasos; track p.id; let i = $index) {
+            <button
+              type="button"
+              class="editor-step"
+              [class.is-active]="i === currentStep"
+              [class.is-complete]="i < currentStep"
+              (click)="goStep(i)"
+            >
+              <span class="editor-step-icon">
+                @if (i < currentStep) {
+                  <lucide-icon name="check" class="w-4 h-4"></lucide-icon>
+                } @else {
+                  <lucide-icon [name]="p.icon" class="w-4 h-4"></lucide-icon>
+                }
+              </span>
+              <span class="editor-step-copy">
+                <span>Paso {{ i + 1 }}</span>
+                <strong>{{ p.label }}</strong>
+              </span>
+              <lucide-icon name="chevron-right" class="editor-step-arrow w-4 h-4"></lucide-icon>
+            </button>
+          }
+        </nav>
+
+        <div class="editor-sidebar-tip">
+          <lucide-icon name="info" class="w-4 h-4"></lucide-icon>
+          <span>
+            @if (isEdit) {
+              Puedes guardar únicamente la sección actual sin completar las demás.
             } @else {
-              {{ i + 1 }}
+              Avanza paso a paso; validaremos cada sección antes de continuar.
             }
           </span>
-          <span
-            class="text-xs font-medium hidden sm:inline"
-            [class.text-text-dark]="i === currentStep"
-            [class.text-text-body]="i !== currentStep"
-          >{{ p.label }}</span>
-        </button>
-        @if (!$last) {
-          <span class="h-px w-3 sm:w-6 bg-border-soft shrink-0"></span>
-        }
-      }
-    </div>
-  </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="editor-main">
+      <div class="editor-mobile-progress card">
+        <div class="editor-mobile-progress-head">
+          <div>
+            <span>Paso {{ currentStep + 1 }} de {{ pasos.length }}</span>
+            <strong>{{ pasos[currentStep]?.label }}</strong>
+          </div>
+          <span>{{ progresoPorcentaje }}%</span>
+        </div>
+        <div class="editor-progress-track">
+          <span [style.width.%]="progresoPorcentaje"></span>
+        </div>
+        <div class="editor-mobile-steps">
+          @for (p of pasos; track p.id; let i = $index) {
+            <button
+              type="button"
+              [class.is-active]="i === currentStep"
+              [class.is-complete]="i < currentStep"
+              [attr.aria-label]="p.label"
+              (click)="goStep(i)"
+            >
+              {{ i + 1 }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="editor-section-intro">
+        <div>
+          <span class="editor-eyebrow">Paso {{ currentStep + 1 }}</span>
+          <h2>{{ pasos[currentStep]?.label }}</h2>
+          <p>{{ pasoDescripcion }}</p>
+        </div>
+        <div class="icon-badge icon-badge-primary">
+          <lucide-icon [name]="pasos[currentStep]?.icon || 'store'" class="w-5 h-5"></lucide-icon>
+        </div>
+      </div>
 
   <!-- ESTABLECIMIENTO -->
   @if (esPaso('datos')) {
-  <section class="card">
-    <header class="flex items-center gap-3 mb-6">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-primary">
         <lucide-icon name="store" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Establecimiento</h3>
+      <div>
+        <h3 class="section-title text-sm">Información del establecimiento</h3>
+        <p class="subtle text-xs">Datos con los que el equipo y los clientes identificarán al local.</p>
+      </div>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -148,12 +203,21 @@
         }
       </div>
 
-      <div class="md:col-span-2 lg:col-span-4 flex items-center gap-3 pt-2">
-        <label class="toggle-switch">
-          <input type="checkbox" [(ngModel)]="model.estado" />
-          <span class="toggle-switch-track"></span>
+      <div class="md:col-span-2 lg:col-span-4">
+        <label class="choice-card">
+          <span class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="model.estado" />
+            <span class="toggle-switch-track"></span>
+          </span>
+          <span class="choice-card-copy">
+            <span class="choice-card-title">
+              {{ model.estado ? 'Establecimiento activo' : 'Establecimiento inactivo' }}
+            </span>
+            <span class="choice-card-help">
+              {{ model.estado ? 'El local puede mostrarse y operar normalmente.' : 'El local permanecerá oculto para los clientes.' }}
+            </span>
+          </span>
         </label>
-        <span class="text-sm text-text-dark">Activo</span>
       </div>
     </div>
   </section>
@@ -161,12 +225,15 @@
 
   <!-- CATEGORÍAS -->
   @if (esPaso('ubicacion')) {
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-accent">
         <lucide-icon name="tags" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Categorías</h3>
+      <div>
+        <h3 class="section-title text-sm">Categorías</h3>
+        <p class="subtle text-xs">Selecciona las categorías en las que los clientes encontrarán este local.</p>
+      </div>
     </header>
     @if (errors['categorias']) {
       <p class="form-hint text-danger mb-3">{{ errors['categorias'] }}</p>
@@ -178,8 +245,8 @@
   </section>
 
   <!-- PROVINCIA (obligatoria) -->
-  <section class="card">
-    <header class="flex items-center gap-3 mb-2">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-primary">
         <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
       </div>
@@ -198,12 +265,15 @@
   </section>
 
   <!-- CIUDADES -->
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-accent">
         <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Ciudades <span class="text-danger">*</span></h3>
+      <div>
+        <h3 class="section-title text-sm">Ciudades <span class="text-danger">*</span></h3>
+        <p class="subtle text-xs">Puedes asociar el establecimiento con una o varias ciudades.</p>
+      </div>
     </header>
     @if (errors['ciudades']) {
       <p class="form-hint text-danger mb-3">{{ errors['ciudades'] }}</p>
@@ -222,8 +292,8 @@
 
   <!-- GEOLOCALIZACIÓN -->
   @if (esPaso('ubicacion')) {
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-primary">
         <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
       </div>
@@ -252,7 +322,7 @@
     }
 
     <!-- Ingreso manual -->
-    <div class="grid grid-cols-2 gap-3 mb-3">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
       <div>
         <label class="form-label">Latitud</label>
         <input
@@ -281,7 +351,7 @@
       <p class="form-hint text-danger mb-3">{{ geoError }}</p>
     }
 
-    <div class="flex items-center gap-3 flex-wrap">
+    <div class="editor-inline-actions">
       <button
         type="button"
         class="btn-outline btn-sm flex items-center gap-2"
@@ -317,60 +387,71 @@
 
   <!-- MODAL MAPA (Leaflet) -->
   @if (mapaAbierto) {
-    <div
-      class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4"
-      (click)="cerrarMapa()"
-    >
-      <div
-        class="bg-surface rounded-2xl shadow-pop w-full max-w-2xl overflow-hidden"
+    <div class="modal-backdrop" (click)="cerrarMapa()">
+      <section
+        class="modal-surface"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mapa-title"
         (click)="$event.stopPropagation()"
       >
-        <div class="flex items-center justify-between px-5 py-3 border-b border-border-soft">
-          <h3 class="section-title text-sm">Seleccionar ubicación en el mapa</h3>
-          <button type="button" class="text-text-faint hover:text-danger transition" (click)="cerrarMapa()">✕</button>
-        </div>
+        <header class="modal-header">
+          <div class="flex items-center gap-3">
+            <span class="icon-badge icon-badge-primary">
+              <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
+            </span>
+            <div>
+              <h3 id="mapa-title" class="section-title text-sm">Seleccionar ubicación</h3>
+              <p class="subtle text-xs">Toca el mapa o arrastra el marcador para ajustar la posición.</p>
+            </div>
+          </div>
+          <button type="button" class="btn-ghost btn-icon" aria-label="Cerrar mapa" (click)="cerrarMapa()">
+            <lucide-icon name="x" class="w-5 h-5"></lucide-icon>
+          </button>
+        </header>
 
-        <p class="px-5 pt-3 subtle text-xs">
-          Toca el mapa para colocar el marcador. Puedes arrastrarlo para ajustar la posición.
-        </p>
-
-        <div id="mapa-ubicacion" class="w-full h-80 mt-3"></div>
-
-        <div class="flex items-center justify-between gap-3 px-5 py-3 border-t border-border-soft">
-          <span class="text-xs font-mono text-text-body">
+        <div class="modal-body editor-map-body">
+          <div id="mapa-ubicacion" class="editor-map"></div>
+          <div class="editor-map-selection">
+            <span class="subtle">Coordenadas seleccionadas</span>
+            <strong class="font-mono text-text-dark">
             @if (mapSeleccion) {
               {{ mapSeleccion.lat }}, {{ mapSeleccion.lng }}
             } @else {
               Sin selección
             }
-          </span>
-          <div class="flex gap-2">
-            <button
-              type="button"
-              class="btn-outline btn-sm"
-              (click)="cerrarMapa()"
-            >Cancelar</button>
-            <button
-              type="button"
-              class="btn-secondary btn-sm"
-              [disabled]="!mapSeleccion"
-              (click)="confirmarMapa()"
-            >Confirmar ubicación</button>
+            </strong>
           </div>
         </div>
-      </div>
+
+        <footer class="modal-footer">
+          <button type="button" class="btn-outline" (click)="cerrarMapa()">Cancelar</button>
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="!mapSeleccion"
+            (click)="confirmarMapa()"
+          >
+            <lucide-icon name="check" class="w-4 h-4"></lucide-icon>
+            Confirmar ubicación
+          </button>
+        </footer>
+      </section>
     </div>
   }
   } <!-- /if !soloFotos (geo) -->
 
   <!-- DETALLE PROMOCIÓN PRINCIPAL -->
   @if (esPaso('promocion')) {
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-accent">
         <lucide-icon name="ticket" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Detalle de la promoción principal</h3>
+      <div>
+        <h3 class="section-title text-sm">Promoción principal</h3>
+        <p class="subtle text-xs">Configura el beneficio que se mostrará primero en el perfil del local.</p>
+      </div>
     </header>
 
     <div class="grid md:grid-cols-2 gap-5">
@@ -460,12 +541,15 @@
   </section>
 
   <!-- FECHAS EXCLUIDAS -->
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge bg-danger-soft text-danger">
         <lucide-icon name="calendar-x" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Fechas excluidas</h3>
+      <div>
+        <h3 class="section-title text-sm">Fechas excluidas</h3>
+        <p class="subtle text-xs">Añade feriados o fechas en las que la promoción no estará disponible.</p>
+      </div>
     </header>
 
     @if (model.detallePromocion.fechasExcluidas.length) {
@@ -482,7 +566,7 @@
       </div>
     }
 
-    <div class="flex gap-2">
+    <div class="editor-add-row">
       <input
         #fechaExcluidaInput
         type="date"
@@ -500,12 +584,15 @@
 
   <!-- DÍAS Y HORARIOS ESPECÍFICOS -->
   @if (!model.detallePromocion.aplicaTodosLosDias) {
-    <section class="card">
-      <header class="flex items-center gap-3 mb-5">
+    <section class="card editor-form-section">
+      <header class="editor-card-header">
         <div class="icon-badge icon-badge-primary">
           <lucide-icon name="calendar-clock" class="w-4 h-4"></lucide-icon>
         </div>
-        <h3 class="section-title text-sm">Días y horarios específicos</h3>
+        <div>
+          <h3 class="section-title text-sm">Días y horarios específicos</h3>
+          <p class="subtle text-xs">Define excepciones cuando la promoción no aplica todos los días.</p>
+        </div>
       </header>
 
       <div class="flex flex-wrap gap-2 mb-5">
@@ -524,7 +611,7 @@
       @if (model.detallePromocion.diasAplicables.length) {
         <div class="space-y-3">
           @for (dia of model.detallePromocion.diasAplicables; track dia) {
-            <div class="flex items-center gap-4 px-3 py-2 bg-surface-muted rounded-lg">
+            <div class="editor-day-row">
               <span class="w-24 capitalize text-sm font-medium text-text-dark">{{ dia }}</span>
               <div class="flex items-center gap-2">
                 <label class="text-xs text-text-body">Abre</label>
@@ -542,17 +629,21 @@
   }
 
   <!-- PROMOCIONES EXTRA -->
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-accent">
         <lucide-icon name="ticket-plus" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Promociones extra</h3>
+      <div class="flex-1">
+        <h3 class="section-title text-sm">Promociones adicionales</h3>
+        <p class="subtle text-xs">Agrega beneficios temporales o promociones flash sin reemplazar la principal.</p>
+      </div>
+      <span class="badge badge-muted">{{ model.detallePromocionesExtra.length }}</span>
     </header>
 
     <div class="space-y-5">
       @for (promo of model.detallePromocionesExtra; track $index; let i = $index) {
-        <div class="rounded-xl border border-border-soft p-5 bg-surface-muted/50">
+        <div class="editor-nested-card">
           <div class="flex justify-between items-center mb-4">
             <h4 class="text-sm font-semibold text-text-dark">Promoción {{ i + 1 }}</h4>
             <button type="button" class="text-danger hover:opacity-80 text-xs font-medium transition" (click)="removePromocionExtra(i)">
@@ -598,12 +689,9 @@
         </div>
       }
 
-      <button
-        type="button"
-        class="w-full px-4 py-3 border-2 border-dashed border-border-soft rounded-xl text-sm text-text-body hover:border-accent hover:text-accent hover:bg-accent-soft transition"
-        (click)="addPromocionExtra()"
-      >
-        + Añadir promoción extra
+      <button type="button" class="editor-add-button" (click)="addPromocionExtra()">
+        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
+        Añadir promoción extra
       </button>
     </div>
   </section>
@@ -611,17 +699,20 @@
 
   <!-- IMÁGENES DEL LOCAL (logo + galería) -->
   @if (esPaso('imagenes')) {
-  <section class="card">
-    <header class="flex items-center gap-3 mb-6">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge icon-badge-primary">
         <lucide-icon name="image" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="section-title text-sm">Imágenes del local</h3>
+      <div>
+        <h3 class="section-title text-sm">Identidad visual y galería</h3>
+        <p class="subtle text-xs">Carga el logo y ordena las imágenes como aparecerán en la aplicación.</p>
+      </div>
     </header>
 
     <div class="flex flex-col gap-7">
       <!-- Logo -->
-      <div class="flex items-start gap-4">
+      <div class="editor-logo-row">
         <div class="relative group shrink-0">
           @if (model.detallePromocion.logoBase64 || model.detallePromocion.logoUrl) {
             <img
@@ -639,9 +730,14 @@
             <input type="file" class="hidden" accept="image/*" (change)="onFile($event, 'logoBase64')" />
           </label>
         </div>
-        <div class="pt-1">
+        <div class="editor-logo-copy">
           <label class="block text-sm font-medium text-text-dark">Logo del establecimiento</label>
           <p class="text-xs text-text-body mt-1 max-w-xs">Imagen cuadrada del logo. Pasa el cursor por encima y haz clic para subir o recortar.</p>
+          <label class="btn-outline btn-sm mt-3 inline-flex cursor-pointer">
+            <lucide-icon name="upload" class="w-4 h-4"></lucide-icon>
+            {{ model.detallePromocion.logoBase64 || model.detallePromocion.logoUrl ? 'Cambiar logo' : 'Subir logo' }}
+            <input type="file" class="hidden" accept="image/*" (change)="onFile($event, 'logoBase64')" />
+          </label>
         </div>
       </div>
 
@@ -653,7 +749,7 @@
         </div>
         <p class="form-hint mb-4">Hasta {{ MAX_GALERIA }} fotos o videos. Usa ◀ ▶ para ordenar cómo se muestran. Si hay <b>video</b>, se reproduce primero (de fondo) al entrar al detalle.</p>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        <div class="editor-gallery-grid">
           @for (item of model.detallePromocion.galeria; track $index) {
             <div class="relative group rounded-xl overflow-hidden border border-border-soft aspect-square bg-surface-muted">
               @if (item.type === 'video') {
@@ -743,15 +839,15 @@
 
   <!-- CATÁLOGO DE PRODUCTOS (genérico: productos/servicios del local) -->
   @if (esPaso('catalogo')) {
-  <section class="card">
-    <header class="flex items-center justify-between mb-6">
+  <section class="card editor-form-section">
+    <header class="editor-card-header editor-card-header-between">
       <div class="flex items-center gap-3">
         <div class="icon-badge icon-badge-primary">
           <lucide-icon name="shopping-bag" class="w-4 h-4"></lucide-icon>
         </div>
         <div>
-          <h3 class="section-title text-sm">Catálogo</h3>
-          <p class="subtle text-xs">Productos o servicios que ofrece el local. Sin límite.</p>
+          <h3 class="section-title text-sm">Catálogo del establecimiento</h3>
+          <p class="subtle text-xs">Presenta productos o servicios destacados. Puedes cambiar el orden en cualquier momento.</p>
         </div>
       </div>
       <span class="badge badge-muted">{{ model.detallePromocion.productos.length }}</span>
@@ -830,7 +926,7 @@
       <!-- Botón agregar -->
       <button
         type="button"
-        class="rounded-xl border-2 border-dashed border-border-soft hover:border-primary hover:bg-primary-tint flex flex-col items-center justify-center text-text-body gap-1 cursor-pointer transition min-h-[180px]"
+        class="editor-catalog-add"
         (click)="addProducto()"
       >
         <lucide-icon name="plus" class="w-6 h-6"></lucide-icon>
@@ -842,8 +938,8 @@
 
   <!-- RESUMEN -->
   @if (esPaso('resumen')) {
-  <section class="card">
-    <header class="flex items-center gap-3 mb-5">
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
       <div class="icon-badge bg-success-soft text-success">
         <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
       </div>
@@ -908,19 +1004,20 @@
   }
 
   <!-- NAVEGACIÓN DEL WIZARD -->
-  <div class="flex items-center justify-between gap-3 pt-2">
+  <div class="editor-actions">
     <button
-      class="btn-outline"
+      class="btn-ghost editor-cancel-action"
       type="button"
       [routerLink]="['/establecimientos']"
     >
+      <lucide-icon name="x" class="w-4 h-4"></lucide-icon>
       Cancelar
     </button>
 
-    <div class="flex items-center gap-3">
+    <div class="editor-primary-actions">
       @if (currentStep > 0) {
         <button
-          class="btn-secondary flex items-center gap-1.5"
+          class="btn-outline"
           type="button"
           (click)="prevStep()"
         >
@@ -932,19 +1029,19 @@
       <!-- Guardar solo esta sección (solo en edición, fuera del resumen) -->
       @if (isEdit && pasoActual !== 'resumen') {
         <button
-          class="btn-outline flex items-center gap-1.5"
+          class="btn-secondary editor-save-section"
           type="button"
           [disabled]="loading"
           (click)="guardarSeccion()"
         >
-          <lucide-icon name="check" class="w-4 h-4"></lucide-icon>
-          Guardar esta sección
+          <lucide-icon name="save" class="w-4 h-4"></lucide-icon>
+          <span>Guardar sección</span>
         </button>
       }
 
       @if (!esUltimoPaso) {
         <button
-          class="btn-primary flex items-center gap-1.5"
+          class="btn-primary"
           type="button"
           (click)="nextStep()"
         >
@@ -953,19 +1050,23 @@
         </button>
       } @else {
         <button
-          class="btn-primary"
+          class="btn-primary editor-submit"
           type="button"
           [disabled]="loading"
           (click)="submit()"
         >
           @if (loading) {
+            <span class="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
             Guardando...
           } @else {
+            <lucide-icon name="check" class="w-4 h-4"></lucide-icon>
             {{ isEdit ? "Guardar cambios" : "Crear establecimiento" }}
           }
         </button>
       }
     </div>
+  </div>
+    </main>
   </div>
 
   <!-- MODAL DE RECORTE -->

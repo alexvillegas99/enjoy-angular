@@ -29,6 +29,7 @@ import { ImageCropperModal } from '../../../../shared/components/image-cropper-m
     ImageCropperModal,
   ],
   templateUrl: './crear-editar-establecimiento.html',
+  styleUrl: './crear-editar-establecimiento.scss',
 })
 export class CrearEditarEstablecimiento {
   private route = inject(ActivatedRoute);
@@ -104,6 +105,25 @@ export class CrearEditarEstablecimiento {
 
   get pasoActual(): string {
     return this.pasos[this.currentStep]?.id ?? '';
+  }
+
+  get progresoPorcentaje(): number {
+    return this.pasos.length
+      ? Math.round(((this.currentStep + 1) / this.pasos.length) * 100)
+      : 0;
+  }
+
+  get pasoDescripcion(): string {
+    const descripciones: Record<string, string> = {
+      datos: 'Información principal, contacto y disponibilidad del establecimiento.',
+      ubicacion: 'Clasificación, cobertura por ciudad y coordenadas del local.',
+      promocion: 'Beneficio principal, horarios, restricciones y promociones adicionales.',
+      imagenes: 'Logo, portada y material visual que verán los clientes.',
+      catalogo: 'Productos o servicios destacados dentro del perfil del local.',
+      resumen: 'Comprueba la información antes de guardar los cambios.',
+    };
+
+    return descripciones[this.pasoActual] ?? '';
   }
 
   esPaso(id: string): boolean {
