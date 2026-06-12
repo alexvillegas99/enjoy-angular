@@ -22,14 +22,12 @@
   <!-- FILTRO -->
   <div class="card mb-4" style="padding:18px;">
     <div class="filter-bar">
-      <div class="relative" style="grid-column: span 2;">
+      <div class="search-field" style="grid-column: span 2;">
         <lucide-icon
           name="search"
-          style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-mute); pointer-events:none;"
         ></lucide-icon>
         <input
           class="input"
-          style="padding-left:36px;"
           placeholder="Buscar por nombre, email, promo, tags…"
           [(ngModel)]="busqueda"
           (keyup.enter)="buscar()"

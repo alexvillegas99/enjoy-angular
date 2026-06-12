@@ -9,19 +9,17 @@
   <div class="card p-5 sm:p-6 space-y-5">
 
     <!-- 🔍 BUSCADOR -->
-    <div class="relative">
+    <div class="search-field has-trailing">
       <!-- Icono buscar -->
       <lucide-icon
         name="search"
-        class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2
-               w-4 h-4 text-text-faint"
       ></lucide-icon>
 
       <!-- Input -->
       <input
         type="text"
         placeholder="Buscar por secuencial, estado o cliente"
-        class="input pl-10 pr-10"
+        class="input"
         (input)="onSearchInput($event.target.value)"
       />
 

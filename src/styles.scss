@@ -944,18 +944,34 @@ input[type="date"], input[type="datetime-local"], input[type="time"] {
   font-weight: 700;
   color: var(--text-soft);
 }
-.search-field { position: relative; }
-.search-field > lucide-icon {
+.search-field {
+  position: relative;
+  width: 100%;
+}
+.search-field > lucide-icon:first-child,
+.search-field > svg:first-child,
+.search-field > .search-field-icon {
   position: absolute;
-  left: 13px;
+  z-index: 1;
+  left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   color: var(--text-mute);
   pointer-events: none;
 }
-.search-field > .input { padding-left: 38px; }
+.search-field > .search-field-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.search-field > .search-field-icon > svg {
+  width: 16px;
+  height: 16px;
+}
+.search-field > .input { padding-left: 42px; }
+.search-field.has-trailing > .input { padding-right: 42px; }
 
 /* Empty state estándar */
 .empty-state {

@@ -1,8 +1,8 @@
 <div class="space-y-4">
   <!-- Buscador + contador -->
   <div class="flex items-center gap-3">
-    <div class="relative flex-1">
-      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-faint" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <div class="search-field flex-1">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
@@ -10,7 +10,7 @@
         type="text"
         [(ngModel)]="query"
         placeholder="Buscar categoría…"
-        class="input pl-10"
+        class="input"
       />
     </div>
     <span class="badge badge-muted whitespace-nowrap">{{ selectedIds.length }} seleccionada(s)</span>
