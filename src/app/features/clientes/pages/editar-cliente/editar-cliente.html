@@ -6,96 +6,99 @@
 }
 
 @if (!cargando) {
-<div class="max-w-3xl mx-auto space-y-8 p-6 pb-20">
-
-  <!-- BACK -->
-  <a routerLink="/clientes" class="inline-flex items-center gap-1.5 text-sm text-text-body hover:text-accent transition">
-    <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
-    Volver al listado
-  </a>
+<div class="form-page space-y-6 animate-in">
 
   <!-- HEADER -->
-  <div>
-    <h1 class="text-xl font-semibold text-text-dark">
-      {{ isEdit ? 'Editar cliente' : 'Nuevo cliente' }}
-    </h1>
-    <p class="text-sm text-text-body mt-1">
-      {{ isEdit ? 'Modifica los datos del cliente.' : 'Completa los datos para registrar un nuevo cliente.' }}
-    </p>
+  <div class="page-header">
+    <a routerLink="/clientes" class="btn-icon" title="Volver al listado" aria-label="Volver al listado">
+      <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
+    </a>
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="user" class="w-5 h-5"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">{{ isEdit ? 'Editar cliente' : 'Nuevo cliente' }}</h1>
+      <p class="subtle">
+        {{ isEdit ? 'Actualiza la información y el estado de la cuenta.' : 'Completa los datos para registrar un nuevo cliente.' }}
+      </p>
+    </div>
   </div>
 
   <!-- DATOS PERSONALES -->
-  <section class="card">
-    <header class="flex items-center gap-3 mb-6">
-      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-        <lucide-icon name="user" class="w-4 h-4 text-primary"></lucide-icon>
+  <section class="card form-section">
+    <header class="form-section-header">
+      <div class="icon-badge icon-badge-primary">
+        <lucide-icon name="user" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Datos personales</h3>
+      <div class="form-section-copy">
+        <h3 class="section-title">Datos personales</h3>
+        <p class="subtle">Información de contacto que identifica al cliente.</p>
+      </div>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
       <!-- Nombres -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Nombres</label>
+        <label class="form-label">Nombres</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['nombres']"
+          class="input"
+          [class.border-danger]="errors['nombres']"
           [(ngModel)]="model.nombres"
           placeholder="Nombres"
         />
         @if (errors['nombres']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['nombres'] }}</p>
+          <p class="text-xs text-danger mt-1">{{ errors['nombres'] }}</p>
         }
       </div>
 
       <!-- Apellidos -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Apellidos</label>
+        <label class="form-label">Apellidos</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['apellidos']"
+          class="input"
+          [class.border-danger]="errors['apellidos']"
           [(ngModel)]="model.apellidos"
           placeholder="Apellidos"
         />
         @if (errors['apellidos']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['apellidos'] }}</p>
+          <p class="text-xs text-danger mt-1">{{ errors['apellidos'] }}</p>
         }
       </div>
 
       <!-- Email -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Email</label>
+        <label class="form-label">Email</label>
         <input
           type="email"
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['email']"
+          class="input"
+          [class.border-danger]="errors['email']"
           [(ngModel)]="model.email"
           placeholder="correo&#64;ejemplo.com"
         />
         @if (errors['email']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['email'] }}</p>
+          <p class="text-xs text-danger mt-1">{{ errors['email'] }}</p>
         }
       </div>
 
       <!-- Teléfono -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Teléfono</label>
+        <label class="form-label">Teléfono</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['telefono']"
+          class="input"
+          [class.border-danger]="errors['telefono']"
           [(ngModel)]="model.telefono"
           placeholder="0999999999"
         />
         @if (errors['telefono']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['telefono'] }}</p>
+          <p class="text-xs text-danger mt-1">{{ errors['telefono'] }}</p>
         }
       </div>
 
       <!-- Dirección -->
       <div class="md:col-span-2">
-        <label class="block text-xs font-medium text-text-body mb-1">Dirección</label>
+        <label class="form-label">Dirección</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input"
           [(ngModel)]="model.direccion"
           placeholder="Dirección (opcional)"
         />
@@ -103,42 +106,48 @@
 
       <!-- Fecha nacimiento -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Fecha de nacimiento</label>
+        <label class="form-label">Fecha de nacimiento</label>
         <input
           type="date"
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
+          class="input"
           [value]="model.fechaNacimiento | date:'yyyy-MM-dd'"
           (change)="onFechaNacimiento($event)"
         />
       </div>
 
       <!-- Estado -->
-      <div class="flex items-end pb-1">
-        <label class="relative inline-flex items-center cursor-pointer gap-3">
+      <div class="md:col-span-2">
+        <label class="choice-card">
           <input type="checkbox" [(ngModel)]="model.estado" class="sr-only peer" />
-          <div class="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-accent transition-colors"></div>
+          <div class="w-9 h-5 bg-surface-sunken rounded-full peer peer-checked:bg-accent transition-colors"></div>
           <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-4 transition-transform"></div>
-          <span class="text-sm text-text-dark ml-2">Activo</span>
+          <span class="choice-card-copy">
+            <span class="choice-card-title">Cliente activo</span>
+            <span class="choice-card-help">Puede ingresar a la app y utilizar sus membresías.</span>
+          </span>
         </label>
       </div>
     </div>
   </section>
 
   <!-- IDENTIFICACIÓN -->
-  <section class="card">
-    <header class="flex items-center gap-3 mb-6">
-      <div class="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-        <lucide-icon name="id-card" class="w-4 h-4 text-accent"></lucide-icon>
+  <section class="card form-section">
+    <header class="form-section-header">
+      <div class="icon-badge icon-badge-accent">
+        <lucide-icon name="id-card" class="w-4 h-4"></lucide-icon>
       </div>
-      <h3 class="text-sm font-semibold text-text-dark">Identificación</h3>
+      <div class="form-section-copy">
+        <h3 class="section-title">Identificación</h3>
+        <p class="subtle">Documento utilizado para validar la identidad del cliente.</p>
+      </div>
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
       <!-- Tipo -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Tipo de identificación</label>
+        <label class="form-label">Tipo de identificación</label>
         <select
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition bg-white"
+          class="input bg-white"
           [(ngModel)]="model.tipoIdentificacion"
         >
           <option value="CEDULA">Cédula</option>
@@ -149,27 +158,27 @@
 
       <!-- Número -->
       <div>
-        <label class="block text-xs font-medium text-text-body mb-1">Número de identificación</label>
+        <label class="form-label">Número de identificación</label>
         <input
-          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-          [class.border-red-400]="errors['identificacion']"
+          class="input"
+          [class.border-danger]="errors['identificacion']"
           [(ngModel)]="model.identificacion"
           [placeholder]="model.tipoIdentificacion === 'CEDULA' ? '1700000000' : model.tipoIdentificacion === 'RUC' ? '1700000000001' : 'Pasaporte'"
         />
         @if (errors['identificacion']) {
-          <p class="text-xs text-red-500 mt-1">{{ errors['identificacion'] }}</p>
+          <p class="text-xs text-danger mt-1">{{ errors['identificacion'] }}</p>
         }
       </div>
     </div>
   </section>
 
   <!-- GUARDAR -->
-  <div class="flex justify-end gap-3 pt-4">
-    <a routerLink="/clientes" class="btn-secondary px-6 py-2.5">
+  <div class="form-actions">
+    <a routerLink="/clientes" class="btn-outline btn-lg">
       Cancelar
     </a>
     <button
-      class="btn-primary px-6 py-2.5"
+      class="btn-primary btn-lg"
       [disabled]="loading"
       (click)="submit()"
     >

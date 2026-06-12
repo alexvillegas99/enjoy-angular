@@ -2,15 +2,13 @@
   @for (c of ciudades; track c._id) {
     <button
       type="button"
-      class="px-4 py-1.5 rounded-full text-xs font-medium border transition"
-      [class.bg-primary]="isSelected(c._id)"
-      [class.text-white]="isSelected(c._id)"
-      [class.border-primary]="isSelected(c._id)"
-      [class.border-gray-200]="!isSelected(c._id)"
-      [class.text-text-body]="!isSelected(c._id)"
+      class="chip"
+      [class.is-active]="isSelected(c._id)"
       (click)="toggle(c._id)"
     >
       {{ c.nombre }}
     </button>
+  } @empty {
+    <p class="subtle text-sm py-2">No hay ciudades disponibles.</p>
   }
 </div>

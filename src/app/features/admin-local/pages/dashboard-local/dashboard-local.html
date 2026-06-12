@@ -1,47 +1,46 @@
 <div class="p-6 space-y-6">
 
   <!-- HEADER + FILTRO -->
-  <div class="flex flex-col lg:flex-row justify-between items-center gap-4">
-    <h1 class="text-2xl font-semibold text-slate-800">Dashboard Operativo</h1>
+  <div class="flex flex-col lg:flex-row lg:justify-between lg:items-end gap-4">
+    <div>
+      <h1 class="page-title">Dashboard Operativo</h1>
+      <p class="subtle">Resumen de canjes y actividad de tu local.</p>
+    </div>
 
-    <div class="flex gap-2 items-center">
-      <input type="date" [(ngModel)]="fechaInicio"
-        class="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-      <input type="date" [(ngModel)]="fechaFin"
-        class="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
-      <button (click)="filtrar()"
-        class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm hover:bg-slate-700 disabled:opacity-50"
-        [disabled]="loading">
+    <div class="flex flex-wrap gap-2 items-center">
+      <input type="date" [(ngModel)]="fechaInicio" class="input w-auto" />
+      <input type="date" [(ngModel)]="fechaFin" class="input w-auto" />
+      <button (click)="filtrar()" class="btn-secondary btn-sm" [disabled]="loading">
         {{ loading ? 'Cargando...' : 'Filtrar' }}
       </button>
     </div>
   </div>
 
   @if (loading) {
-    <div class="text-center py-12 text-slate-500">Cargando datos...</div>
+    <div class="card text-center py-12 subtle">Cargando datos...</div>
   } @else {
 
     <!-- KPIs -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-      <div class="bg-slate-800 text-white p-6 rounded-2xl shadow-md">
-        <p class="text-sm opacity-70">Total Canjes</p>
+      <div class="surface-brand rounded-xl p-6 shadow-card">
+        <p class="text-sm text-white/70">Total Canjes</p>
         <h2 class="text-3xl font-bold mt-2">{{ totalCanjes }}</h2>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-md">
-        <p class="text-sm text-gray-500">Empleados Activos</p>
-        <h2 class="text-3xl font-bold mt-2">{{ empleadosActivos }}</h2>
+      <div class="stat-card">
+        <p class="stat-label">Empleados Activos</p>
+        <h2 class="stat-value">{{ empleadosActivos }}</h2>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-md">
-        <p class="text-sm text-gray-500">Empleado Top</p>
-        <h2 class="text-xl font-semibold mt-2">{{ empleadoTop }}</h2>
+      <div class="stat-card">
+        <p class="stat-label">Empleado Top</p>
+        <h2 class="text-xl font-semibold mt-2 text-text-strong">{{ empleadoTop }}</h2>
       </div>
 
-      <div class="bg-white p-6 rounded-2xl shadow-md">
-        <p class="text-sm text-gray-500">Promedio Diario</p>
-        <h2 class="text-3xl font-bold mt-2">{{ promedioDiario }}</h2>
+      <div class="stat-card">
+        <p class="stat-label">Promedio Diario</p>
+        <h2 class="stat-value">{{ promedioDiario }}</h2>
       </div>
 
     </div>
@@ -50,13 +49,13 @@
     @if (rankingOptions.series) {
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        <div class="bg-white p-6 rounded-2xl shadow-md lg:col-span-2">
-          <h3 class="font-semibold mb-4">Canjes por Empleado</h3>
+        <div class="card lg:col-span-2">
+          <h3 class="section-title mb-4">Canjes por Empleado</h3>
           <div echarts [options]="rankingOptions" class="h-64"></div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl shadow-md">
-          <h3 class="font-semibold mb-4">Distribución</h3>
+        <div class="card">
+          <h3 class="section-title mb-4">Distribución</h3>
           <div echarts [options]="distribucionOptions" class="h-64"></div>
         </div>
 
@@ -65,22 +64,22 @@
 
     <!-- TENDENCIA -->
     @if (tendenciaOptions.series) {
-      <div class="bg-white p-6 rounded-2xl shadow-md">
-        <h3 class="font-semibold mb-4">Tendencia de Canjes</h3>
+      <div class="card">
+        <h3 class="section-title mb-4">Tendencia de Canjes</h3>
         <div echarts [options]="tendenciaOptions" class="h-72"></div>
       </div>
     }
 
     <!-- HORAS PICO -->
     @if (horasOptions.series) {
-      <div class="bg-white p-6 rounded-2xl shadow-md">
-        <h3 class="font-semibold mb-4">Horas con Mayor Actividad</h3>
+      <div class="card">
+        <h3 class="section-title mb-4">Horas con Mayor Actividad</h3>
         <div echarts [options]="horasOptions" class="h-64"></div>
       </div>
     }
 
     @if (totalCanjes === 0) {
-      <div class="text-center py-8 text-slate-400">
+      <div class="card text-center py-8 muted">
         No se encontraron canjes en el rango seleccionado.
       </div>
     }

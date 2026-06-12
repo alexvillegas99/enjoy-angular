@@ -1,0 +1,176 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6 print-hide-flex">
+    <div class="flex items-start gap-4">
+      <a routerLink="/reportes" class="btn-icon" title="Volver">
+        <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+      </a>
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="store" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Locales &amp; Vendedores</h1>
+        <p class="subtle mt-1">Ranking de establecimientos y productividad de tu equipo de vendedores.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="btn-ghost" (click)="exportarRankingCsv()"><lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV ranking</button>
+      <button class="btn-ghost" (click)="exportarVendedoresCsv()"><lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV vendedores</button>
+      <button class="btn-primary" (click)="imprimirPdf()"><lucide-icon name="printer" style="width:14px; height:14px;"></lucide-icon> Imprimir / PDF</button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-6 print-hide" style="padding:18px;">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+      <div><label class="field-label">Desde</label><input type="date" class="input" [(ngModel)]="desde" /></div>
+      <div><label class="field-label">Hasta</label><input type="date" class="input" [(ngModel)]="hasta" /></div>
+      <button class="btn-primary" (click)="cargar()" [disabled]="loading">
+        <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
+      </button>
+    </div>
+  </div>
+
+  @if (loading && !locales) {
+    <div class="card" style="padding:60px; text-align:center;"><div class="subtle">Cargando…</div></div>
+  } @else if (locales) {
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="card stat">
+        <div class="stat-label">Locales totales</div>
+        <div class="stat-value">{{ fmtN(locales.total) }}</div>
+      </div>
+      <div class="card stat card-accent">
+        <div class="stat-label">Locales activos</div>
+        <div class="stat-value">{{ fmtN(locales.activos) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">Inactivos</div>
+        <div class="stat-value">{{ fmtN(locales.inactivos) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">% activos</div>
+        <div class="stat-value">{{ (porActivos() * 100).toFixed(0) }}%</div>
+      </div>
+    </div>
+
+    <!-- Ranking + provincias -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="card lg:col-span-2" style="padding:0; overflow:hidden;">
+        <div style="padding:18px 22px;">
+          <h3 class="section-title">Ranking de locales</h3>
+          <p class="subtle" style="font-size:12px;">Top 25 por canjes en el período</p>
+        </div>
+        <div style="overflow:auto; max-height:520px;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Local</th>
+                <th>Ciudad</th>
+                <th>Categoría</th>
+                <th>Estado</th>
+                <th style="text-align:right;">Canjes</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (l of locales.ranking; track l.localId; let i = $index) {
+                <tr>
+                  <td style="color:var(--text-mute); width:32px;">{{ i + 1 }}</td>
+                  <td style="font-weight:600;">{{ l.nombre }}</td>
+                  <td class="subtle">{{ l.ciudad || '—' }}</td>
+                  <td class="subtle">{{ l.categoria || '—' }}</td>
+                  <td>
+                    @if (l.estado) {
+                      <span class="pill pill-green pill-dot">Activo</span>
+                    } @else {
+                      <span class="pill pill-red">Inactivo</span>
+                    }
+                  </td>
+                  <td style="text-align:right; font-weight:700; color:var(--orange);">{{ fmtN(l.canjes) }}</td>
+                </tr>
+              }
+              @if (!locales.ranking?.length) {
+                <tr><td colspan="6" class="subtle" style="text-align:center; padding:32px;">Sin canjes</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="padding:18px;">
+        <h3 class="section-title">Por provincia</h3>
+        <p class="subtle" style="font-size:12px; margin-bottom:8px;">Distribución de locales</p>
+        <div echarts [options]="provinciasOption" style="height:340px;"></div>
+      </div>
+    </div>
+
+    <!-- Vendedores -->
+    @if (vendedores) {
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="padding:18px 22px;">
+          <div class="flex items-center gap-3">
+            <h3 class="section-title">Productividad por creador</h3>
+            <span class="pill pill-orange">{{ fmtN(vendedores.vendedores?.length || 0) }}</span>
+          </div>
+          <p class="subtle" style="font-size:12px;">Todos los usuarios que han creado al menos un local — locales y canjes generados en el período</p>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Creador</th>
+              <th>Rol</th>
+              <th>Email</th>
+              <th style="text-align:right;">Locales creados</th>
+              <th style="text-align:right;">Activos</th>
+              <th style="text-align:right;">Inactivos</th>
+              <th style="text-align:right;">Canjes generados</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of vendedores.vendedores; track v.vendedorId) {
+              <tr
+                [routerLink]="['/reportes/creador', v.vendedorId]"
+                style="cursor:pointer;"
+                title="Ver detalle de {{ v.nombre }}"
+              >
+                <td style="font-weight:600;">
+                  {{ v.nombre }}
+                  <lucide-icon
+                    name="chevron-right"
+                    style="width:12px; height:12px; color:var(--text-mute); vertical-align:middle; margin-left:4px;"
+                  ></lucide-icon>
+                </td>
+                <td>
+                  <span class="pill" style="font-size:10.5px; text-transform:capitalize;">{{ v.rol || '—' }}</span>
+                </td>
+                <td class="subtle">{{ v.email }}</td>
+                <td style="text-align:right;">{{ fmtN(v.localesCreados) }}</td>
+                <td style="text-align:right; color:var(--green); font-weight:600;">{{ fmtN(v.activos) }}</td>
+                <td style="text-align:right; color:var(--text-mute);">{{ fmtN(v.inactivos) }}</td>
+                <td style="text-align:right; font-weight:700; color:var(--orange);">{{ fmtN(v.canjesGenerados) }}</td>
+              </tr>
+            }
+            @if (!vendedores.vendedores?.length) {
+              <tr><td colspan="7" class="subtle" style="text-align:center; padding:32px;">Nadie ha creado locales todavía</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>
+
+<style>
+  @media print {
+    .print-hide, .print-hide-flex { display: none !important; }
+    app-dashboard-sidebar, app-dashboard-header, app-dashboard-bottom-nav { display: none !important; }
+    main { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
+    .card { background: white !important; border: 1px solid #ddd !important; color: black !important; box-shadow: none !important; }
+    .stat-value, .page-title, .section-title { color: black !important; }
+    .subtle, .stat-label, td, th { color: #333 !important; }
+  }
+</style>

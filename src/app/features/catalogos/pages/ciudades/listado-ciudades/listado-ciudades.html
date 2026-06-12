@@ -1,16 +1,16 @@
-<div class="p-4 lg:p-8 bg-gray-100 min-h-screen space-y-8">
+<div class="p-4 lg:p-8 bg-surface-muted min-h-screen space-y-8 font-roboto">
 
   <!-- HEADER -->
-  <div class="flex items-center justify-between">
+  <div class="flex items-center justify-between gap-4 animate-in">
     <div>
-      <h1 class="text-2xl font-semibold text-gray-900">Ciudades</h1>
-      <p class="text-sm text-gray-500">
+      <h1 class="page-title">Ciudades</h1>
+      <p class="subtle">
         Administración de ciudades del sistema
       </p>
     </div>
 
     <button
-      class="hidden sm:flex bg-black text-white px-5 py-2.5 rounded-xl text-sm font-medium gap-2"
+      class="hidden sm:flex btn-primary gap-2"
       (click)="abrirCrear()"
     >
       <lucide-icon name="plus" class="w-4 h-4" />
@@ -19,16 +19,26 @@
   </div>
 
   <!-- FILTROS -->
-  <div class="flex flex-col sm:flex-row gap-4">
-    <input
-      class="bg-white rounded-xl px-4 py-3 text-sm w-full sm:w-72"
-      placeholder="Buscar ciudad"
-      [(ngModel)]="filtroNombre"
-      (input)="onBuscar()"
-    />
+  <div class="filter-card animate-in">
+    <div class="filter-card-header">
+      <div>
+        <h2 class="filter-card-title">Buscar y filtrar</h2>
+        <p class="subtle">{{ ciudades.length }} ciudades visibles</p>
+      </div>
+    </div>
+    <div class="filter-bar">
+    <div class="search-field">
+      <lucide-icon name="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-faint" />
+      <input
+        class="input pl-9 w-full"
+        placeholder="Buscar ciudad"
+        [(ngModel)]="filtroNombre"
+        (input)="onBuscar()"
+      />
+    </div>
 
     <select
-      class="bg-white rounded-xl px-4 py-3 text-sm w-full sm:w-48"
+      class="input w-full sm:w-48"
       [(ngModel)]="filtroEstado"
       (change)="onBuscar()"
     >
@@ -36,48 +46,55 @@
       <option value="true">Activas</option>
       <option value="false">Inactivas</option>
     </select>
+    </div>
   </div>
 
   <!-- GRID -->
-  <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-    @for (c of ciudades; track c._id) {
-      <div
-        class="bg-white rounded-[28px] p-6
-               shadow-[0_20px_40px_-15px_rgba(0,0,0,0.25)]
-               hover:-translate-y-1 transition"
-      >
-        <div class="flex justify-between items-start">
-          <h3 class="text-base font-semibold text-gray-900">
-            {{ c.nombre }}
-          </h3>
+  @if (ciudades.length) {
+    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      @for (c of ciudades; track c._id) {
+      <div class="card card-interactive p-6 animate-in flex flex-col">
+        <div class="flex justify-between items-start gap-3">
+          <div class="flex items-center gap-3">
+            <span class="icon-badge icon-badge-primary">
+              <lucide-icon name="map-pin" class="w-5 h-5" />
+            </span>
+            <h3 class="text-base font-semibold text-text-dark">
+              {{ c.nombre }}
+            </h3>
+          </div>
 
           <span
-            class="px-3 py-1 rounded-full text-xs font-medium"
-            [class.bg-green-100]="c.estado"
-            [class.text-green-700]="c.estado"
-            [class.bg-gray-200]="!c.estado"
-            [class.text-gray-700]="!c.estado"
+            class="badge"
+            [class.badge-success]="c.estado"
+            [class.badge-muted]="!c.estado"
           >
             {{ c.estado ? 'Activa' : 'Inactiva' }}
           </span>
         </div>
 
-        <p class="text-xs text-gray-500 mt-2">
+        <p class="text-xs text-text-faint mt-3 flex items-center gap-1.5">
+          <lucide-icon
+            [name]="c.visibleParaRegistro ? 'eye' : 'eye-off'"
+            class="w-3.5 h-3.5"
+          />
           {{ c.visibleParaRegistro
             ? 'Visible para registro'
             : 'No visible para registro' }}
         </p>
 
-        <div class="mt-6 flex gap-3">
+        <div class="divider my-5"></div>
+
+        <div class="flex gap-3">
           <button
-            class="flex-1 bg-black text-white py-2.5 rounded-xl text-sm"
+            class="btn-secondary btn-sm flex-1"
             (click)="editar(c)"
           >
             Editar
           </button>
 
           <button
-            class="flex-1 bg-gray-200 text-gray-900 py-2.5 rounded-xl text-sm"
+            class="btn-outline btn-sm flex-1"
             (click)="toggleEstado(c)"
           >
             {{ c.estado ? 'Desactivar' : 'Activar' }}
@@ -85,19 +102,29 @@
         </div>
 
         <button
-          class="w-full mt-3 text-xs text-red-600"
+          class="btn-ghost btn-sm w-full mt-2 text-danger! gap-1.5"
           (click)="eliminar(c)"
         >
+          <lucide-icon name="trash-2" class="w-3.5 h-3.5" />
           Eliminar ciudad
         </button>
       </div>
-    }
-  </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <span class="icon-badge icon-badge-primary">
+        <lucide-icon name="map-pin" class="w-5 h-5" />
+      </span>
+      <h2 class="empty-state-title">No encontramos ciudades</h2>
+      <p class="empty-state-copy">Ajusta los filtros o registra una nueva ciudad.</p>
+    </div>
+  }
 
   <!-- FAB -->
   <button
-    class="sm:hidden fixed bottom-6 right-6 bg-black text-white
-           w-14 h-14 rounded-full shadow-xl"
+    class="catalog-fab sm:hidden btn-primary btn-icon"
+    aria-label="Crear ciudad"
     (click)="abrirCrear()"
   >
     <lucide-icon name="plus" class="w-6 h-6" />
@@ -106,42 +133,57 @@
 
 <!-- MODAL -->
 @if (modalAbierto) {
-  <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-[28px] w-full max-w-md p-6 space-y-5">
+  <div class="modal-backdrop">
+    <section class="modal-surface modal-surface-sm" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <div class="flex items-center gap-3">
+          <span class="icon-badge icon-badge-accent">
+            <lucide-icon name="map-pin" class="w-5 h-5" />
+          </span>
+          <div>
+            <h2 class="section-title">{{ editando ? 'Editar ciudad' : 'Nueva ciudad' }}</h2>
+            <p class="subtle mt-1">Configura el nombre y su disponibilidad de registro.</p>
+          </div>
+        </div>
+        <button class="btn-ghost btn-icon" aria-label="Cerrar" (click)="cerrarModal()">
+          <lucide-icon name="x" class="w-5 h-5" />
+        </button>
+      </header>
 
-      <h2 class="text-lg font-semibold">
-        {{ editando ? 'Editar ciudad' : 'Nueva ciudad' }}
-      </h2>
+      <div class="modal-body space-y-5">
+      <div>
+        <label class="form-label">Nombre</label>
+        <input
+          class="input w-full"
+          placeholder="Nombre"
+          [(ngModel)]="form.nombre"
+        />
+      </div>
 
-      <input
-        class="bg-gray-100 rounded-xl px-4 py-3 text-sm w-full"
-        placeholder="Nombre"
-        [(ngModel)]="form.nombre"
-      />
-
-      <label class="flex items-center gap-2 text-sm">
+      <label class="chip flex items-center gap-2 text-sm w-fit cursor-pointer">
         <input
           type="checkbox"
           [(ngModel)]="form.visibleParaRegistro"
         />
         Visible para registro
       </label>
+      </div>
 
-      <div class="flex justify-end gap-3 pt-4">
+      <footer class="modal-footer">
         <button
-          class="px-4 py-2 text-sm rounded-xl border"
+          class="btn-outline"
           (click)="cerrarModal()"
         >
           Cancelar
         </button>
 
         <button
-          class="px-4 py-2 text-sm rounded-xl bg-black text-white"
+          class="btn-primary"
           (click)="guardar()"
         >
           Guardar
         </button>
-      </div>
-    </div>
+      </footer>
+    </section>
   </div>
 }

@@ -1,151 +1,224 @@
-<div class="p-6 space-y-6">
-  <!-- HEADER -->
-  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div>
-      <h1 class="text-xl font-semibold text-text-dark">Establecimientos</h1>
-      <p class="text-sm text-text-body">Administración de comercios y locales</p>
-    </div>
+<section class="page animate-in">
 
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="store" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Establecimientos</h1>
+      <p class="subtle">Locales registrados, sus promociones y estado.</p>
+    </div>
     @if (puedeCrear) {
-      <button class="btn-primary flex items-center gap-2" (click)="nuevo()">
-        <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
-        Nuevo
-      </button>
+      <div class="page-header-actions">
+        <button class="btn-primary" (click)="nuevo()">
+          <lucide-icon name="plus" style="width:14px; height:14px;"></lucide-icon>
+          Nuevo local
+        </button>
+      </div>
     }
   </div>
 
   <!-- FILTRO -->
-  <div class="flex items-center gap-3 max-w-md">
-    <input
-      class="w-full rounded-lg border border-gray-200 px-4 py-2 text-sm bg-white focus:ring-2 focus:ring-accent/30 focus:border-accent transition"
-      placeholder="Buscar por nombre, email, promo, tags…"
-      [(ngModel)]="busqueda"
-      (keyup.enter)="buscar()"
-    />
-    <button class="btn-secondary px-4 py-2 text-sm" (click)="buscar()">
-      Buscar
-    </button>
+  <div class="card mb-4" style="padding:18px;">
+    <div class="filter-bar">
+      <div class="relative" style="grid-column: span 2;">
+        <lucide-icon
+          name="search"
+          style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--text-mute); pointer-events:none;"
+        ></lucide-icon>
+        <input
+          class="input"
+          style="padding-left:36px;"
+          placeholder="Buscar por nombre, email, promo, tags…"
+          [(ngModel)]="busqueda"
+          (keyup.enter)="buscar()"
+        />
+      </div>
+      <button class="btn-primary" (click)="buscar()">
+        <lucide-icon name="search" style="width:14px; height:14px;"></lucide-icon>
+        Buscar
+      </button>
+    </div>
   </div>
 
   <!-- LOADING -->
   @if (cargando) {
-    <div class="flex items-center justify-center py-16">
-      <div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+    <div class="card empty-state">
+      <lucide-icon name="loader" style="width:18px; height:18px; vertical-align:middle; margin-right:8px;"></lucide-icon>
+      Cargando establecimientos…
     </div>
-  }
+  } @else if (establecimientos.length === 0) {
+    <div class="card empty-state">
+      <div class="icon">
+        <lucide-icon name="store" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div class="empty-title">No hay locales</div>
+      <div class="empty-msg">No encontramos establecimientos con esa búsqueda.</div>
+    </div>
+  } @else {
 
-  <!-- GRID -->
-  @if (!cargando) {
-    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+    <!-- GRID DE TARJETAS -->
+    <div
+      class="grid gap-4"
+      style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));"
+    >
       @for (e of establecimientos; track e._id) {
-        <div class="card !p-0 overflow-hidden hover:shadow-md transition-shadow">
-          <!-- IMAGE -->
-          <div class="relative h-32 bg-surface-muted">
+        <article
+          class="card"
+          style="padding:0; overflow:hidden; display:flex; flex-direction:column; transition:transform .15s ease, border-color .15s ease;"
+          onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,159,28,0.4)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--stroke)'"
+        >
+          <!-- IMAGEN -->
+          <div
+            class="relative"
+            style="height:130px; background: var(--glass-strong);"
+          >
             @if (e.detallePromocion?.imageUrl) {
-              <img [src]="e.detallePromocion!.imageUrl" class="w-full h-full object-cover" />
+              <img
+                [src]="e.detallePromocion!.imageUrl"
+                style="width:100%; height:100%; object-fit:cover;"
+              />
             } @else {
-              <div class="w-full h-full flex items-center justify-center">
-                <lucide-icon name="image" class="w-8 h-8 text-gray-300"></lucide-icon>
+              <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                <lucide-icon name="image" style="width:32px; height:32px; color:var(--text-mute);"></lucide-icon>
               </div>
             }
 
-            <div class="absolute bottom-2 left-2">
-              @if (e.detallePromocion?.logoUrl) {
-                <img [src]="e.detallePromocion!.logoUrl" class="w-10 h-10 rounded-full bg-white p-0.5 shadow-md object-cover" />
+            <!-- Badge estado -->
+            <div style="position:absolute; top:10px; right:10px;">
+              @if (e.estado) {
+                <span class="pill pill-green pill-dot">Activo</span>
               } @else {
-                <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold shadow-md">
-                  {{ e.nombre.charAt(0) }}
-                </div>
+                <span class="pill pill-red">Inactivo</span>
+              }
+            </div>
+
+            <!-- Logo -->
+            <div style="position:absolute; left:14px; bottom:-22px;">
+              @if (e.detallePromocion?.logoUrl) {
+                <img
+                  [src]="e.detallePromocion!.logoUrl"
+                  style="width:46px; height:46px; border-radius:14px; object-fit:cover; background:var(--surface-top); border:2px solid var(--surface-top); box-shadow: 0 4px 12px rgba(0,0,0,0.4);"
+                />
+              } @else {
+                <div
+                  style="width:46px; height:46px; border-radius:14px; background: var(--accent-grad); color:var(--on-accent); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px; border:2px solid var(--surface-top); box-shadow: 0 4px 12px rgba(0,0,0,0.4);"
+                >{{ e.nombre.charAt(0) }}</div>
               }
             </div>
           </div>
 
-          <!-- CONTENT -->
-          <div class="p-4 space-y-3">
-            <div class="flex justify-between items-start">
-              <div>
-                <h3 class="font-semibold text-text-dark">{{ e.nombre }}</h3>
-                <p class="text-xs text-text-body">{{ e.email }}</p>
-              </div>
-              <span
-                class="px-2.5 py-0.5 text-xs rounded-full font-medium"
-                [class.bg-green-100]="e.estado"
-                [class.text-green-700]="e.estado"
-                [class.bg-gray-200]="!e.estado"
-                [class.text-gray-500]="!e.estado"
-              >
-                {{ e.estado ? "Activo" : "Inactivo" }}
-              </span>
-            </div>
-
-            <div class="text-xs text-text-body space-y-1">
-              <div>
-                <span class="font-medium text-text-dark">Ciudades:</span>
-                {{ e.ciudades?.join(", ") || "—" }}
-              </div>
-              <div>
-                <span class="font-medium text-text-dark">Categorías:</span>
-                {{ e.categorias?.join(", ") || "—" }}
+          <!-- CONTENIDO -->
+          <div style="padding:30px 16px 14px 16px; flex:1; display:flex; flex-direction:column; gap:10px;">
+            <div>
+              <h3 class="section-title" style="font-size:15px;">{{ e.nombre }}</h3>
+              <div class="subtle" style="font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                {{ e.email }}
               </div>
             </div>
 
-            <div class="flex items-center justify-between pt-3 border-t border-gray-100">
-              <div class="flex items-center gap-1 text-sm">
-                <lucide-icon name="star" class="w-4 h-4 text-accent-light"></lucide-icon>
-                <span class="font-medium text-text-dark">{{ e.promedioCalificacion || 0 }}</span>
+            <div style="display:flex; flex-direction:column; gap:5px; font-size:12px; color:var(--text-soft);">
+              <div style="display:flex; align-items:flex-start; gap:6px;">
+                <lucide-icon name="map-pin" style="width:13px; height:13px; color:var(--orange); margin-top:1px; flex-shrink:0;"></lucide-icon>
+                <span style="overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;">
+                  {{ e.ciudades?.join(', ') || '—' }}
+                </span>
+              </div>
+              <div style="display:flex; align-items:flex-start; gap:6px;">
+                <lucide-icon name="tags" style="width:13px; height:13px; color:var(--orange); margin-top:1px; flex-shrink:0;"></lucide-icon>
+                <span style="overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical;">
+                  {{ e.categorias?.join(', ') || '—' }}
+                </span>
+              </div>
+              @if (e.usuarioCreacion?.nombre; as creadorNombre) {
+                <div style="display:flex; align-items:flex-start; gap:6px;" [title]="'Creado por ' + creadorNombre">
+                  <lucide-icon name="user-check" style="width:13px; height:13px; color:var(--blue); margin-top:1px; flex-shrink:0;"></lucide-icon>
+                  <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">
+                    <span style="color:var(--text-mute);">por </span>
+                    <strong style="color:var(--text);">{{ creadorNombre }}</strong>
+                    @if (e.usuarioCreacion?.rol; as creadorRol) {
+                      <span class="pill" style="font-size:9.5px; padding:1px 6px; margin-left:4px; text-transform:capitalize;">{{ creadorRol }}</span>
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+
+            <div
+              style="display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:10px; border-top:1px solid var(--stroke); margin-top:auto;"
+            >
+              <div style="display:flex; align-items:center; gap:5px; font-size:13px;">
+                <lucide-icon name="star" style="width:14px; height:14px; color:var(--yellow); fill:var(--yellow);"></lucide-icon>
+                <strong>{{ e.promedioCalificacion || 0 }}</strong>
               </div>
 
-              <div class="flex gap-2">
-                <button
-                  class="btn-secondary text-xs px-3 py-1.5"
-                  (click)="ver(e._id)"
-                >
-                  Ver
+              <div style="display:flex; gap:4px;">
+                @if (puedeActivar) {
+                  <button
+                    class="btn-icon"
+                    [disabled]="togglingId === e._id"
+                    [title]="e.estado ? 'Desactivar' : 'Activar'"
+                    (click)="toggleEstado(e, $event)"
+                  >
+                    @if (togglingId === e._id) {
+                      <span
+                        style="width:13px; height:13px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; display:inline-block; animation: spin 0.6s linear infinite;"
+                      ></span>
+                    } @else {
+                      <lucide-icon
+                        [name]="e.estado ? 'toggle-right' : 'toggle-left'"
+                        style="width:14px; height:14px;"
+                        [style.color]="e.estado ? 'var(--green)' : 'var(--text-mute)'"
+                      ></lucide-icon>
+                    }
+                  </button>
+                }
+                <button class="btn-icon" (click)="ver(e._id)" title="Ver detalle">
+                  <lucide-icon name="eye" style="width:14px; height:14px;"></lucide-icon>
                 </button>
-                <button
-                  class="btn-primary text-xs px-3 py-1.5"
-                  (click)="editar(e._id)"
-                >
-                  Editar
+                <button class="btn-icon" (click)="editar(e._id)" title="Editar">
+                  <lucide-icon name="pencil" style="width:14px; height:14px; color:var(--orange);"></lucide-icon>
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      }
-
-      @if (establecimientos.length === 0) {
-        <div class="col-span-full card text-center py-10">
-          <lucide-icon name="store" class="w-10 h-10 text-gray-300 mx-auto mb-3"></lucide-icon>
-          <p class="text-sm text-text-body">No se encontraron establecimientos.</p>
-        </div>
+        </article>
       }
     </div>
-  }
 
-  <!-- PAGINACIÓN -->
-  @if (pages > 1) {
-    <div class="flex items-center justify-between pt-4">
-      <span class="text-sm text-text-body">
-        Página {{ page }} de {{ pages }} · {{ total }} resultados
-      </span>
-
-      <div class="flex gap-2">
-        <button
-          class="btn-secondary text-sm px-4 py-2 disabled:opacity-50"
-          [disabled]="page === 1"
-          (click)="anterior()"
-        >
-          Anterior
-        </button>
-        <button
-          class="btn-secondary text-sm px-4 py-2 disabled:opacity-50"
-          [disabled]="page === pages"
-          (click)="siguiente()"
-        >
-          Siguiente
-        </button>
+    <!-- PAGINACIÓN -->
+    @if (pages > 1) {
+      <div class="pagination">
+        <span class="subtle" style="font-size:12.5px;">
+          Página <strong style="color:var(--text);">{{ page }}</strong> de {{ pages }} · {{ total }} resultados
+        </span>
+        <div class="pagination-controls">
+          <button
+            class="btn-icon"
+            [disabled]="page === 1"
+            (click)="anterior()"
+            title="Anterior"
+          >
+            <lucide-icon name="chevron-left" style="width:14px; height:14px;"></lucide-icon>
+          </button>
+          <button
+            class="btn-icon"
+            [disabled]="page === pages"
+            (click)="siguiente()"
+            title="Siguiente"
+          >
+            <lucide-icon name="chevron-right" style="width:14px; height:14px;"></lucide-icon>
+          </button>
+        </div>
       </div>
-    </div>
+    }
   }
-</div>
+</section>
+
+<style>
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>

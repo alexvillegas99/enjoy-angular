@@ -1,0 +1,199 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6 print-hide-flex">
+    <div class="flex items-start gap-4">
+      <a routerLink="/reportes" class="btn-icon" title="Volver">
+        <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+      </a>
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="trending-up" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Canjes &amp; Ingresos</h1>
+        <p class="subtle mt-1">Tendencia de canjes y rendimiento de ventas en el período.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="btn-ghost" (click)="exportarCanjesCsv()">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV canjes
+      </button>
+      <button class="btn-ghost" (click)="exportarIngresosCsv()">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV ingresos
+      </button>
+      <button class="btn-primary" (click)="imprimirPdf()">
+        <lucide-icon name="printer" style="width:14px; height:14px;"></lucide-icon> Imprimir / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-6 print-hide" style="padding:18px;">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+      <div>
+        <label class="field-label">Desde</label>
+        <input type="date" class="input" [(ngModel)]="desde" />
+      </div>
+      <div>
+        <label class="field-label">Hasta</label>
+        <input type="date" class="input" [(ngModel)]="hasta" />
+      </div>
+      <div>
+        <label class="field-label">Granularidad</label>
+        <select class="input" [(ngModel)]="granularidad">
+          <option value="dia">Diaria</option>
+          <option value="semana">Semanal</option>
+          <option value="mes">Mensual</option>
+        </select>
+      </div>
+      <button class="btn-primary" (click)="cargar()" [disabled]="loading">
+        @if (loading) {
+          <span>Cargando…</span>
+        } @else {
+          <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (loading && !canjes) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <div class="subtle">Cargando datos…</div>
+    </div>
+  } @else if (!canjes) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <div class="subtle">No se pudieron cargar los datos.</div>
+    </div>
+  } @else {
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="card stat">
+        <div class="stat-label">Canjes totales</div>
+        <div class="stat-value">{{ fmtN(canjes.totalCanjes) }}</div>
+      </div>
+      <div class="card stat card-accent">
+        <div class="stat-label">Ingreso total</div>
+        <div class="stat-value">{{ fmtMoney(ingresos?.total || 0) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">Ventas (membresías)</div>
+        <div class="stat-value">{{ fmtN(ingresos?.ventas || 0) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">Ticket promedio</div>
+        <div class="stat-value">{{ fmtMoney(ingresos?.ticketPromedio || 0) }}</div>
+      </div>
+    </div>
+
+    <!-- Serie temporal grande -->
+    <div class="card mb-6" style="padding:22px;">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h3 class="section-title">Tendencia de canjes</h3>
+          <p class="subtle" style="font-size:12px;">Cantidad de cupones canjeados por período</p>
+        </div>
+        <span class="pill pill-orange">{{ granularidad === 'dia' ? 'Diario' : granularidad === 'semana' ? 'Semanal' : 'Mensual' }}</span>
+      </div>
+      <div echarts [options]="serieOption" style="height:340px;"></div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <!-- Top locales -->
+      <div class="card lg:col-span-2" style="padding:0; overflow:hidden;">
+        <div class="flex items-center justify-between" style="padding:18px 22px;">
+          <div>
+            <h3 class="section-title">Top locales por canjes</h3>
+            <p class="subtle" style="font-size:12px;">Los 10 establecimientos con más canjes</p>
+          </div>
+          <button class="btn-icon" (click)="exportarTopLocalesCsv()" title="Exportar CSV">
+            <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon>
+          </button>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Local</th>
+              <th>Email</th>
+              <th style="text-align:right;">Canjes</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of canjes.topLocales; track l.localId; let i = $index) {
+              <tr>
+                <td style="color:var(--text-mute); width:32px;">{{ i + 1 }}</td>
+                <td style="font-weight:600;">{{ l.nombre }}</td>
+                <td class="subtle">{{ l.email }}</td>
+                <td style="text-align:right; font-weight:700; color:var(--orange);">{{ fmtN(l.canjes) }}</td>
+              </tr>
+            }
+            @if (!canjes.topLocales?.length) {
+              <tr><td colspan="4" class="subtle" style="text-align:center; padding:32px;">Sin canjes en el período</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Canjes por hora -->
+      <div class="card" style="padding:18px;">
+        <h3 class="section-title">Distribución por hora</h3>
+        <p class="subtle" style="font-size:12px; margin-bottom:8px;">Cuándo se concentran los canjes</p>
+        <div echarts [options]="horasOption" style="height:280px;"></div>
+      </div>
+    </div>
+
+    <!-- Ingresos -->
+    @if (ingresos) {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="card" style="padding:18px;">
+          <h3 class="section-title">Métodos de pago</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:8px;">Distribución de ingresos</p>
+          <div echarts [options]="metodosOption" style="height:300px;"></div>
+        </div>
+
+        <div class="card lg:col-span-2" style="padding:0; overflow:hidden;">
+          <div style="padding:18px 22px;">
+            <h3 class="section-title">Detalle por método</h3>
+            <p class="subtle" style="font-size:12px;">Monto y cantidad de ventas por canal</p>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Método</th>
+                <th style="text-align:right;">Ventas</th>
+                <th style="text-align:right;">Monto</th>
+                <th style="text-align:right;">Ticket promedio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of ingresos.porMetodo; track m.metodo) {
+                <tr>
+                  <td style="font-weight:600; text-transform:capitalize;">{{ m.metodo }}</td>
+                  <td style="text-align:right;">{{ fmtN(m.ventas) }}</td>
+                  <td style="text-align:right; font-weight:700;">{{ fmtMoney(m.monto) }}</td>
+                  <td style="text-align:right; color:var(--text-mute);">{{ fmtMoney(ticketMetodo(m)) }}</td>
+                </tr>
+              }
+              @if (!ingresos.porMetodo?.length) {
+                <tr><td colspan="4" class="subtle" style="text-align:center; padding:32px;">Sin ingresos confirmados</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</section>
+
+<style>
+  @media print {
+    .print-hide, .print-hide-flex { display: none !important; }
+    app-dashboard-sidebar, app-dashboard-header, app-dashboard-bottom-nav { display: none !important; }
+    main { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
+    .card { background: white !important; border: 1px solid #ddd !important; color: black !important; box-shadow: none !important; }
+    .stat-value, .page-title, .section-title, h1, h2, h3 { color: black !important; }
+    .subtle, .stat-label, td, th { color: #333 !important; }
+  }
+</style>

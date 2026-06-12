@@ -1,18 +1,18 @@
 @if(loading){
 
 <!-- SKELETON MODERNO -->
-<div class="p-4 md:p-6 space-y-6 animate-pulse">
+<div class="p-4 md:p-6 space-y-6">
 
-  <div class="h-28 bg-gray-200/70 rounded-3xl"></div>
+  <div class="skeleton h-28 rounded-xl"></div>
 
   <div class="grid lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2 space-y-6">
-      <div class="h-52 bg-gray-200/70 rounded-3xl"></div>
-      <div class="h-40 bg-gray-200/70 rounded-3xl"></div>
+      <div class="skeleton h-52 rounded-xl"></div>
+      <div class="skeleton h-40 rounded-xl"></div>
     </div>
     <div class="space-y-6">
-      <div class="h-40 bg-gray-200/70 rounded-3xl"></div>
-      <div class="h-32 bg-gray-200/70 rounded-3xl"></div>
+      <div class="skeleton h-40 rounded-xl"></div>
+      <div class="skeleton h-32 rounded-xl"></div>
     </div>
   </div>
 
@@ -20,27 +20,33 @@
 
 } @else if(data){
 
-<div class="w-full min-h-screen px-4 md:px-8 pb-28 lg:pb-10 space-y-6">
+<div class="w-full min-h-screen px-4 md:px-8 pb-28 lg:pb-10 space-y-6 animate-in">
 
   <!-- HEADER -->
-  <div class="backdrop-blur-xl bg-white/70 border border-gray-200/60 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <div class="card flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-    <div>
-      <h1 class="text-2xl font-semibold text-gray-900 tracking-tight">
-        {{ data.nombre }}
-      </h1>
-      <p class="text-sm text-gray-500">{{ data.email }}</p>
+    <div class="flex items-center gap-4">
+      <span class="icon-badge icon-badge-primary shrink-0">
+        <lucide-icon name="store" class="w-6 h-6"></lucide-icon>
+      </span>
+      <div>
+        <h1 class="page-title">
+          {{ data.nombre }}
+        </h1>
+        <p class="subtle">{{ data.email }}</p>
+      </div>
     </div>
 
     <div class="flex items-center gap-3 flex-wrap">
 
-      <span class="px-3 py-1 text-xs rounded-full font-medium"
+      <span class="badge"
             [ngClass]="getEstadoClass()">
         {{ data.estado ? 'Activo' : 'Inactivo' }}
       </span>
 
-      <div class="flex items-center gap-1 text-sm text-gray-700">
-        ⭐ <span class="font-medium">{{ data.promedioCalificacion || 0 }}</span>
+      <div class="chip">
+        <lucide-icon name="star" class="w-4 h-4 text-accent"></lucide-icon>
+        <span class="font-semibold text-text-dark">{{ data.promedioCalificacion || 0 }}</span>
       </div>
 
     </div>
@@ -54,32 +60,52 @@
     <div class="lg:col-span-2 space-y-6">
 
       <!-- INFO CARD -->
-      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm">
+      <div class="card">
 
-        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-5">
+        <h2 class="section-title mb-5">
           Información general
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
 
-          <div>
-            <p class="text-gray-400">Identificación</p>
-            <p class="font-medium text-gray-900">{{ data.identificacion }}</p>
+          <div class="flex items-start gap-3">
+            <span class="icon-badge icon-badge-primary shrink-0">
+              <lucide-icon name="badge-check" class="w-5 h-5"></lucide-icon>
+            </span>
+            <div>
+              <p class="muted">Identificación</p>
+              <p class="font-semibold text-text-dark">{{ data.identificacion }}</p>
+            </div>
           </div>
 
-          <div>
-            <p class="text-gray-400">Rol</p>
-            <p class="font-medium text-gray-900 uppercase">{{ data.rol }}</p>
+          <div class="flex items-start gap-3">
+            <span class="icon-badge icon-badge-primary shrink-0">
+              <lucide-icon name="shield" class="w-5 h-5"></lucide-icon>
+            </span>
+            <div>
+              <p class="muted">Rol</p>
+              <p class="font-semibold text-text-dark uppercase">{{ data.rol }}</p>
+            </div>
           </div>
 
-          <div>
-            <p class="text-gray-400">Horario</p>
-            <p class="font-medium text-gray-900">{{ data.horarioAtencion }}</p>
+          <div class="flex items-start gap-3">
+            <span class="icon-badge icon-badge-primary shrink-0">
+              <lucide-icon name="clock" class="w-5 h-5"></lucide-icon>
+            </span>
+            <div>
+              <p class="muted">Horario</p>
+              <p class="font-semibold text-text-dark">{{ data.horarioAtencion }}</p>
+            </div>
           </div>
 
-          <div>
-            <p class="text-gray-400">Promoción</p>
-            <p class="font-medium text-gray-900">{{ data.promocion }}</p>
+          <div class="flex items-start gap-3">
+            <span class="icon-badge icon-badge-accent shrink-0">
+              <lucide-icon name="tags" class="w-5 h-5"></lucide-icon>
+            </span>
+            <div>
+              <p class="muted">Promoción</p>
+              <p class="font-semibold text-text-dark">{{ data.promocion }}</p>
+            </div>
           </div>
 
         </div>
@@ -88,17 +114,17 @@
 
       <!-- PROMO PRINCIPAL -->
       @if(data.detallePromocion){
-      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl overflow-hidden shadow-sm">
+      <div class="card !p-0 overflow-hidden">
 
         <div class="relative">
           <img [src]="data.detallePromocion.imageUrl"
                class="w-full h-48 md:h-64 object-cover"/>
 
           <!-- overlay gradient -->
-          <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-primary-deep/70 to-transparent"></div>
 
           <div class="absolute bottom-4 left-4 text-white">
-            <h3 class="text-lg font-semibold">
+            <h3 class="text-lg font-semibold drop-shadow">
               {{ data.detallePromocion.title }}
             </h3>
           </div>
@@ -106,39 +132,56 @@
 
         <div class="p-6 space-y-4">
 
-          <p class="text-sm text-gray-600 leading-relaxed">
+          <p class="text-sm text-text-body leading-relaxed">
             {{ data.detallePromocion.description }}
           </p>
 
           <div class="flex flex-wrap gap-2">
             @for(tag of data.detallePromocion.tags; track tag){
-              <span class="text-xs bg-gray-100/80 px-3 py-1 rounded-full">
+              <span class="badge badge-muted">
                 {{ tag }}
               </span>
             }
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs text-gray-600 pt-2">
+          <div class="divider"></div>
 
-            <div>
-              <p class="text-gray-400">Horario</p>
-              <p class="font-medium text-gray-800">
-                {{ data.detallePromocion.scheduleLabel }}
-              </p>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-xs pt-1">
+
+            <div class="flex items-start gap-2.5">
+              <span class="icon-badge icon-badge-primary shrink-0">
+                <lucide-icon name="clock" class="w-4 h-4"></lucide-icon>
+              </span>
+              <div>
+                <p class="muted">Horario</p>
+                <p class="font-semibold text-text-dark">
+                  {{ data.detallePromocion.scheduleLabel }}
+                </p>
+              </div>
             </div>
 
-            <div>
-              <p class="text-gray-400">Dirección</p>
-              <p class="font-medium text-gray-800">
-                {{ data.detallePromocion.address }}
-              </p>
+            <div class="flex items-start gap-2.5">
+              <span class="icon-badge icon-badge-primary shrink-0">
+                <lucide-icon name="map-pin" class="w-4 h-4"></lucide-icon>
+              </span>
+              <div>
+                <p class="muted">Dirección</p>
+                <p class="font-semibold text-text-dark">
+                  {{ data.detallePromocion.address }}
+                </p>
+              </div>
             </div>
 
-            <div>
-              <p class="text-gray-400">Distancia</p>
-              <p class="font-medium text-gray-800">
-                {{ data.detallePromocion.distanceLabel }}
-              </p>
+            <div class="flex items-start gap-2.5">
+              <span class="icon-badge icon-badge-accent shrink-0">
+                <lucide-icon name="locate" class="w-4 h-4"></lucide-icon>
+              </span>
+              <div>
+                <p class="muted">Distancia</p>
+                <p class="font-semibold text-text-dark">
+                  {{ data.detallePromocion.distanceLabel }}
+                </p>
+              </div>
             </div>
 
           </div>
@@ -150,28 +193,28 @@
 
       <!-- PROMOS EXTRA -->
       @if(data.detallePromocionesExtra?.length){
-      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm">
+      <div class="card">
 
-        <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-5">
+        <h2 class="section-title mb-5">
           Promociones adicionales
         </h2>
 
         <div class="grid sm:grid-cols-2 gap-4">
 
           @for(p of data.detallePromocionesExtra; track p.title){
-            <div class="bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-md transition">
+            <div class="card card-interactive card-flat !p-4">
 
-              <p class="font-medium text-sm text-gray-900">
+              <p class="font-semibold text-sm text-text-dark">
                 {{ p.title }}
               </p>
 
-              <p class="text-xs text-gray-500 mb-2">
+              <p class="text-xs subtle mb-3">
                 {{ p.placeName }}
               </p>
 
-              <div class="flex flex-wrap gap-1">
+              <div class="flex flex-wrap gap-1.5">
                 @for(tag of p.tags; track tag){
-                  <span class="text-[10px] bg-gray-100 px-2 py-1 rounded">
+                  <span class="badge badge-muted text-[10px]">
                     {{ tag }}
                   </span>
                 }
@@ -191,27 +234,27 @@
     <div class="space-y-6">
 
       <!-- MÉTRICAS -->
-      <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm">
+      <div class="card">
 
-        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">
+        <h3 class="section-title mb-4">
           Métricas
         </h3>
 
-        <div class="space-y-3 text-sm">
+        <div class="space-y-3">
 
-          <div class="flex justify-between">
-            <span class="text-gray-500">Rating</span>
-            <span class="font-medium">{{ data.promedioCalificacion || 0 }}</span>
+          <div class="stat-card flex items-center justify-between gap-4">
+            <span class="stat-label">Rating</span>
+            <span class="stat-value text-accent">{{ data.promedioCalificacion || 0 }}</span>
           </div>
 
-          <div class="flex justify-between">
-            <span class="text-gray-500">Comentarios</span>
-            <span class="font-medium">{{ data.totalComentarios || 0 }}</span>
+          <div class="stat-card flex items-center justify-between gap-4">
+            <span class="stat-label">Comentarios</span>
+            <span class="stat-value">{{ data.totalComentarios || 0 }}</span>
           </div>
 
-          <div class="flex justify-between">
-            <span class="text-gray-500">Promos</span>
-            <span class="font-medium">
+          <div class="stat-card flex items-center justify-between gap-4">
+            <span class="stat-label">Promos</span>
+            <span class="stat-value">
               {{ data.detallePromocionesExtra?.length || 0 }}
             </span>
           </div>
@@ -221,13 +264,13 @@
       </div>
 
       <!-- ACTIONS -->
-     <!--  <div class="bg-white/70 backdrop-blur-xl border border-gray-200/60 rounded-3xl p-6 shadow-sm space-y-3">
+     <!--  <div class="card space-y-3">
 
-        <button class="w-full bg-gradient-to-r from-accent to-accent-hover text-white py-2.5 rounded-xl text-sm font-medium shadow hover:opacity-95 transition">
+        <button class="btn-primary btn-block">
           Editar perfil
         </button>
 
-        <button class="w-full border border-gray-200 py-2.5 rounded-xl text-sm hover:bg-gray-50 transition"
+        <button class="btn-outline btn-block"
                 (click)="toggleEstado()">
           Cambiar estado
         </button>
@@ -242,8 +285,11 @@
 
 } @else {
 
-<div class="p-6 text-center text-gray-500">
-  No se encontró información del perfil
+<div class="card text-center">
+  <span class="icon-badge icon-badge-primary mx-auto mb-3">
+    <lucide-icon name="x-circle" class="w-6 h-6"></lucide-icon>
+  </span>
+  <p class="subtle">No se encontró información del perfil</p>
 </div>
 
 }

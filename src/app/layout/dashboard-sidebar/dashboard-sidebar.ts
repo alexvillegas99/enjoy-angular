@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -10,6 +10,7 @@ import {
   SIDEBAR_MENU_FULL,
 } from '../../core/constants/sidebar.config';
 import { SecureStorageService } from '../../core/services/secure-storage.service';
+import { SidebarStore } from '../../core/services/sidebar-store';
 
 @Component({
   selector: 'app-dashboard-sidebar',
@@ -18,10 +19,11 @@ import { SecureStorageService } from '../../core/services/secure-storage.service
   templateUrl: './dashboard-sidebar.html',
 })
 export class DashboardSidebar implements OnInit {
-
   expanded = false;
   institucion = environment.institution;
   menu: SidebarItem[] = [];
+
+  store = inject(SidebarStore);
 
   constructor(private storage: SecureStorageService) {}
 
@@ -47,5 +49,9 @@ export class DashboardSidebar implements OnInit {
 
   toggle() {
     this.expanded = !this.expanded;
+  }
+
+  closeMobile() {
+    this.store.close();
   }
 }

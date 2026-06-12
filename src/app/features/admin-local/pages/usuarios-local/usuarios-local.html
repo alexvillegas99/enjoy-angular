@@ -1,41 +1,59 @@
-<div class="w-full max-w-7xl mx-auto px-4 md:px-6 pb-28 lg:pb-0 space-y-6">
+<div class="w-full max-w-7xl mx-auto px-4 md:px-6 pb-28 lg:pb-0 space-y-6 animate-in">
+  <!-- ================= TITLE ================= -->
+  <div class="space-y-1">
+    <h1 class="page-title">Usuarios Staff</h1>
+    <p class="subtle">Gestión de usuarios administrativos del local</p>
+  </div>
+
   <!-- ================= KPI ================= -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div
-      class="rounded-2xl bg-white/70 backdrop-blur border border-gray-200 p-5 shadow-sm"
-    >
-      <p class="text-xs text-gray-500">Total usuarios</p>
-      <h2 class="text-3xl font-semibold tracking-tight">{{ total }}</h2>
+    <div class="stat-card">
+      <div class="flex items-center gap-3">
+        <span class="icon-badge icon-badge-primary">
+          <lucide-icon name="users" class="w-5 h-5"></lucide-icon>
+        </span>
+        <div>
+          <p class="stat-label">Total usuarios</p>
+          <h2 class="stat-value">{{ total }}</h2>
+        </div>
+      </div>
     </div>
 
-    <div
-      class="rounded-2xl bg-white/70 backdrop-blur border border-gray-200 p-5 shadow-sm"
-    >
-      <p class="text-xs text-gray-500">Activos</p>
-      <h2 class="text-3xl font-semibold text-emerald-600">{{ activos }}</h2>
+    <div class="stat-card">
+      <div class="flex items-center gap-3">
+        <span class="icon-badge icon-badge-accent">
+          <lucide-icon name="badge-check" class="w-5 h-5"></lucide-icon>
+        </span>
+        <div>
+          <p class="stat-label">Activos</p>
+          <h2 class="stat-value text-success">{{ activos }}</h2>
+        </div>
+      </div>
     </div>
 
-    <div
-      class="rounded-2xl bg-white/70 backdrop-blur border border-gray-200 p-5 shadow-sm"
-    >
-      <p class="text-xs text-gray-500">Inactivos</p>
-      <h2 class="text-3xl font-semibold text-rose-600">{{ inactivos }}</h2>
+    <div class="stat-card">
+      <div class="flex items-center gap-3">
+        <span class="icon-badge icon-badge-primary">
+          <lucide-icon name="circle-x" class="w-5 h-5"></lucide-icon>
+        </span>
+        <div>
+          <p class="stat-label">Inactivos</p>
+          <h2 class="stat-value text-danger">{{ inactivos }}</h2>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ================= LISTADO ================= -->
-  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm">
+  <div class="card p-0 overflow-hidden">
     <!-- HEADER -->
-    <div class="flex items-center justify-between p-5 border-b">
+    <div class="flex items-center justify-between gap-4 p-5 border-b border-border-soft">
       <div>
-        <h2 class="text-lg font-semibold">Usuarios Staff</h2>
-        <p class="text-xs text-gray-500">Gestión de usuarios administrativos</p>
+        <h2 class="section-title">Listado de usuarios</h2>
+        <p class="subtle">Administra el equipo con acceso al panel</p>
       </div>
 
-      <button
-        class="bg-accent hover:bg-accent-hover text-white px-4 py-2 rounded-xl text-sm flex items-center gap-2 shadow"
-        (click)="abrirModal()"
-      >
+      <button class="btn-primary btn-sm" (click)="abrirModal()">
         <lucide-icon name="plus" class="w-4 h-4"></lucide-icon>
         Nuevo
       </button>
@@ -44,55 +62,53 @@
     <!-- ================= DESKTOP ================= -->
     <div class="hidden md:block">
       <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-gray-600">
-          <tr>
-            <th class="p-4 text-left">Usuario</th>
-            <th class="p-4 text-left">Identificación</th>
-            <th class="p-4 text-left">Teléfono</th>
-            <th class="p-4 text-left">Estado</th>
-            <th class="p-4 text-right">Acciones</th>
+        <thead class="bg-surface-muted text-text-faint">
+          <tr class="text-left text-[11px] font-semibold uppercase tracking-wider">
+            <th class="px-5 py-3">Usuario</th>
+            <th class="px-5 py-3">Identificación</th>
+            <th class="px-5 py-3">Teléfono</th>
+            <th class="px-5 py-3">Estado</th>
+            <th class="px-5 py-3 text-right">Acciones</th>
           </tr>
         </thead>
 
         <tbody>
           @for (u of usuarios; track u._id) {
-            <tr class="border-t hover:bg-gray-50 transition">
-              <td class="p-4">
+            <tr class="border-t border-border-soft hover:bg-surface-hover transition-colors">
+              <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
                   <div
-                    class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium"
+                    class="w-10 h-10 rounded-full bg-primary-tint text-primary flex items-center justify-center text-sm font-semibold"
                   >
                     {{ u.nombre[0] }}
                   </div>
                   <div>
-                    <p class="font-medium text-gray-800">{{ u.nombre }}</p>
-                    <p class="text-xs text-gray-500">{{ u.email }}</p>
+                    <p class="font-medium text-text-dark">{{ u.nombre }}</p>
+                    <p class="text-xs text-text-faint">{{ u.email }}</p>
                   </div>
                 </div>
               </td>
 
-              <td class="p-4">{{ u.identificacion }}</td>
-              <td class="p-4">{{ u.telefono || "-" }}</td>
+              <td class="px-5 py-4 text-text-body">{{ u.identificacion }}</td>
+              <td class="px-5 py-4 text-text-body">{{ u.telefono || "-" }}</td>
 
-              <td class="p-4">
+              <td class="px-5 py-4">
                 <span
-                  class="px-2 py-1 text-xs rounded-full"
-                  [class.bg-emerald-100]="u.estado"
-                  [class.text-emerald-700]="u.estado"
-                  [class.bg-rose-100]="!u.estado"
-                  [class.text-rose-700]="!u.estado"
+                  class="badge"
+                  [class.badge-success]="u.estado"
+                  [class.badge-danger]="!u.estado"
                 >
                   {{ u.estado ? "Activo" : "Inactivo" }}
                 </span>
               </td>
 
-             <td class="p-4 text-right">
+             <td class="px-5 py-4 text-right">
   <div class="flex justify-end gap-2">
 
     <!-- EDITAR -->
     <button
       (click)="editar(u)"
-      class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+      class="btn-outline btn-sm"
     >
       <lucide-icon name="pencil" class="w-3.5 h-3.5"></lucide-icon>
       Editar
@@ -101,13 +117,11 @@
     <!-- ESTADO -->
     <button
       (click)="abrirConfirmacion(u)"
-      class="flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition"
-      [class.bg-emerald-100]="u.estado"
-      [class.text-emerald-700]="u.estado"
-      [class.hover:bg-emerald-200]="u.estado"
-      [class.bg-rose-100]="!u.estado"
-      [class.text-rose-700]="!u.estado"
-      [class.hover:bg-rose-200]="!u.estado"
+      class="btn-sm rounded-lg flex items-center gap-1.5 font-medium transition-colors"
+      [class.bg-success-soft]="u.estado"
+      [class.text-success]="u.estado"
+      [class.bg-danger-soft]="!u.estado"
+      [class.text-danger]="!u.estado"
     >
       <lucide-icon
         [name]="u.estado ? 'toggle-right' : 'toggle-left'"
@@ -128,38 +142,36 @@
     <!-- ================= MOBILE ================= -->
     <div class="md:hidden p-4 space-y-3">
       @for (u of usuarios; track u._id) {
-        <div class="border rounded-xl p-4 bg-white shadow-sm space-y-3">
+        <div class="card card-flat p-4 space-y-3">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium"
+              class="w-10 h-10 rounded-full bg-primary-tint text-primary flex items-center justify-center text-sm font-semibold"
             >
               {{ u.nombre[0] }}
             </div>
             <div>
-              <p class="font-medium">{{ u.nombre }}</p>
-              <p class="text-xs text-gray-500">{{ u.email }}</p>
+              <p class="font-medium text-text-dark">{{ u.nombre }}</p>
+              <p class="text-xs text-text-faint">{{ u.email }}</p>
             </div>
           </div>
 
-          <div class="text-sm text-gray-600 space-y-1">
-            <p><b>ID:</b> {{ u.identificacion }}</p>
-            <p><b>Tel:</b> {{ u.telefono || "-" }}</p>
+          <div class="text-sm text-text-body space-y-1">
+            <p><b class="text-text-dark">ID:</b> {{ u.identificacion }}</p>
+            <p><b class="text-text-dark">Tel:</b> {{ u.telefono || "-" }}</p>
           </div>
 
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between pt-1">
             <span
-              class="px-2 py-1 text-xs rounded-full"
-              [class.bg-emerald-100]="u.estado"
-              [class.text-emerald-700]="u.estado"
-              [class.bg-rose-100]="!u.estado"
-              [class.text-rose-700]="!u.estado"
+              class="badge"
+              [class.badge-success]="u.estado"
+              [class.badge-danger]="!u.estado"
             >
               {{ u.estado ? "Activo" : "Inactivo" }}
             </span>
 
-            <div class="flex gap-3 text-xs">
-              <button (click)="editar(u)" class="text-accent">Editar</button>
-              <button (click)="abrirConfirmacion(u)" class="text-gray-500">
+            <div class="flex gap-2">
+              <button (click)="editar(u)" class="btn-ghost btn-sm">Editar</button>
+              <button (click)="abrirConfirmacion(u)" class="btn-outline btn-sm">
                 Estado
               </button>
             </div>
@@ -172,30 +184,28 @@
 
 <!-- ================= MODAL ================= -->
 @if (modalAbierto) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center">
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <!-- OVERLAY -->
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+    <div class="absolute inset-0 bg-primary-deep/50 backdrop-blur-[2px]"></div>
 
     <!-- MODAL -->
     <div
-      class="relative w-full max-w-xl rounded-3xl bg-white shadow-2xl border border-gray-200 overflow-hidden"
+      class="relative w-full max-w-xl rounded-2xl bg-surface shadow-pop border border-border-soft overflow-hidden animate-in"
     >
       <!-- HEADER -->
       <div
-        class="flex items-center justify-between px-6 py-5 bg-gray-50 border-b"
+        class="flex items-center justify-between px-6 py-5 bg-surface-muted border-b border-border-soft"
       >
         <div class="flex items-center gap-3">
-          <div
-            class="w-11 h-11 rounded-xl bg-accent/10 flex items-center justify-center"
-          >
-            <lucide-icon name="user" class="w-5 h-5 text-accent"></lucide-icon>
-          </div>
+          <span class="icon-badge icon-badge-accent">
+            <lucide-icon name="user" class="w-5 h-5"></lucide-icon>
+          </span>
 
           <div>
-            <h3 class="text-lg font-semibold text-gray-900">
+            <h3 class="section-title">
               {{ modoEdicion ? "Editar usuario" : "Nuevo usuario" }}
             </h3>
-            <p class="text-xs text-gray-500">
+            <p class="subtle">
               {{
                 modoEdicion
                   ? "Modifica la información del usuario"
@@ -207,51 +217,48 @@
 
         <button
           (click)="cerrarModal()"
-          class="w-9 h-9 rounded-lg hover:bg-gray-200 flex items-center justify-center transition"
+          class="btn-icon btn-ghost"
         >
-          <lucide-icon name="x" class="w-5 h-5 text-gray-600"></lucide-icon>
+          <lucide-icon name="x" class="w-5 h-5"></lucide-icon>
         </button>
       </div>
 
       <!-- BODY -->
-      <div class="px-6 py-6 bg-white space-y-5">
+      <div class="px-6 py-6 bg-surface space-y-5">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="label">Nombre</label>
+            <label class="form-label">Nombre</label>
             <input
               type="text"
               [(ngModel)]="form.nombre"
-              class="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/40"
+              class="input"
             />
           </div>
 
           <div>
-            <label class="label">Email</label>
+            <label class="form-label">Email</label>
             <input
               type="email"
               [(ngModel)]="form.email"
-              class="input-pro"
-              class="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/40"
+              class="input"
             />
           </div>
 
           <div>
-            <label class="label">Identificación</label>
+            <label class="form-label">Identificación</label>
             <input
               type="text"
               [(ngModel)]="form.identificacion"
-              class="input-pro"
-              class="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/40"
+              class="input"
             />
           </div>
 
           <div>
-            <label class="label">Teléfono</label>
+            <label class="form-label">Teléfono</label>
             <input
               type="text"
               [(ngModel)]="form.telefono"
-              class="input-pro"
-              class="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/40"
+              class="input"
             />
           </div>
 
@@ -260,7 +267,7 @@
       </div>
 
       <!-- FOOTER -->
-      <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t">
+      <div class="flex justify-end gap-3 px-6 py-4 bg-surface-muted border-t border-border-soft">
         <button class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
 
         <button
@@ -276,24 +283,22 @@
 }
 @if (modalConfirmarEstado) {
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-primary-deep/40 backdrop-blur-sm"
   >
     <div
-      class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-200 p-6 space-y-4"
+      class="w-full max-w-md card shadow-pop p-6 space-y-4 animate-in"
     >
       <div class="flex items-center gap-3">
-        <div
-          class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center"
-        >
+        <span class="icon-badge bg-warning-soft text-warning">
           <lucide-icon
             name="alert-triangle"
-            class="w-5 h-5 text-amber-600"
+            class="w-5 h-5"
           ></lucide-icon>
-        </div>
+        </span>
 
         <div>
-          <h3 class="font-semibold">Cambiar estado</h3>
-          <p class="text-sm text-gray-500">
+          <h3 class="section-title">Cambiar estado</h3>
+          <p class="subtle">
             ¿Seguro que deseas
             {{ usuarioSeleccionado?.estado ? "desactivar" : "activar" }}
             este usuario?

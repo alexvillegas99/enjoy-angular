@@ -1,61 +1,111 @@
+<!-- ─── SIDEBAR DESKTOP (lg+) ────────────────────────────────────── -->
 <aside
-  class="hidden lg:flex h-screen bg-slate-50 border-r border-slate-200 transition-all duration-200"
-  [class.w-20]="!expanded"
-  [class.w-60]="expanded"
-  (mouseenter)="expanded = true"
-  (mouseleave)="expanded = false"
+  class="hidden lg:flex h-screen w-64 shrink-0 relative overflow-hidden"
+  style="background: var(--surface-grad); border-right: 1px solid var(--stroke);"
 >
-  <div class="flex flex-col w-full">
+  <div class="flex flex-col w-full relative z-10">
 
     <!-- LOGO -->
     <div
-      class="h-16 flex items-center justify-center cursor-pointer px-4"
+      class="h-16 flex items-center cursor-pointer px-4 gap-3"
+      style="border-bottom: 1px solid var(--stroke);"
       routerLink="/dashboard"
     >
-      <img
-        [src]="expanded ? institucion.logoTexto : institucion.logoIcono"
-        alt="Logo"
-        class="h-8 object-contain transition-all duration-200"
-        [class.w-8]="!expanded"
-        [class.w-32]="expanded"
-      />
+      <div class="sidebar-logo-mark">E</div>
+      <div style="font-family:'Sora'; font-weight:800; font-size:16px; letter-spacing:-0.02em; color:var(--text); line-height:1.1;">
+        Enjoy
+        <small style="display:block; font-size:11px; font-weight:500; color:var(--text-mute); margin-top:2px;">Panel administrativo</small>
+      </div>
     </div>
 
     <!-- MENU -->
-    <nav class="flex-1 overflow-y-auto py-4 space-y-1">
-
+    <nav class="flex-1 overflow-y-auto py-4 px-3">
       @for (item of menu; track item.route) {
         <a
           [routerLink]="item.route"
-          routerLinkActive="bg-slate-200 text-slate-900"
-          class="flex items-center gap-4 px-4 py-3 text-sm text-slate-700 hover:bg-slate-200 transition"
+          routerLinkActive="active"
+          class="nav-item"
         >
-          <lucide-icon
-            [name]="item.icon"
-            class="w-5 h-5"
-          ></lucide-icon>
-
-          @if (expanded) {
-            <span>{{ item.label }}</span>
-          }
+          <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+          <span class="truncate">{{ item.label }}</span>
         </a>
       }
-
     </nav>
 
     <!-- FOOTER -->
-    <div class="border-t border-slate-200 px-4 py-3">
+    <div class="px-3 py-3" style="border-top: 1px solid var(--stroke);">
       <a
         routerLink="/configuracion"
-        class="flex items-center gap-4 text-sm text-slate-600 hover:text-slate-800"
+        routerLinkActive="active"
+        class="nav-item"
       >
-        <lucide-icon name="settings" class="w-5 h-5"></lucide-icon>
-
-        @if (expanded) {
-          <span>Configuración</span>
-        }
+        <lucide-icon name="settings" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+        <span>Configuración</span>
       </a>
     </div>
-
   </div>
 </aside>
+
+<!-- ─── DRAWER MOBILE (visible solo en <lg) ────────────────────── -->
+@if (store.mobileOpen()) {
+  <!-- Backdrop -->
+  <div
+    class="lg:hidden fixed inset-0 z-40"
+    style="background: rgba(0,0,0,0.55); backdrop-filter: blur(4px);"
+    (click)="closeMobile()"
+  ></div>
+
+  <!-- Drawer panel -->
+  <aside
+    class="lg:hidden fixed top-0 left-0 z-50 h-screen w-72 flex flex-col animate-in"
+    style="background: var(--surface-grad); border-right: 1px solid var(--stroke); box-shadow: 0 0 40px rgba(0,0,0,0.6);"
+  >
+    <!-- LOGO + cerrar -->
+    <div
+      class="h-16 flex items-center px-4 gap-3"
+      style="border-bottom: 1px solid var(--stroke);"
+    >
+      <div class="sidebar-logo-mark">E</div>
+      <div style="font-family:'Sora'; font-weight:800; font-size:16px; letter-spacing:-0.02em; color:var(--text); line-height:1.1; flex:1;">
+        Enjoy
+        <small style="display:block; font-size:11px; font-weight:500; color:var(--text-mute); margin-top:2px;">Panel admin</small>
+      </div>
+      <button
+        class="btn-icon"
+        (click)="closeMobile()"
+        title="Cerrar"
+        aria-label="Cerrar menú"
+      >
+        <lucide-icon name="x" style="width:16px; height:16px;"></lucide-icon>
+      </button>
+    </div>
+
+    <!-- MENU completo -->
+    <nav class="flex-1 overflow-y-auto py-4 px-3">
+      @for (item of menu; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          (click)="closeMobile()"
+          class="nav-item"
+        >
+          <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+          <span class="truncate">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <!-- FOOTER -->
+    <div class="px-3 py-3" style="border-top: 1px solid var(--stroke);">
+      <a
+        routerLink="/configuracion"
+        routerLinkActive="active"
+        (click)="closeMobile()"
+        class="nav-item"
+      >
+        <lucide-icon name="settings" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+        <span>Configuración</span>
+      </a>
+    </div>
+  </aside>
+}

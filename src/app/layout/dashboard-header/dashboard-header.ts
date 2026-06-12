@@ -1,9 +1,10 @@
 import { AuthService } from './../../features/auth/services/auth';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlertService } from '../../core/services/alert.service';
 import { Router } from '@angular/router';
+import { SidebarStore } from '../../core/services/sidebar-store';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -12,6 +13,7 @@ import { Router } from '@angular/router';
   templateUrl: './dashboard-header.html',
 })
 export class DashboardHeader {
+  sidebarStore = inject(SidebarStore);
   irAperfil() {
     this.router.navigate(['dashboard-local/perfil']);
   }

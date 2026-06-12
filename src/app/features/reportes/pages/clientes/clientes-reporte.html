@@ -1,0 +1,122 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6 print-hide-flex">
+    <div class="flex items-start gap-4">
+      <a routerLink="/reportes" class="btn-icon" title="Volver">
+        <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+      </a>
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="users" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Clientes &amp; Retención</h1>
+        <p class="subtle mt-1">Quiénes vuelven, dónde están y quiénes consumen más.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="btn-ghost" (click)="exportarTopCsv()">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV top clientes
+      </button>
+      <button class="btn-ghost" (click)="exportarProvinciasCsv()">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV por provincia
+      </button>
+      <button class="btn-primary" (click)="imprimirPdf()">
+        <lucide-icon name="printer" style="width:14px; height:14px;"></lucide-icon> Imprimir / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-6 print-hide" style="padding:18px;">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+      <div><label class="field-label">Desde</label><input type="date" class="input" [(ngModel)]="desde" /></div>
+      <div><label class="field-label">Hasta</label><input type="date" class="input" [(ngModel)]="hasta" /></div>
+      <button class="btn-primary" (click)="cargar()" [disabled]="loading">
+        <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
+      </button>
+    </div>
+  </div>
+
+  @if (loading && !data) {
+    <div class="card" style="padding:60px; text-align:center;"><div class="subtle">Cargando…</div></div>
+  } @else if (data) {
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="card stat">
+        <div class="stat-label">Clientes totales</div>
+        <div class="stat-value">{{ fmtN(data.totalClientes) }}</div>
+      </div>
+      <div class="card stat card-accent">
+        <div class="stat-label">Nuevos en el período</div>
+        <div class="stat-value">{{ fmtN(data.nuevosEnRango) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">Recurrentes (2+ compras)</div>
+        <div class="stat-value">{{ fmtN(data.recurrentes) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">% recurrentes</div>
+        <div class="stat-value">{{ fmtPct(porcRecurrentes(), 0) }}</div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="card" style="padding:18px;">
+        <h3 class="section-title">Recurrentes vs únicos</h3>
+        <p class="subtle" style="font-size:12px; margin-bottom:8px;">Distribución de compradores</p>
+        <div echarts [options]="recurrentesOption" style="height:300px;"></div>
+      </div>
+
+      <div class="card lg:col-span-2" style="padding:18px;">
+        <h3 class="section-title">Distribución geográfica</h3>
+        <p class="subtle" style="font-size:12px; margin-bottom:8px;">Clientes por provincia</p>
+        <div echarts [options]="provinciasOption" style="height:380px;"></div>
+      </div>
+    </div>
+
+    <!-- Top clientes -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="padding:18px 22px;">
+        <h3 class="section-title">Top consumidores</h3>
+        <p class="subtle" style="font-size:12px;">Los 15 clientes con más cupones canjeados</p>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Email</th>
+            <th style="text-align:right;">Canjes</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of data.topClientes; track c.clienteId; let i = $index) {
+            <tr>
+              <td style="color:var(--text-mute); width:32px;">{{ i + 1 }}</td>
+              <td style="font-weight:600;">{{ c.nombres || '—' }} {{ c.apellidos || '' }}</td>
+              <td class="subtle">{{ c.email || '—' }}</td>
+              <td style="text-align:right; font-weight:700; color:var(--orange);">{{ fmtN(c.canjes) }}</td>
+            </tr>
+          }
+          @if (!data.topClientes?.length) {
+            <tr><td colspan="4" class="subtle" style="text-align:center; padding:32px;">Sin canjes en el período</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
+
+<style>
+  @media print {
+    .print-hide, .print-hide-flex { display: none !important; }
+    app-dashboard-sidebar, app-dashboard-header, app-dashboard-bottom-nav { display: none !important; }
+    main { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
+    .card { background: white !important; border: 1px solid #ddd !important; color: black !important; box-shadow: none !important; }
+    .stat-value, .page-title, .section-title { color: black !important; }
+    .subtle, .stat-label, td, th { color: #333 !important; }
+  }
+</style>

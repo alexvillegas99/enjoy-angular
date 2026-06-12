@@ -1,18 +1,19 @@
-<div class="p-4 lg:p-8 bg-gray-100 min-h-screen space-y-8">
+<div class="p-4 lg:p-8 bg-surface-muted min-h-screen space-y-8">
   <!-- HEADER -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-semibold text-gray-900">
-        Versiones de cuponera
-      </h1>
-      <p class="text-sm text-gray-500">
-        Configura versiones y sus ciudades disponibles
-      </p>
+  <div class="flex items-start justify-between gap-4 animate-in">
+    <div class="flex items-start gap-4">
+      <span class="icon-badge icon-badge-primary shrink-0">
+        <lucide-icon name="layers" class="w-5 h-5" />
+      </span>
+      <div>
+        <h1 class="page-title">Versiones de cuponera</h1>
+        <p class="subtle">Configura versiones y sus ciudades disponibles</p>
+      </div>
     </div>
 
     <!-- Desktop CTA -->
     <button
-      class="hidden sm:flex bg-black text-white px-5 py-2.5 rounded-xl text-sm font-medium items-center gap-2"
+      class="btn-primary hidden sm:inline-flex"
       (click)="abrirCrear()"
     >
       <lucide-icon name="plus" class="w-4 h-4" />
@@ -21,16 +22,26 @@
   </div>
 
   <!-- FILTROS -->
-  <div class="flex flex-col sm:flex-row gap-4">
-    <input
-      class="bg-white rounded-xl px-4 py-3 text-sm w-full sm:w-72 shadow-sm"
-      placeholder="Buscar versión"
-      [(ngModel)]="filtroNombre"
-      (input)="onBuscar()"
-    />
+  <div class="filter-card animate-in">
+    <div class="filter-card-header">
+      <div>
+        <h2 class="filter-card-title">Buscar y filtrar</h2>
+        <p class="subtle">{{ versiones.length }} versiones visibles</p>
+      </div>
+    </div>
+    <div class="filter-bar">
+    <div class="search-field">
+      <lucide-icon name="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-faint" />
+      <input
+        class="input pl-9"
+        placeholder="Buscar versión"
+        [(ngModel)]="filtroNombre"
+        (input)="onBuscar()"
+      />
+    </div>
 
     <select
-      class="bg-white rounded-xl px-4 py-3 text-sm w-full sm:w-48 shadow-sm"
+      class="input w-full sm:w-48"
       [(ngModel)]="filtroEstado"
       (change)="onBuscar()"
     >
@@ -38,34 +49,32 @@
       <option value="true">Activas</option>
       <option value="false">Inactivas</option>
     </select>
+    </div>
   </div>
 
   <!-- GRID DE CARDS -->
-  <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-    @for (v of versiones; track v._id) {
-      <div
-        class="bg-white rounded-[28px] p-6 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.25)] hover:-translate-y-1 hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] transition"
-      >
+  @if (versiones.length) {
+    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      @for (v of versiones; track v._id) {
+      <div class="card card-interactive p-6 flex flex-col animate-in">
         <!-- HEADER CARD -->
         <div class="flex items-start justify-between gap-3">
           <div>
-            <h3 class="text-base font-semibold text-gray-900">
+            <h3 class="section-title text-base">
               {{ v.nombre }}
             </h3>
-            <p class="text-xs text-gray-500 mt-1">Versión de cuponera</p>
+            <p class="muted text-xs mt-1">Versión de cuponera</p>
             @if (v.precio) {
-              <p class="text-lg font-bold text-gray-900 mt-1">${{ v.precio }}</p>
+              <p class="stat-value mt-2">${{ v.precio }}</p>
             }
           </div>
           <!-- DETALLE / DESCRIPCIÓN -->
 
 
           <span
-            class="px-3 py-1 rounded-full text-xs font-medium"
-            [class.bg-green-100]="v.estado"
-            [class.text-green-700]="v.estado"
-            [class.bg-gray-200]="!v.estado"
-            [class.text-gray-700]="!v.estado"
+            class="badge"
+            [class.badge-success]="v.estado"
+            [class.badge-muted]="!v.estado"
           >
             {{ v.estado ? "Activa" : "Inactiva" }}
           </span>
@@ -73,7 +82,7 @@
  @if (v.descripcion) {
             <div class="mt-3">
               <p
-                class="text-sm text-gray-600 leading-relaxed line-clamp-2"
+                class="subtle text-sm leading-relaxed line-clamp-2"
                 title="{{ v.descripcion }}"
               >
                 {{ v.descripcion }}
@@ -81,21 +90,19 @@
             </div>
           }
         <!-- CIUDADES (FOCO PRINCIPAL) -->
-        <div class="mt-5">
-          <p class="text-xs text-gray-500 mb-2">Ciudades disponibles</p>
+        <div class="mt-5 flex-1">
+          <p class="form-label mb-2">Ciudades disponibles</p>
 
-          @if (v.ciudadesDisponibles?.length) {
+          @if (v.ciudadesDisponibles.length) {
             <div class="flex flex-wrap gap-2">
               @for (c of v.ciudadesDisponibles; track c) {
-                <span
-                  class="px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-800"
-                >
+                <span class="chip">
                   {{ c }}
                 </span>
               }
             </div>
           } @else {
-            <div class="text-sm text-gray-600 bg-gray-50 rounded-xl px-4 py-3">
+            <div class="surface-sunken text-sm text-text-body rounded-xl px-4 py-3 bg-surface-sunken">
              N/A
             </div>
           }
@@ -104,14 +111,15 @@
         <!-- ACCIONES -->
         <div class="mt-6 flex gap-3">
           <button
-            class="flex-1 bg-black text-white py-2.5 rounded-xl text-sm font-medium"
+            class="btn-secondary btn-sm flex-1"
             (click)="editar(v)"
           >
+            <lucide-icon name="pencil" class="w-4 h-4" />
             Editar
           </button>
 
           <button
-            class="flex-1 bg-gray-200 text-gray-900 py-2.5 rounded-xl text-sm font-medium"
+            class="btn-outline btn-sm flex-1"
             (click)="toggleEstado(v)"
           >
             {{ v.estado ? "Desactivar" : "Activar" }}
@@ -119,52 +127,75 @@
         </div>
 
         <button
-          class="w-full mt-3 text-xs text-red-600 font-medium"
+          class="btn-ghost btn-sm btn-block mt-3 text-danger! hover:bg-danger-soft!"
           (click)="eliminar(v)"
         >
+          <lucide-icon name="trash-2" class="w-4 h-4" />
           Eliminar versión
         </button>
       </div>
-    }
-  </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <span class="icon-badge icon-badge-primary">
+        <lucide-icon name="layers" class="w-5 h-5" />
+      </span>
+      <h2 class="empty-state-title">No encontramos versiones</h2>
+      <p class="empty-state-copy">Ajusta los filtros o crea una nueva versión de cuponera.</p>
+    </div>
+  }
 
   <!-- FAB MOBILE -->
   <button
-    class="sm:hidden fixed bottom-6 right-6 bg-black text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center"
+    class="catalog-fab btn-primary btn-icon sm:hidden"
+    aria-label="Crear versión"
     (click)="abrirCrear()"
   >
     <lucide-icon name="plus" class="w-6 h-6" />
   </button>
 </div>
 @if (modalAbierto) {
-  <div class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-    <div class="bg-white rounded-[28px] w-full max-w-lg p-6 space-y-5">
+  <div class="modal-backdrop">
+    <section class="modal-surface modal-surface-lg" role="dialog" aria-modal="true">
+      <header class="modal-header">
+        <div>
+          <h2 class="section-title text-lg">{{ editando ? 'Editar versión' : 'Nueva versión' }}</h2>
+          <p class="subtle mt-1">Define precio y cobertura territorial de la cuponera.</p>
+        </div>
+        <button class="btn-ghost btn-icon" aria-label="Cerrar" (click)="cerrarModal()">
+          <lucide-icon name="x" class="w-5 h-5" />
+        </button>
+      </header>
 
-      <h2 class="text-lg font-semibold text-gray-900">
-        {{ editando ? 'Editar versión' : 'Nueva versión' }}
-      </h2>
-
+      <div class="modal-body space-y-5">
       <!-- Nombre -->
-      <input
-        class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm"
-        placeholder="Nombre de la versión"
-        [(ngModel)]="form.nombre"
-      />
+      <div>
+        <label class="form-label mb-1 block">Nombre de la versión</label>
+        <input
+          class="input"
+          placeholder="Nombre de la versión"
+          [(ngModel)]="form.nombre"
+        />
+      </div>
 
       <!-- Descripción -->
-      <textarea
-        class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm"
-        placeholder="Descripción (opcional)"
-        rows="3"
-        [(ngModel)]="form.descripcion"
-      ></textarea>
+      <div>
+        <label class="form-label mb-1 block">Descripción</label>
+        <textarea
+          class="input"
+          placeholder="Descripción (opcional)"
+          rows="3"
+          [(ngModel)]="form.descripcion"
+        ></textarea>
+      </div>
 
       <!-- Precio -->
       <div>
-        <label class="text-sm font-medium text-gray-700 mb-1 block">Precio (USD)</label>
+        <label class="form-label mb-1 block">Precio (USD)</label>
         <input
           type="text"
-          class="w-full bg-gray-100 rounded-xl px-4 py-3 text-sm"
+          class="input"
           placeholder="Ej: 25.00"
           [(ngModel)]="form.precio"
         />
@@ -173,24 +204,20 @@
       <!-- CIUDADES -->
     <!-- CIUDADES -->
 <div>
-  <p class="text-sm font-medium text-gray-700 mb-2">
+  <p class="form-label mb-2">
     Ciudades disponibles
   </p>
 
   @if (loadingCiudades) {
-    <p class="text-xs text-gray-500">Cargando ciudades...</p>
+    <p class="muted text-xs">Cargando ciudades...</p>
   } @else {
     <div class="flex flex-wrap gap-2">
       @for (c of ciudades; track c._id) {
         <button
           type="button"
           (click)="toggleCiudad(c._id)"
-          class="px-3 py-1.5 rounded-full text-xs font-medium border transition"
-          [class.bg-black]="form.ciudadesDisponibles.includes(c._id)"
-          [class.text-white]="form.ciudadesDisponibles.includes(c._id)"
-          [class.border-black]="form.ciudadesDisponibles.includes(c._id)"
-          [class.bg-gray-100]="!form.ciudadesDisponibles.includes(c._id)"
-          [class.text-gray-800]="!form.ciudadesDisponibles.includes(c._id)"
+          class="chip"
+          [class.is-active]="form.ciudadesDisponibles.includes(c._id)"
         >
           {{ c.nombre }}
         </button>
@@ -198,14 +225,14 @@
     </div>
   }
 
-  <p class="text-xs text-gray-500 mt-2">
+  <p class="form-hint mt-2">
     Si no seleccionas ninguna ciudad, la versión será válida para todas.
   </p>
 </div>
 
 <!-- PROVINCIAS -->
 <div>
-  <p class="text-sm font-medium text-gray-700 mb-2">
+  <p class="form-label mb-2">
     Provincias completas
   </p>
   <div class="flex flex-wrap gap-2">
@@ -213,39 +240,36 @@
       <button
         type="button"
         (click)="toggleProvincia(p._id)"
-        class="px-3 py-1.5 rounded-full text-xs font-medium border transition"
-        [class.bg-primary]="form.provinciasDisponibles?.includes(p._id)"
-        [class.text-white]="form.provinciasDisponibles?.includes(p._id)"
-        [class.border-primary]="form.provinciasDisponibles?.includes(p._id)"
-        [class.bg-gray-100]="!form.provinciasDisponibles?.includes(p._id)"
-        [class.text-gray-800]="!form.provinciasDisponibles?.includes(p._id)"
+        class="chip"
+        [class.is-active]="form.provinciasDisponibles?.includes(p._id)"
       >
         {{ p.nombre }}
       </button>
     }
   </div>
-  <p class="text-xs text-gray-500 mt-2">
+  <p class="form-hint mt-2">
     Al elegir una provincia, la versión cubre todas sus ciudades.
   </p>
 </div>
+      </div>
 
 
       <!-- ACTIONS -->
-      <div class="flex justify-end gap-3 pt-4">
+      <footer class="modal-footer">
         <button
-          class="px-4 py-2 text-sm rounded-xl border"
+          class="btn-outline"
           (click)="cerrarModal()"
         >
           Cancelar
         </button>
 
         <button
-          class="px-4 py-2 text-sm rounded-xl bg-black text-white"
+          class="btn-primary"
           (click)="guardar()"
         >
           Guardar
         </button>
-      </div>
-    </div>
+      </footer>
+    </section>
   </div>
 }

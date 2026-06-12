@@ -1,47 +1,57 @@
 <header
-  class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 relative"
+  class="h-16 flex items-center justify-between px-4 sm:px-6 relative z-30 gap-3"
+  style="background: rgba(0,0,0,0.10); border-bottom: 1px solid var(--stroke); backdrop-filter: blur(10px);"
 >
 
-  <h1 class="text-sm text-gray-700">
-    Hola, <span class="font-semibold">{{ nombre }}</span>
-  </h1>
+  <!-- HAMBURGUESA (solo mobile) -->
+  <button
+    class="btn-icon lg:hidden"
+    (click)="sidebarStore.toggle()"
+    aria-label="Abrir menú"
+    title="Menú"
+  >
+    <lucide-icon name="menu" style="width:18px; height:18px;"></lucide-icon>
+  </button>
 
-  <div class="flex items-center gap-4">
-
-    <span class="text-xs text-gray-500 hidden sm:block">
+  <div class="flex flex-col flex-1 min-w-0">
+    <h1 class="text-sm" style="color: var(--text-soft);">
+      Hola, <span style="font-weight:800; color: var(--text);">{{ nombre }}</span>
+    </h1>
+    <span class="hidden sm:block" style="font-size:11px; color: var(--text-mute);">
       Última conexión: {{ ultimaConexion }}
     </span>
+  </div>
 
+  <div class="flex items-center gap-3">
     <!-- AVATAR -->
     <div class="relative">
-
       <button
         (click)="toggleMenu()"
-        class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition"
+        class="avatar"
+        style="cursor:pointer; width:40px; height:40px;"
+        title="Mi cuenta"
       >
-        <lucide-icon name="user" class="w-5 h-5 text-gray-600"></lucide-icon>
+        <lucide-icon name="user" style="width:18px; height:18px;"></lucide-icon>
       </button>
 
       <!-- DROPDOWN -->
       @if (menuAbierto) {
         <div
-          class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50"
+          class="card animate-in absolute right-0 mt-2 overflow-hidden z-50"
+          style="width: 220px; padding: 0;"
         >
-
-
-
           <button
             (click)="logout()"
-            class="w-full text-left px-4 py-2 text-sm hover:bg-red-50 text-red-600 flex items-center gap-2"
+            class="w-full text-left flex items-center gap-2 transition"
+            style="padding: 12px 16px; font-size: 13.5px; color: var(--red); background: transparent; border: 0; cursor: pointer;"
+            onmouseover="this.style.background='rgba(255,92,115,0.12)'"
+            onmouseout="this.style.background='transparent'"
           >
-            <lucide-icon name="log-out" class="w-4 h-4"></lucide-icon>
+            <lucide-icon name="log-out" style="width:14px; height:14px;"></lucide-icon>
             Cerrar sesión
           </button>
-
         </div>
       }
-
     </div>
-
   </div>
 </header>

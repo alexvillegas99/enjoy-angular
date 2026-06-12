@@ -7,28 +7,36 @@
 
 <!-- ERROR -->
 @if (error) {
-  <div class="card text-center py-10 mx-6">
-    <lucide-icon name="alert-circle" class="w-10 h-10 text-red-400 mx-auto mb-3"></lucide-icon>
+  <div class="card card-flat text-center py-12 mx-6 animate-in">
+    <div class="icon-badge icon-badge-accent mx-auto mb-4">
+      <lucide-icon name="alert-circle" class="w-6 h-6"></lucide-icon>
+    </div>
     <p class="text-sm text-text-body">{{ error }}</p>
   </div>
 }
 
 @if (!loading && !error) {
-<div class="space-y-6">
+<div class="space-y-8 animate-in">
+
+  <!-- ====== ENCABEZADO ====== -->
+  <div>
+    <h1 class="page-title">Panel general</h1>
+    <p class="subtle mt-1">Resumen de actividad, cupones y establecimientos.</p>
+  </div>
 
   <!-- ====== ACCIONES RÁPIDAS ====== -->
   <div class="card">
-    <h3 class="text-sm font-semibold text-text-dark mb-4">Acciones rápidas</h3>
+    <h3 class="section-title mb-5">Acciones rápidas</h3>
     <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
       @for (a of accionesRapidas; track a.label) {
         <a
           [routerLink]="a.route"
-          class="flex flex-col items-center justify-center gap-2 p-3 rounded-lg bg-surface-muted hover:bg-accent/10 transition cursor-pointer"
+          class="card card-interactive flex flex-col items-center justify-center gap-3 p-4 text-center"
         >
-          <div class="w-9 h-9 rounded-lg bg-white flex items-center justify-center shadow-sm">
-            <lucide-icon [name]="a.icono" class="w-4 h-4 text-accent"></lucide-icon>
+          <div class="icon-badge icon-badge-accent">
+            <lucide-icon [name]="a.icono" class="w-5 h-5"></lucide-icon>
           </div>
-          <span class="text-xs text-text-body text-center leading-tight">{{ a.label }}</span>
+          <span class="text-xs font-medium text-text-body leading-tight">{{ a.label }}</span>
         </a>
       }
     </div>
@@ -37,46 +45,46 @@
   <!-- ====== KPI CARDS ====== -->
   <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <!-- Establecimientos -->
-    <div class="card flex items-center gap-4">
-      <div class="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <lucide-icon name="store" class="w-5 h-5 text-primary"></lucide-icon>
+    <div class="stat-card flex items-center gap-4">
+      <div class="icon-badge icon-badge-primary flex-shrink-0">
+        <lucide-icon name="store" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <p class="text-xs text-text-body">Establecimientos</p>
-        <p class="text-2xl font-semibold text-text-dark">{{ totalEstablecimientos }}</p>
+        <p class="stat-label">Establecimientos</p>
+        <p class="stat-value">{{ totalEstablecimientos }}</p>
       </div>
     </div>
 
     <!-- Clientes -->
-    <div class="card flex items-center gap-4">
-      <div class="w-11 h-11 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-        <lucide-icon name="users" class="w-5 h-5 text-accent"></lucide-icon>
+    <div class="stat-card flex items-center gap-4">
+      <div class="icon-badge icon-badge-accent flex-shrink-0">
+        <lucide-icon name="users" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <p class="text-xs text-text-body">Clientes</p>
-        <p class="text-2xl font-semibold text-text-dark">{{ totalClientes }}</p>
+        <p class="stat-label">Clientes</p>
+        <p class="stat-value">{{ totalClientes }}</p>
       </div>
     </div>
 
     <!-- Cupones -->
-    <div class="card flex items-center gap-4">
-      <div class="w-11 h-11 rounded-lg bg-accent-light/20 flex items-center justify-center flex-shrink-0">
-        <lucide-icon name="ticket" class="w-5 h-5 text-accent"></lucide-icon>
+    <div class="stat-card flex items-center gap-4">
+      <div class="icon-badge icon-badge-accent flex-shrink-0">
+        <lucide-icon name="ticket" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <p class="text-xs text-text-body">Cupones</p>
-        <p class="text-2xl font-semibold text-text-dark">{{ totalCupones }}</p>
+        <p class="stat-label">Cupones</p>
+        <p class="stat-value">{{ totalCupones }}</p>
       </div>
     </div>
 
     <!-- Versiones -->
-    <div class="card flex items-center gap-4">
-      <div class="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-        <lucide-icon name="layers" class="w-5 h-5 text-primary"></lucide-icon>
+    <div class="stat-card flex items-center gap-4">
+      <div class="icon-badge icon-badge-primary flex-shrink-0">
+        <lucide-icon name="layers" class="w-5 h-5"></lucide-icon>
       </div>
       <div>
-        <p class="text-xs text-text-body">Versiones</p>
-        <p class="text-2xl font-semibold text-text-dark">{{ totalVersiones }}</p>
+        <p class="stat-label">Versiones</p>
+        <p class="stat-value">{{ totalVersiones }}</p>
       </div>
     </div>
   </div>
@@ -85,19 +93,19 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Estado de cupones -->
     <div class="card">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-sm font-semibold text-text-dark">Estado de cupones</h3>
+      <div class="flex items-center justify-between gap-3 mb-5 flex-wrap">
+        <h3 class="section-title">Estado de cupones</h3>
         <div class="flex gap-3 text-xs text-text-body">
-          <span class="flex items-center gap-1">
+          <span class="flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-accent inline-block"></span>
             Activos {{ cuponesActivos }}
           </span>
-          <span class="flex items-center gap-1">
+          <span class="flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
             Inactivos {{ cuponesInactivos }}
           </span>
-          <span class="flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-gray-400 inline-block"></span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-text-faint inline-block"></span>
             Bloqueados {{ cuponesBloqueados }}
           </span>
         </div>
@@ -107,7 +115,7 @@
 
     <!-- Actividad de escaneos -->
     <div class="card">
-      <h3 class="text-sm font-semibold text-text-dark mb-4">Escaneos últimos 14 días</h3>
+      <h3 class="section-title mb-5">Escaneos últimos 14 días</h3>
       <div echarts [options]="actividadChart" class="h-64"></div>
     </div>
   </div>
@@ -118,9 +126,9 @@
     <!-- Solicitudes de empresas -->
     @if (solicitudes.length) {
       <div class="card">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-sm font-semibold text-text-dark">Solicitudes de empresas</h3>
-          <span class="text-xs text-text-body">{{ solicitudes.length }} total</span>
+        <div class="flex items-center justify-between gap-3 mb-5">
+          <h3 class="section-title">Solicitudes de empresas</h3>
+          <span class="badge badge-muted">{{ solicitudes.length }} total</span>
         </div>
         <div echarts [options]="solicitudesChart" class="h-48"></div>
       </div>
@@ -128,35 +136,35 @@
 
     <!-- Top establecimientos por calificación -->
     <div class="card">
-      <h3 class="text-sm font-semibold text-text-dark mb-4">Top establecimientos</h3>
+      <h3 class="section-title mb-5">Top establecimientos</h3>
       @if (establecimientos.length) {
-        <div class="space-y-3">
+        <div class="space-y-2">
           @for (e of establecimientos; track e._id; let i = $index) {
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-hover transition">
               <!-- Posición -->
-              <span class="w-6 h-6 rounded-full bg-surface-muted flex items-center justify-center text-xs font-semibold text-text-body flex-shrink-0">
+              <span class="w-7 h-7 rounded-full bg-surface-sunken flex items-center justify-center text-xs font-bold text-text-body flex-shrink-0">
                 {{ i + 1 }}
               </span>
 
               <!-- Avatar -->
               @if (e.detallePromocion?.logoUrl) {
-                <img [src]="e.detallePromocion.logoUrl" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                <img [src]="e.detallePromocion.logoUrl" class="w-9 h-9 rounded-full object-cover flex-shrink-0 ring-1 ring-border-soft" />
               } @else {
-                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                <div class="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
                   {{ e.nombre?.charAt(0) }}
                 </div>
               }
 
               <!-- Info -->
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium text-text-dark truncate">{{ e.nombre }}</p>
+                <p class="text-sm font-semibold text-text-dark truncate">{{ e.nombre }}</p>
                 <p class="text-xs text-text-body truncate">{{ e.ciudades?.join(', ') || '—' }}</p>
               </div>
 
               <!-- Rating -->
-              <div class="flex items-center gap-1 flex-shrink-0">
-                <lucide-icon name="star" class="w-3.5 h-3.5 text-accent-light"></lucide-icon>
-                <span class="text-sm font-semibold text-text-dark">{{ e.promedioCalificacion || 0 }}</span>
+              <div class="flex items-center gap-1 flex-shrink-0 badge badge-warning">
+                <lucide-icon name="star" class="w-3.5 h-3.5"></lucide-icon>
+                <span class="font-bold">{{ e.promedioCalificacion || 0 }}</span>
               </div>
             </div>
           }
@@ -170,42 +178,39 @@
   <!-- ====== CUPONES RECIENTES ====== -->
   @if (cuponesRecientes.length) {
     <div class="card">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-sm font-semibold text-text-dark">Cupones recientes</h3>
-        <a routerLink="/cupones" class="text-xs text-accent font-medium hover:underline">Ver todos</a>
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="section-title">Cupones recientes</h3>
+        <a routerLink="/cupones" class="btn-link btn-sm">Ver todos</a>
       </div>
 
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
-            <tr class="text-xs text-text-body border-b border-gray-100">
-              <th class="text-left py-2 font-medium">Secuencial</th>
-              <th class="text-left py-2 font-medium">Estado</th>
-              <th class="text-left py-2 font-medium hidden sm:table-cell">Escaneos</th>
-              <th class="text-left py-2 font-medium hidden md:table-cell">Activación</th>
-              <th class="text-left py-2 font-medium hidden md:table-cell">Vencimiento</th>
+            <tr class="text-[0.7rem] uppercase tracking-wide text-text-faint border-b border-border-soft">
+              <th class="text-left py-3 font-semibold">Secuencial</th>
+              <th class="text-left py-3 font-semibold">Estado</th>
+              <th class="text-left py-3 font-semibold hidden sm:table-cell">Escaneos</th>
+              <th class="text-left py-3 font-semibold hidden md:table-cell">Activación</th>
+              <th class="text-left py-3 font-semibold hidden md:table-cell">Vencimiento</th>
             </tr>
           </thead>
           <tbody>
             @for (c of cuponesRecientes; track c._id) {
-              <tr class="border-b border-gray-50 hover:bg-surface-muted/50 transition">
-                <td class="py-2.5 font-medium text-text-dark">{{ c.secuencial }}</td>
-                <td class="py-2.5">
+              <tr class="border-b border-border-subtle hover:bg-surface-hover transition">
+                <td class="py-3 font-semibold text-text-dark">{{ c.secuencial }}</td>
+                <td class="py-3">
                   <span
-                    class="px-2 py-0.5 text-xs rounded-full font-medium"
-                    [class.bg-green-100]="c.estado === 'ACTIVO'"
-                    [class.text-green-700]="c.estado === 'ACTIVO'"
-                    [class.bg-gray-200]="c.estado === 'INACTIVO'"
-                    [class.text-gray-600]="c.estado === 'INACTIVO'"
-                    [class.bg-red-100]="c.estado === 'BLOQUEADO'"
-                    [class.text-red-700]="c.estado === 'BLOQUEADO'"
+                    class="badge"
+                    [class.badge-success]="c.estado === 'ACTIVO'"
+                    [class.badge-muted]="c.estado === 'INACTIVO'"
+                    [class.badge-danger]="c.estado === 'BLOQUEADO'"
                   >
                     {{ c.estado }}
                   </span>
                 </td>
-                <td class="py-2.5 text-text-body hidden sm:table-cell">{{ c.numeroDeEscaneos || 0 }}</td>
-                <td class="py-2.5 text-text-body hidden md:table-cell">{{ c.fechaActivacion | date:'dd/MM/yy' }}</td>
-                <td class="py-2.5 text-text-body hidden md:table-cell">{{ c.fechaVencimiento | date:'dd/MM/yy' }}</td>
+                <td class="py-3 text-text-body hidden sm:table-cell">{{ c.numeroDeEscaneos || 0 }}</td>
+                <td class="py-3 text-text-body hidden md:table-cell">{{ c.fechaActivacion | date:'dd/MM/yy' }}</td>
+                <td class="py-3 text-text-body hidden md:table-cell">{{ c.fechaVencimiento | date:'dd/MM/yy' }}</td>
               </tr>
             }
           </tbody>

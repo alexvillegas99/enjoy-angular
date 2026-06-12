@@ -1,14 +1,19 @@
-<div class="max-w-3xl mx-auto space-y-8 pb-28">
+<div class="form-page space-y-6 animate-in">
 
   <!-- HEADER -->
-  <div class="flex items-center justify-between">
-
-    <div>
-      <h2 class="text-xl font-semibold text-slate-800">
+  <div class="page-header">
+    <button class="btn-icon" (click)="volver()" title="Volver" aria-label="Volver">
+      <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+    </button>
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="user-cog" style="width:20px; height:20px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h2 class="page-title">
         {{ modo === 'editar' ? 'Editar Usuario' : 'Crear Usuario' }}
       </h2>
 
-      <p class="text-sm text-slate-500">
+      <p class="subtle">
         {{
           modo === 'editar'
             ? 'Modificación de datos del usuario'
@@ -16,66 +21,68 @@
         }}
       </p>
     </div>
-
-    <button
-      class="px-4 py-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-100 transition"
-      (click)="volver()"
-    >
-      Volver
-    </button>
-
   </div>
 
   <!-- FORM -->
-  <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
+  <div class="card form-section space-y-7">
+
+    <div class="form-section-header">
+      <div class="icon-box">
+        <lucide-icon name="id-card" style="width:17px; height:17px;"></lucide-icon>
+      </div>
+      <div class="form-section-copy">
+        <h3 class="section-title">Datos del usuario</h3>
+        <p class="subtle">Información básica de la cuenta y su nivel de acceso.</p>
+      </div>
+    </div>
 
     <div class="grid md:grid-cols-2 gap-6">
 
       <!-- Nombre -->
       <div>
-        <label class="block text-xs font-medium text-slate-600 mb-1">
+        <label class="form-label">
           Nombre
         </label>
 
         <input
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          class="input"
           [(ngModel)]="model.nombre"
         />
       </div>
 
       <!-- Email -->
       <div>
-        <label class="block text-xs font-medium text-slate-600 mb-1">
+        <label class="form-label">
           Email
         </label>
 
         <input
           type="email"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          class="input"
           [(ngModel)]="model.email"
         />
       </div>
 
       <!-- Identificación -->
       <div>
-        <label class="block text-xs font-medium text-slate-600 mb-1">
+        <label class="form-label">
           Identificación
         </label>
 
         <input
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          class="input"
           [(ngModel)]="model.identificacion"
         />
       </div>
 
       <!-- Rol -->
       <div>
-        <label class="block text-xs font-medium text-slate-600 mb-1">
+        <label class="form-label">
           Rol
         </label>
 
         <select
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          class="input"
           [(ngModel)]="model.rol"
         >
           @for (r of rolesDisponibles; track r.slug) {
@@ -87,48 +94,64 @@
     </div>
 
     <!-- Estado -->
-    <div class="flex items-center gap-3">
+    <label class="choice-card">
 
       <input
         type="checkbox"
+        class="w-4 h-4 accent-accent rounded"
         [(ngModel)]="model.estado"
       />
 
-      <span class="text-sm text-slate-700">
-        Usuario activo
+      <span class="choice-card-copy">
+        <span class="choice-card-title">Usuario activo</span>
+        <span class="choice-card-help">Puede iniciar sesión y utilizar las funciones de su rol.</span>
       </span>
 
-    </div>
+    </label>
+
+    <div class="divider"></div>
 
     <!-- CONTRASEÑA SOLO CREAR -->
     @if (modo === 'crear') {
 
-      <div class="grid md:grid-cols-2 gap-6">
-
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">
-            Contraseña
-          </label>
-
-          <input
-            type="password"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            [(ngModel)]="model.clave"
-          />
+      <div class="space-y-4">
+        <div class="form-section-header">
+          <div class="icon-box">
+            <lucide-icon name="shield-check" style="width:17px; height:17px;"></lucide-icon>
+          </div>
+          <div class="form-section-copy">
+            <h3 class="section-title">Seguridad</h3>
+            <p class="subtle">Define una contraseña segura para la nueva cuenta.</p>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-medium text-slate-600 mb-1">
-            Confirmar contraseña
-          </label>
+        <div class="grid md:grid-cols-2 gap-6">
 
-          <input
-            type="password"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-            [(ngModel)]="model.confirmarClave"
-          />
+          <div>
+            <label class="form-label">
+              Contraseña
+            </label>
+
+            <input
+              type="password"
+              class="input"
+              [(ngModel)]="model.clave"
+            />
+          </div>
+
+          <div>
+            <label class="form-label">
+              Confirmar contraseña
+            </label>
+
+            <input
+              type="password"
+              class="input"
+              [(ngModel)]="model.confirmarClave"
+            />
+          </div>
+
         </div>
-
       </div>
 
     }
@@ -136,33 +159,45 @@
     <!-- CONTRASEÑA OPCIONAL EDITAR -->
     @if (modo === 'editar') {
 
-      <div>
+      <div class="space-y-4">
+        <div class="form-section-header">
+          <div class="icon-box">
+            <lucide-icon name="shield-check" style="width:17px; height:17px;"></lucide-icon>
+          </div>
+          <div class="form-section-copy">
+            <h3 class="section-title">Seguridad</h3>
+            <p class="subtle">Solo completa estos campos si deseas cambiar la contraseña.</p>
+          </div>
+        </div>
 
-        <label class="block text-xs font-medium text-slate-600 mb-1">
-          Nueva contraseña (opcional)
-        </label>
+        <div class="grid md:grid-cols-2 gap-6">
 
-        <input
-          type="password"
-          placeholder="Dejar vacío para mantener la actual"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-          [(ngModel)]="model.clave"
-        />
+          <div>
+            <label class="form-label">
+              Nueva contraseña (opcional)
+            </label>
 
-      </div>
+            <input
+              type="password"
+              placeholder="Dejar vacío para mantener la actual"
+              class="input"
+              [(ngModel)]="model.clave"
+            />
+          </div>
 
-      <div>
+          <div>
+            <label class="form-label">
+              Confirmar contraseña
+            </label>
 
-        <label class="block text-xs font-medium text-slate-600 mb-1">
-          Confirmar contraseña
-        </label>
+            <input
+              type="password"
+              class="input"
+              [(ngModel)]="model.confirmarClave"
+            />
+          </div>
 
-        <input
-          type="password"
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
-          [(ngModel)]="model.confirmarClave"
-        />
-
+        </div>
       </div>
 
     }
@@ -170,10 +205,10 @@
   </div>
 
   <!-- BOTÓN -->
-  <div class="flex justify-end">
-
+  <div class="form-actions">
+    <button class="btn-outline" (click)="volver()">Cancelar</button>
     <button
-      class="px-6 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-slate-800 disabled:opacity-60"
+      class="btn-primary"
       [disabled]="loading"
       (click)="guardar()"
     >
@@ -185,7 +220,6 @@
       }
 
     </button>
-
   </div>
 
 </div>

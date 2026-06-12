@@ -1,0 +1,170 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6 print-hide-flex">
+    <div class="flex items-start gap-4">
+      <a routerLink="/reportes" class="btn-icon" title="Volver">
+        <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+      </a>
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="bolt" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Flash &amp; Solicitudes</h1>
+        <p class="subtle mt-1">Rendimiento de promos flash y embudo de solicitudes de cuponera.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="btn-ghost" (click)="exportarFlashCsv()">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV flash
+      </button>
+      <button class="btn-ghost" (click)="exportarSolicitudesCsv()">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV solicitudes
+      </button>
+      <button class="btn-primary" (click)="imprimirPdf()">
+        <lucide-icon name="printer" style="width:14px; height:14px;"></lucide-icon> Imprimir / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-6 print-hide" style="padding:18px;">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+      <div><label class="field-label">Desde</label><input type="date" class="input" [(ngModel)]="desde" /></div>
+      <div><label class="field-label">Hasta</label><input type="date" class="input" [(ngModel)]="hasta" /></div>
+      <button class="btn-primary" (click)="cargar()" [disabled]="loading">
+        <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
+      </button>
+    </div>
+  </div>
+
+  @if (loading && !flash) {
+    <div class="card" style="padding:60px; text-align:center;"><div class="subtle">Cargando…</div></div>
+  } @else {
+
+    <!-- KPIs Flash -->
+    @if (flash) {
+      <h2 class="section-title mb-3" style="display:flex; align-items:center; gap:8px;">
+        <lucide-icon name="bolt" style="width:18px; height:18px; color:var(--orange);"></lucide-icon>
+        Promos flash
+      </h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div class="card stat">
+          <div class="stat-label">Promos creadas</div>
+          <div class="stat-value">{{ fmtN(flash.totalFlash) }}</div>
+        </div>
+        <div class="card stat card-accent">
+          <div class="stat-label">Total canjes</div>
+          <div class="stat-value">{{ fmtN(flash.canjes) }}</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">Total vistas</div>
+          <div class="stat-value">{{ fmtN(flash.vistas) }}</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">Tasa conversión</div>
+          <div class="stat-value">{{ fmtPct(flash.tasaConversion, 1) }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+        <div class="card" style="padding:18px;">
+          <h3 class="section-title">Por estado</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:8px;">Distribución de promos</p>
+          <div echarts [options]="estadoOption" style="height:300px;"></div>
+        </div>
+
+        <div class="card lg:col-span-2" style="padding:0; overflow:hidden;">
+          <div style="padding:18px 22px;">
+            <h3 class="section-title">Top promos flash</h3>
+            <p class="subtle" style="font-size:12px;">Las 15 con más canjes en el período</p>
+          </div>
+          <div style="overflow:auto; max-height:380px;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Local</th>
+                  <th>Estado</th>
+                  <th style="text-align:right;">Vistas</th>
+                  <th style="text-align:right;">Canjes</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (f of flash.topFlash; track f.flashId) {
+                  <tr>
+                    <td style="font-weight:600;">{{ f.titulo }}</td>
+                    <td class="subtle">{{ f.local }}</td>
+                    <td>
+                      @if (f.estado === 'ACTIVA') {
+                        <span class="pill pill-green pill-dot">Activa</span>
+                      } @else if (f.estado === 'PAUSADA') {
+                        <span class="pill pill-yellow">Pausada</span>
+                      } @else if (f.estado === 'VENCIDA') {
+                        <span class="pill pill-blue">Vencida</span>
+                      } @else {
+                        <span class="pill pill-red">{{ f.estado }}</span>
+                      }
+                    </td>
+                    <td style="text-align:right;">{{ fmtN(f.vistas) }}</td>
+                    <td style="text-align:right; font-weight:700; color:var(--orange);">{{ fmtN(f.canjes) }}</td>
+                  </tr>
+                }
+                @if (!flash.topFlash?.length) {
+                  <tr><td colspan="5" class="subtle" style="text-align:center; padding:32px;">Sin promos flash en el período</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- KPIs Solicitudes -->
+    @if (solicitudes) {
+      <h2 class="section-title mb-3" style="display:flex; align-items:center; gap:8px;">
+        <lucide-icon name="landmark" style="width:18px; height:18px; color:var(--blue);"></lucide-icon>
+        Solicitudes de cuponera
+      </h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
+        <div class="card stat">
+          <div class="stat-label">Total recibidas</div>
+          <div class="stat-value">{{ fmtN(solicitudes.total) }}</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">Tiempo prom. aprobación</div>
+          <div class="stat-value">{{ (solicitudes.tiempoPromedioHoras || 0).toFixed(1) }} h</div>
+        </div>
+        <div class="card stat">
+          <div class="stat-label">Estados distintos</div>
+          <div class="stat-value">{{ fmtN(solicitudes.porEstado?.length || 0) }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="card" style="padding:18px;">
+          <h3 class="section-title">Embudo por estado</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:8px;">Cantidad de solicitudes en cada estado</p>
+          <div echarts [options]="embudoOption" style="height:320px;"></div>
+        </div>
+        <div class="card" style="padding:18px;">
+          <h3 class="section-title">Solicitudes por día</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:8px;">Tendencia diaria</p>
+          <div echarts [options]="serieSolicitudesOption" style="height:320px;"></div>
+        </div>
+      </div>
+    }
+  }
+</section>
+
+<style>
+  @media print {
+    .print-hide, .print-hide-flex { display: none !important; }
+    app-dashboard-sidebar, app-dashboard-header, app-dashboard-bottom-nav { display: none !important; }
+    main { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
+    .card { background: white !important; border: 1px solid #ddd !important; color: black !important; box-shadow: none !important; }
+    .stat-value, .page-title, .section-title { color: black !important; }
+    .subtle, .stat-label, td, th { color: #333 !important; }
+  }
+</style>

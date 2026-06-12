@@ -1,62 +1,66 @@
-<div class="p-6 space-y-8">
-  <!-- Hero -->
-  <div
-    class="bg-white border rounded-2xl p-6 flex flex-col gap-2 shadow-sm"
-  >
-    <h1 class="text-xl font-semibold text-gray-800">
-      Administración de catálogos
-    </h1>
-    <p class="text-sm text-gray-600 max-w-2xl">
-      Gestiona los catálogos base del sistema. Estos valores controlan
-      configuraciones clave y se reflejan en toda la plataforma.
-    </p>
+<section class="page animate-in">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="database" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Catálogos del sistema</h1>
+      <p class="subtle">
+        Gestiona los catálogos base. Estos valores se reflejan en toda la plataforma.
+      </p>
+    </div>
   </div>
 
-  <!-- Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+  <!-- GRID DE TARJETAS -->
+  <div
+    class="grid gap-4"
+    style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));"
+  >
     @for (item of catalogos; track item.route) {
-      <div
-        class="group bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+      <a
+        [routerLink]="item.route"
+        class="card no-underline"
+        style="padding:20px; display:flex; flex-direction:column; gap:14px; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;"
+        onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,159,28,0.4)'; this.style.boxShadow='0 10px 28px rgba(0,0,0,0.35)'"
+        onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--stroke)'; this.style.boxShadow='none'"
       >
-        <!-- Header -->
-        <div class="flex items-start gap-4">
+        <div style="display:flex; align-items:flex-start; gap:14px;">
           <div
-            class="w-14 h-14 rounded-xl flex items-center justify-center"
-            [ngClass]="item.color"
+            style="width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0;"
+            [style.background]="item.iconBg"
+            [style.color]="item.iconColor"
           >
             <lucide-icon
               [name]="item.icono"
-              class="w-7 h-7"
-            />
+              style="width:22px; height:22px;"
+            ></lucide-icon>
           </div>
-
-          <div>
-            <h2 class="text-base font-semibold text-gray-800">
+          <div style="flex:1; min-width:0;">
+            <h2 class="section-title" style="font-size:15.5px; margin:0;">
               {{ item.titulo }}
             </h2>
-            <p class="text-sm text-gray-600 mt-1">
+            <p class="subtle" style="font-size:12.5px; margin-top:4px; line-height:1.5;">
               {{ item.descripcion }}
             </p>
           </div>
         </div>
 
-        <!-- Footer -->
         <div
-          class="mt-8 flex items-center justify-between border-t pt-4"
+          style="display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px solid var(--stroke); margin-top:auto;"
         >
-          <span class="text-xs text-gray-500">
-            Configuración del sistema
+          <span style="font-size:10.5px; color:var(--text-mute); text-transform:uppercase; letter-spacing:0.4px; font-weight:600;">
+            Configuración
           </span>
-
-          <a
-            [routerLink]="item.route"
-            class="inline-flex items-center gap-2 text-sm font-medium text-accent group-hover:underline"
+          <span
+            style="display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--orange);"
           >
             Administrar
-            <lucide-icon name="arrow-right" class="w-4 h-4" />
-          </a>
+            <lucide-icon name="arrow-right" style="width:14px; height:14px;"></lucide-icon>
+          </span>
         </div>
-      </div>
+      </a>
     }
   </div>
-</div>
+</section>

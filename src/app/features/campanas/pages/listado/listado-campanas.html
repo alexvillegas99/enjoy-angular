@@ -1,0 +1,149 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6">
+    <div class="flex items-start gap-4">
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="bell" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Notificaciones</h1>
+        <p class="subtle mt-1">
+          Crea, programa y envía campañas push segmentadas a tus clientes.
+        </p>
+      </div>
+    </div>
+    <a routerLink="nueva" class="btn-primary">
+      <lucide-icon name="plus" style="width:14px; height:14px;"></lucide-icon>
+      Nueva campaña
+    </a>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card filter-card mb-4">
+    <div class="filter-card-header">
+      <div class="filter-card-title">
+        <lucide-icon name="sliders-horizontal" style="width:15px; height:15px;"></lucide-icon>
+        Estado de campaña
+      </div>
+      <span class="subtle">{{ items.length }} campaña(s)</span>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button
+        class="chip"
+        [class.chip-active]="estadoFiltro === ''"
+        (click)="estadoFiltro = ''; cargar()"
+      >Todas</button>
+      <button
+        class="chip"
+        [class.chip-active]="estadoFiltro === 'PROGRAMADA'"
+        (click)="estadoFiltro = 'PROGRAMADA'; cargar()"
+      >Programadas</button>
+      <button
+        class="chip"
+        [class.chip-active]="estadoFiltro === 'ENVIADA'"
+        (click)="estadoFiltro = 'ENVIADA'; cargar()"
+      >Enviadas</button>
+      <button
+        class="chip"
+        [class.chip-active]="estadoFiltro === 'BORRADOR'"
+        (click)="estadoFiltro = 'BORRADOR'; cargar()"
+      >Borradores</button>
+      <button
+        class="chip"
+        [class.chip-active]="estadoFiltro === 'FALLIDA'"
+        (click)="estadoFiltro = 'FALLIDA'; cargar()"
+      >Fallidas</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <div class="subtle">Cargando…</div>
+    </div>
+  } @else if (items.length === 0) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <lucide-icon name="bell" style="width:32px; height:32px; opacity:0.5; color:var(--text-mute);"></lucide-icon>
+      <div class="subtle" style="margin-top:8px;">No hay campañas todavía.</div>
+    </div>
+  } @else {
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="table table-responsive">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Segmento</th>
+            <th>Estado</th>
+            <th style="text-align:right;">Destinatarios</th>
+            <th>Programada / enviada</th>
+            <th style="text-align:right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of items; track c._id) {
+            <tr>
+              <td data-primary="true" data-label="Campaña">
+                <div class="table-primary">
+                  <div class="icon-box" style="width:38px; height:38px; border-radius:11px;">
+                    <lucide-icon name="bell" style="width:15px; height:15px;"></lucide-icon>
+                  </div>
+                  <div class="table-primary-copy">
+                    <div class="table-primary-title">{{ c.titulo }}</div>
+                    <div class="table-primary-meta" style="max-width:380px;">{{ c.cuerpo }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Segmento">
+                <span class="pill">{{ segmentoTexto(c) }}</span>
+              </td>
+              <td data-label="Estado">
+                <span [class]="'pill ' + estadoPill(c.estado)" style="text-transform:capitalize;">{{ c.estado.toLowerCase() }}</span>
+              </td>
+              <td data-label="Destinatarios" style="text-align:right; font-weight:700; color:var(--orange);">
+                {{ c.totalDestinatarios || 0 }}
+              </td>
+              <td data-label="Fecha" class="subtle" style="font-size:12px;">
+                @if (c.estado === 'PROGRAMADA') {
+                  <lucide-icon name="clock" style="width:12px; height:12px; margin-right:4px; vertical-align:middle;"></lucide-icon>
+                  {{ c.programadaPara | date:'short' }}
+                } @else if (c.enviadaEn) {
+                  <lucide-icon name="check" style="width:12px; height:12px; margin-right:4px; vertical-align:middle; color:var(--green);"></lucide-icon>
+                  {{ c.enviadaEn | date:'short' }}
+                } @else if (c.estado === 'BORRADOR') {
+                  Sin programar
+                }
+              </td>
+              <td data-label="Acciones" data-actions="true" style="text-align:right; white-space:nowrap;">
+                <div class="action-group">
+                @if (c.estado !== 'ENVIADA') {
+                  <button class="btn-icon" (click)="editar(c)" title="Editar">
+                    <lucide-icon name="pencil" style="width:14px; height:14px;"></lucide-icon>
+                  </button>
+                }
+                @if (c.estado === 'BORRADOR' || c.estado === 'PROGRAMADA') {
+                  <button class="btn-icon" (click)="enviar(c)" title="Enviar ahora">
+                    <lucide-icon name="send" style="width:14px; height:14px; color:var(--orange);"></lucide-icon>
+                  </button>
+                  <button class="btn-icon" (click)="cancelar(c)" title="Cancelar">
+                    <lucide-icon name="x" style="width:14px; height:14px; color:var(--red);"></lucide-icon>
+                  </button>
+                }
+                @if (c.estado === 'ENVIADA') {
+                  <button class="btn-icon" (click)="editar(c)" title="Ver detalle">
+                    <lucide-icon name="eye" style="width:14px; height:14px;"></lucide-icon>
+                  </button>
+                }
+                @if (c.estado === 'ENVIADA' || c.estado === 'CANCELADA' || c.estado === 'FALLIDA') {
+                  <button class="btn-icon" (click)="eliminar(c)" title="Eliminar definitivamente">
+                    <lucide-icon name="trash-2" style="width:14px; height:14px; color:var(--red);"></lucide-icon>
+                  </button>
+                }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

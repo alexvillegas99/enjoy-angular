@@ -115,6 +115,17 @@ export const routes: Routes = [
           ),
       },
 
+      // NOTIFICACIONES / CAMPAÑAS
+      {
+        path: 'notificaciones',
+        canActivate: [roleGuard],
+        data: { permissions: ['notificaciones.ver'], roles: ['admin'] },
+        loadChildren: () =>
+          import('./features/campanas/campanas.routes').then(
+            (m) => m.campanasRoutes,
+          ),
+      },
+
       // RUTAS COMPARTIDAS
       {
         path: 'establecimientos',
@@ -160,6 +171,15 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'empresas-solicitudes',
+        canActivate: [roleGuard],
+        data: { permissions: ['solicitudes.ver'], roles: ['admin'] },
+        loadChildren: () =>
+          import('./features/empresas-solicitudes/empresas-solicitudes.routes').then(
+            (m) => m.EMPRESAS_SOLICITUDES_ROUTES,
+          ),
+      },
+      {
         path: 'configuracion',
         canActivate: [roleGuard],
         data: { permissions: ['configuracion.ver'], roles: ['admin'] },
@@ -167,6 +187,20 @@ export const routes: Routes = [
           import('./features/configuracion/configuracion.routes').then(
             (m) => m.CONFIGURACION_ROUTES,
           ),
+      },
+
+      // CHAT
+      {
+        path: 'chat',
+        canActivate: [roleGuard],
+        data: {
+          // Soporte → `chat.ver` / `chat.responder`. Admin-local entra por
+          // `perfil-local.ver` (verá solo SU hilo, filtrado en backend).
+          permissions: ['chat.ver', 'chat.responder', 'perfil-local.ver'],
+          roles: ['admin', 'admin-local'],
+        },
+        loadChildren: () =>
+          import('./features/chat/chat.routes').then((m) => m.chatRoutes),
       },
 
       // PAGOS

@@ -1,1 +1,62 @@
-<p>inicio-reportes works!</p>
+<section class="animate-in mx-auto w-full max-w-7xl">
+  <!-- HEADER -->
+  <div class="flex items-start gap-4 mb-8">
+    <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+      <lucide-icon name="chart-column" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div>
+      <h1 class="page-title">Reportes</h1>
+      <p class="subtle mt-1">Métricas y exportables — todos los reportes en un solo lugar.</p>
+    </div>
+  </div>
+
+  <!-- Grid de reportes -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+
+    @for (r of reportes; track r.slug) {
+      <a
+        [routerLink]="['/reportes', r.slug]"
+        class="card hover-rise"
+        style="text-decoration:none; padding:22px; display:flex; flex-direction:column; gap:14px; cursor:pointer; min-height:200px;"
+      >
+        <div class="icon-badge icon-badge-primary" style="width:46px; height:46px;">
+          <lucide-icon [name]="r.icono" style="width:22px; height:22px;"></lucide-icon>
+        </div>
+
+        <div>
+          <h3 class="section-title" style="margin-bottom:6px;">{{ r.titulo }}</h3>
+          <p class="subtle" style="font-size:13px; line-height:1.5;">{{ r.bajada }}</p>
+        </div>
+
+        <div class="flex flex-wrap gap-1.5 mt-auto">
+          @for (k of r.kpis; track k) {
+            <span class="pill" style="font-size:10.5px;">{{ k }}</span>
+          }
+        </div>
+      </a>
+    }
+
+  </div>
+
+  <!-- Help bloque -->
+  <div class="card mt-6" style="padding:18px; display:flex; align-items:center; gap:14px;">
+    <div class="icon-box" style="width:40px; height:40px;">
+      <lucide-icon name="info" style="width:18px; height:18px;"></lucide-icon>
+    </div>
+    <div style="flex:1;">
+      <div style="font-weight:700; color:var(--text);">¿Cómo funcionan?</div>
+      <div class="subtle" style="font-size:12.5px;">
+        Cada reporte tiene rango de fechas configurable, exportación a CSV y opción de imprimir/PDF.
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hover-rise { transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+  .hover-rise:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,159,28,0.45);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,159,28,0.12) inset;
+  }
+</style>

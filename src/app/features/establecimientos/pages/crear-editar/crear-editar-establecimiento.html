@@ -1,27 +1,35 @@
-<div class="max-w-5xl mx-auto space-y-8 pb-20 animate-in">
+<section class="page animate-in" style="max-width: 1040px;">
 
-  <!-- BACK -->
-  <a routerLink="/establecimientos" class="btn-link inline-flex items-center gap-1.5 text-sm">
-    <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
-    Volver al listado
-  </a>
-
-  <!-- HEADER -->
-  <div class="space-y-1">
-    <h1 class="page-title">{{ isEdit ? "Editar establecimiento" : "Nuevo establecimiento" }}</h1>
-    <p class="subtle text-sm">Completa los pasos para {{ isEdit ? "actualizar" : "registrar" }} el local.</p>
+  <!-- HEADER UNIFICADO -->
+  <div class="page-header">
+    <a routerLink="/establecimientos" class="btn-icon" title="Volver al listado" aria-label="Volver">
+      <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+    </a>
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="store" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">{{ isEdit ? "Editar establecimiento" : "Nuevo establecimiento" }}</h1>
+      <p class="subtle">Completa los pasos para {{ isEdit ? "actualizar" : "registrar" }} el local.</p>
+    </div>
   </div>
 
-  <!-- Solo fotos: banner informativo -->
+  <!-- Banners informativos según rol -->
   @if (soloFotos) {
-    <div class="flex items-center gap-3 bg-info-soft border border-info/20 rounded-xl px-4 py-3 text-sm text-info">
-      <lucide-icon name="image" class="w-4 h-4 shrink-0"></lucide-icon>
+    <div
+      class="card mb-4"
+      style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-color: rgba(91,164,240,0.35); background: rgba(91,164,240,0.08); color: var(--blue); font-size: 13.5px;"
+    >
+      <lucide-icon name="image" style="width:16px; height:16px; flex-shrink:0;"></lucide-icon>
       Tu rol solo te permite actualizar las fotos del establecimiento.
     </div>
   }
   @if (soloDetalles) {
-    <div class="flex items-center gap-3 bg-warning-soft border border-warning/20 rounded-xl px-4 py-3 text-sm text-warning">
-      <lucide-icon name="pencil" class="w-4 h-4 shrink-0"></lucide-icon>
+    <div
+      class="card mb-4"
+      style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-color: rgba(255,191,70,0.35); background: rgba(255,191,70,0.08); color: var(--yellow); font-size: 13.5px;"
+    >
+      <lucide-icon name="pencil" style="width:16px; height:16px; flex-shrink:0;"></lucide-icon>
       Tu rol te permite editar los datos del establecimiento pero no las fotos.
     </div>
   }
@@ -970,4 +978,4 @@
       (cancelled)="cerrarRecorte()"
     ></app-image-cropper-modal>
   }
-</div>
+</section>

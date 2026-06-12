@@ -1,174 +1,175 @@
-<div class="max-w-7xl mx-auto space-y-6 pb-20">
+<section class="page animate-in">
 
   <!-- HEADER -->
-  <div>
-    <h2 class="text-xl font-semibold text-slate-800">
-      Gestión de Clientes
-    </h2>
-    <p class="text-sm text-slate-500">
-      Administración de clientes registrados
-    </p>
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="user" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Clientes</h1>
+      <p class="subtle">Administra los clientes registrados en la plataforma.</p>
+    </div>
   </div>
 
   <!-- FILTROS -->
-  <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-
-    <div class="grid md:grid-cols-3 gap-4">
-
-      <input
-        type="text"
-        placeholder="Buscar por nombre, email o identificación"
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        [(ngModel)]="filtros.q"
-        (keyup.enter)="buscar()"
-      />
-
-      <select
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        [(ngModel)]="filtros.estado"
-        (change)="buscar()"
-      >
-        <option value="">Todos</option>
+  <div class="card filter-card mb-4">
+    <div class="filter-card-header">
+      <div class="filter-card-title">
+        <lucide-icon name="sliders-horizontal" style="width:15px; height:15px;"></lucide-icon>
+        Buscar y filtrar
+      </div>
+      <span class="subtle">{{ clientes.length }} resultado(s)</span>
+    </div>
+    <div class="filter-bar">
+      <div class="search-field" style="grid-column: span 2;">
+        <lucide-icon
+          name="search"
+        ></lucide-icon>
+        <input
+          type="text"
+          placeholder="Buscar por nombre, email o identificación"
+          class="input"
+          [(ngModel)]="filtros.q"
+          (keyup.enter)="buscar()"
+        />
+      </div>
+      <select class="input" [(ngModel)]="filtros.estado" (change)="buscar()">
+        <option value="">Todos los estados</option>
         <option value="true">Activos</option>
         <option value="false">Inactivos</option>
       </select>
-
-      <button
-        class="bg-slate-900 text-white rounded-lg px-4 py-2 text-sm hover:bg-slate-800"
-        (click)="buscar()">
+      <button class="btn-primary" (click)="buscar()">
+        <lucide-icon name="search" style="width:14px; height:14px;"></lucide-icon>
         Buscar
       </button>
-
     </div>
-
   </div>
 
   <!-- TABLA -->
-  <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-
-    <div class="overflow-x-auto">
-
-      <table class="min-w-full text-sm">
-
-        <thead class="bg-slate-50 border-b border-slate-200 text-slate-600">
-          <tr>
-            <th class="text-left px-4 py-3">Nombre</th>
-            <th class="text-left px-4 py-3">Identificación</th>
-            <th class="text-left px-4 py-3">Email</th>
-            <th class="text-left px-4 py-3">Teléfono</th>
-            <th class="text-left px-4 py-3">Estado</th>
-            <th class="text-right px-4 py-3">Acciones</th>
-          </tr>
-        </thead>
-
-        <tbody class="divide-y divide-slate-100">
-
-          @if (loading) {
-            <tr>
-              <td colspan="6" class="text-center py-6 text-slate-500">
-                Cargando...
-              </td>
-            </tr>
-          }
-
-          @for (c of clientes; track c._id) {
-
-            <tr class="hover:bg-slate-50">
-
-              <td class="px-4 py-3 font-medium text-slate-800">
-                {{ c.nombres }} {{ c.apellidos }}
-              </td>
-
-              <td class="px-4 py-3 text-slate-600">
-               {{ c.identificacion }}
-              </td>
-
-              <td class="px-4 py-3 text-slate-600">
-                {{ c.email }}
-              </td>
-
-              <td class="px-4 py-3 text-slate-600">
-                {{ c.telefono || '-' }}
-              </td>
-
-              <td class="px-4 py-3">
-                <span
-                  class="px-2 py-1 text-xs rounded-full"
-                  [class.bg-emerald-100]="c.estado"
-                  [class.text-emerald-700]="c.estado"
-                  [class.bg-rose-100]="!c.estado"
-                  [class.text-rose-700]="!c.estado"
-                >
-                  {{ c.estado ? 'Activo' : 'Inactivo' }}
-                </span>
-              </td>
-
-              <td class="px-4 py-3 text-right">
-                <div class="flex justify-end gap-2">
-
-                  <button
-                    class="px-3 py-1.5 text-xs font-medium rounded-md
-                           border border-slate-300 text-slate-700
-                           hover:bg-slate-100 transition"
-                    (click)="editar(c._id)">
-                    Editar
-                  </button>
-
-                  <button
-                    class="px-3 py-1.5 text-xs font-medium rounded-md
-                           border transition"
-                    [class.border-amber-300]="c.estado"
-                    [class.text-amber-700]="c.estado"
-                    [class.hover:bg-amber-50]="c.estado"
-                    [class.border-emerald-300]="!c.estado"
-                    [class.text-emerald-700]="!c.estado"
-                    [class.hover:bg-emerald-50]="!c.estado"
-                    (click)="toggleEstado(c)">
-                    {{ c.estado ? 'Desactivar' : 'Activar' }}
-                  </button>
-
-                </div>
-              </td>
-
-            </tr>
-
-          }
-
-          @if (!loading && !clientes.length) {
-            <tr>
-              <td colspan="6" class="text-center py-6 text-slate-500">
-                No se encontraron registros.
-              </td>
-            </tr>
-          }
-
-        </tbody>
-
-      </table>
-
+  <div class="card data-table">
+    <div class="data-table-head flex items-center justify-between gap-3 flex-wrap">
+      <div>
+        <h3 class="section-title">Listado</h3>
+        <p class="subtle" style="font-size:12px;">
+          {{ clientes.length }} cliente(s) en pantalla
+        </p>
+      </div>
     </div>
 
+    <table class="table table-responsive">
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Identificación</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th style="text-align:right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
+          <tr>
+            <td colspan="6" style="text-align:center; padding:32px; color:var(--text-mute);">
+              <lucide-icon name="loader" style="width:14px; height:14px; vertical-align:middle; margin-right:6px;"></lucide-icon>
+              Cargando…
+            </td>
+          </tr>
+        } @else if (!clientes.length) {
+          <tr>
+            <td colspan="6">
+              <div class="empty-state">
+                <div class="icon">
+                  <lucide-icon name="user" style="width:22px; height:22px;"></lucide-icon>
+                </div>
+                <div class="empty-title">Sin resultados</div>
+                <div class="empty-msg">No encontramos clientes con esos filtros.</div>
+              </div>
+            </td>
+          </tr>
+        } @else {
+          @for (c of clientes; track c._id) {
+            <tr>
+              <td data-primary="true" data-label="Cliente">
+                <div class="table-primary">
+                  <div class="avatar">{{ (c.nombres || '?').charAt(0).toUpperCase() }}</div>
+                  <div class="table-primary-copy">
+                    <div class="table-primary-title">{{ c.nombres }} {{ c.apellidos }}</div>
+                    <div class="table-primary-meta">{{ c.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Identificación" class="subtle">{{ c.identificacion || '—' }}</td>
+              <td data-label="Email" class="subtle">{{ c.email }}</td>
+              <td data-label="Teléfono" class="subtle">{{ c.telefono || '—' }}</td>
+              <td data-label="Estado">
+                @if (c.estado) {
+                  <span class="pill pill-green pill-dot">Activo</span>
+                } @else {
+                  <span class="pill pill-red">Inactivo</span>
+                }
+              </td>
+              <td data-label="Acciones" data-actions="true" style="text-align:right; white-space:nowrap;">
+                <div class="action-group">
+                  <button class="btn-icon" (click)="editar(c._id)" title="Editar cliente" aria-label="Editar cliente">
+                    <lucide-icon name="pencil" style="width:14px; height:14px;"></lucide-icon>
+                  </button>
+                  <button
+                    class="btn-icon"
+                    (click)="toggleEstado(c)"
+                    [title]="c.estado ? 'Desactivar cliente' : 'Activar cliente'"
+                    [attr.aria-label]="c.estado ? 'Desactivar cliente' : 'Activar cliente'"
+                  >
+                    <lucide-icon
+                      [name]="c.estado ? 'toggle-right' : 'toggle-left'"
+                      style="width:14px; height:14px;"
+                      [style.color]="c.estado ? 'var(--green)' : 'var(--text-mute)'"
+                    ></lucide-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
   </div>
 
   <!-- PAGINACIÓN -->
   @if (totalPaginas > 1) {
-
-    <div class="flex justify-center gap-2">
-
-      @for (p of [].constructor(totalPaginas); track $index; let i = $index) {
-
+    <div class="pagination">
+      <span class="subtle" style="font-size:12px;">
+        Página {{ filtros.page }} de {{ totalPaginas }}
+      </span>
+      <div class="pagination-controls">
         <button
-          class="px-3 py-1 rounded border text-sm"
-          [class.bg-slate-900]="filtros.page === i + 1"
-          [class.text-white]="filtros.page === i + 1"
-          (click)="cambiarPagina(i + 1)">
-          {{ i + 1 }}
+          class="btn-icon"
+          [disabled]="filtros.page <= 1"
+          (click)="cambiarPagina(filtros.page - 1)"
+          title="Anterior"
+        >
+          <lucide-icon name="chevron-left" style="width:14px; height:14px;"></lucide-icon>
         </button>
-
-      }
-
+        @for (p of [].constructor(totalPaginas); track $index; let i = $index) {
+          @if (i < 7 || i === totalPaginas - 1) {
+            <button
+              class="page-num"
+              [class.active]="filtros.page === i + 1"
+              (click)="cambiarPagina(i + 1)"
+            >
+              {{ i + 1 }}
+            </button>
+          }
+        }
+        <button
+          class="btn-icon"
+          [disabled]="filtros.page >= totalPaginas"
+          (click)="cambiarPagina(filtros.page + 1)"
+          title="Siguiente"
+        >
+          <lucide-icon name="chevron-right" style="width:14px; height:14px;"></lucide-icon>
+        </button>
+      </div>
     </div>
-
   }
-
-</div>
+</section>

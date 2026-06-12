@@ -2,6 +2,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import * as icons from 'lucide-angular';
 
 const ICON_LIST = [
+  'Database',
   'Eye',
   'EyeOff',
   'Lock',
@@ -37,6 +38,7 @@ const ICON_LIST = [
   'Repeat',
   'LoaderCircle',
   'Search',
+  'SlidersHorizontal',
   'UserPlus',
   'ChevronRight',
   'Trash2',
@@ -111,6 +113,25 @@ const ICON_LIST = [
   'GripVertical',
   'ShoppingBag',
   'Check',
+  'Building2',
+  'RefreshCw',
+  'PhoneCall',
+  // Iconos usados en Soporte / Reportes / nueva navegación
+  'MessageSquare',
+  'MessageSquareDashed',
+  'UserCheck',
+  'CheckCheck',
+  'FileDown',
+  'Bolt',
+  'Save',
+  'Bell',
+  'Crown',
+  'Briefcase',
+  'Megaphone',
+  'Printer',
+  'Upload',
+  'LockOpen',
+  'EllipsisVertical',
 ] as const;
 
 export const LUCIDE_ICONS = LucideAngularModule.pick(

@@ -1,22 +1,30 @@
 <nav
-  class="fixed bottom-0 left-0 right-0 z-50
-         bg-slate-50 border-t border-slate-200
-         flex justify-around py-2 lg:hidden"
+  class="fixed bottom-0 left-0 right-0 z-50 flex justify-around px-2 py-2 lg:hidden"
+  style="
+    background: rgba(7,13,24,0.92);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--stroke);
+    box-shadow: 0 -4px 22px rgba(0,0,0,0.45);
+  "
 >
 
   @for (item of menu; track item.route) {
     <button
       [routerLink]="item.route"
-      routerLinkActive="text-accent"
-      class="flex flex-col items-center gap-1 text-xs text-slate-600"
+      routerLinkActive="bn-active"
+      class="bn-btn flex flex-col items-center gap-1 px-3 py-1.5 transition-colors"
+      style="border-radius: 12px; background: transparent; border: 0; color: var(--text-mute); font-size: 11px; font-weight: 600; cursor: pointer;"
     >
       <lucide-icon
         [name]="item.icon"
-        class="w-5 h-5"
+        style="width:20px; height:20px;"
       ></lucide-icon>
-
       <span>{{ item.label }}</span>
     </button>
   }
 
 </nav>
+
+<style>
+  .bn-active { color: var(--orange) !important; background: rgba(255,159,28,0.12) !important; }
+</style>

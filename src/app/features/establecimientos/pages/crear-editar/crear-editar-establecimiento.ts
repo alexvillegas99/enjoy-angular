@@ -315,13 +315,25 @@ export class CrearEditarEstablecimiento {
         this.loading = true;
         this.svc.obtener(id).subscribe({
           next: (e) => {
-            const categoriasIds = Array.isArray(e.categorias)
-              ? e.categorias.map((c: any) => (typeof c === 'object' ? c._id : c))
-              : [];
+            // Preferir los arrays *Ids (nuevos, con _id reales). Si vienen,
+            // los strings de e.ciudades/e.categorias son sólo nombres
+            // legibles (mapNombres del back los aplana). Fallback al
+            // formato viejo si el back no enviara los *Ids todavía.
+            const categoriasIds: string[] = Array.isArray(e.categoriasIds)
+              ? e.categoriasIds
+              : Array.isArray(e.categorias)
+                ? e.categorias
+                    .map((c: any) => (typeof c === 'object' ? c._id : c))
+                    .filter((x: any) => /^[a-f\d]{24}$/i.test(x))
+                : [];
 
-            const ciudadesIds = Array.isArray(e.ciudades)
-              ? e.ciudades.map((c: any) => (typeof c === 'object' ? c._id : c))
-              : [];
+            const ciudadesIds: string[] = Array.isArray(e.ciudadesIds)
+              ? e.ciudadesIds
+              : Array.isArray(e.ciudades)
+                ? e.ciudades
+                    .map((c: any) => (typeof c === 'object' ? c._id : c))
+                    .filter((x: any) => /^[a-f\d]{24}$/i.test(x))
+                : [];
 
             this.model = {
               ...this.model,

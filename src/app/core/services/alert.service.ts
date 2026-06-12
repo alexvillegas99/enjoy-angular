@@ -6,15 +6,12 @@ export class AlertService {
   private base = Swal.mixin({
     buttonsStyling: false,
     customClass: {
-      popup: 'rounded-lg shadow-lg text-sm',
-      title: 'text-lg font-semibold text-gray-800',
-      htmlContainer: 'text-gray-600',
-
-      actions: 'flex gap-3 justify-center mt-6',
-
-      confirmButton: 'bg-accent text-white px-4 py-2 rounded-full hover:opacity-95',
-      cancelButton:
-        'bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200',
+      popup: 'enjoy-swal-popup',
+      title: 'enjoy-swal-title',
+      htmlContainer: 'enjoy-swal-html',
+      actions: 'enjoy-swal-actions',
+      confirmButton: 'enjoy-swal-confirm',
+      cancelButton: 'enjoy-swal-cancel',
     },
   });
 

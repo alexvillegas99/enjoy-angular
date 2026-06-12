@@ -1,0 +1,254 @@
+<section class="animate-in mx-auto w-full max-w-5xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start gap-4 mb-6">
+    <a routerLink="/notificaciones" class="btn-icon" title="Volver">
+      <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+    </a>
+    <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+      <lucide-icon name="bell" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="flex-1">
+      <h1 class="page-title">{{ id ? 'Editar campaña' : 'Nueva campaña' }}</h1>
+      <p class="subtle mt-1">
+        Crea, segmenta y programa el envío. Los usuarios con push desactivado igual reciben en la bandeja in-app.
+      </p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <div class="subtle">Cargando…</div>
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+      <!-- COLUMNA IZQUIERDA: form -->
+      <div class="lg:col-span-2 space-y-4">
+
+        <!-- Contenido -->
+        <div class="card" style="padding:22px;">
+          <h3 class="section-title">Contenido del mensaje</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:14px;">
+            Esto es lo que verá el usuario en su notificación push y en la bandeja.
+          </p>
+
+          <label class="field-label">Título *</label>
+          <input
+            class="input"
+            [(ngModel)]="m.titulo"
+            maxlength="120"
+            placeholder="Ej. Nuevo local en tu ciudad"
+            style="margin-bottom:12px;"
+          />
+
+          <label class="field-label">Mensaje *</label>
+          <textarea
+            class="input"
+            rows="4"
+            maxlength="500"
+            [(ngModel)]="m.cuerpo"
+            placeholder="Cuerpo del mensaje (hasta 500 caracteres)…"
+            style="margin-bottom:12px; resize:vertical;"
+          ></textarea>
+
+          <label class="field-label">Imagen (URL, opcional)</label>
+          <input
+            class="input"
+            type="url"
+            [(ngModel)]="m.imagenUrl"
+            placeholder="https://…"
+          />
+        </div>
+
+        <!-- Segmentación -->
+        <div class="card" style="padding:22px;">
+          <h3 class="section-title">¿A quién se la enviamos?</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:14px;">
+            Define el segmento. Usamos topics FCM para entrega eficiente.
+          </p>
+
+          <label class="field-label">Segmento</label>
+          <div class="flex flex-wrap gap-2" style="margin-bottom:14px;">
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="m.tipoSegmento === 'TODOS'"
+              (click)="m.tipoSegmento = 'TODOS'"
+            >Todos</button>
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="m.tipoSegmento === 'PROVINCIA'"
+              (click)="m.tipoSegmento = 'PROVINCIA'"
+            >Por provincia</button>
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="m.tipoSegmento === 'CIUDAD'"
+              (click)="m.tipoSegmento = 'CIUDAD'"
+            >Por ciudad</button>
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="m.tipoSegmento === 'CATEGORIA'"
+              (click)="m.tipoSegmento = 'CATEGORIA'"
+            >Por categoría</button>
+            <button
+              type="button"
+              class="chip"
+              [class.chip-active]="m.tipoSegmento === 'TOPIC'"
+              (click)="m.tipoSegmento = 'TOPIC'"
+            >Topic personalizado</button>
+          </div>
+
+          @if (m.tipoSegmento === 'PROVINCIA' || m.tipoSegmento === 'CIUDAD') {
+            <label class="field-label">Provincia *</label>
+            <select class="input" [(ngModel)]="m.provinciaId" (change)="onProvinciaChange()" style="margin-bottom:12px;">
+              <option value="">— Selecciona —</option>
+              @for (p of provincias; track p._id) {
+                <option [value]="p._id">{{ p.nombre }}</option>
+              }
+            </select>
+          }
+          @if (m.tipoSegmento === 'CIUDAD') {
+            <label class="field-label">Ciudad *</label>
+            <select class="input" [(ngModel)]="m.ciudadId" style="margin-bottom:12px;">
+              <option value="">— Selecciona —</option>
+              @for (c of ciudades; track c._id) {
+                <option [value]="c._id">{{ c.nombre }}</option>
+              }
+            </select>
+          }
+          @if (m.tipoSegmento === 'CATEGORIA') {
+            <label class="field-label">Categoría *</label>
+            <select class="input" [(ngModel)]="m.categoriaId">
+              <option value="">— Selecciona —</option>
+              @for (c of categorias; track c._id) {
+                <option [value]="c._id">{{ c.nombre }}</option>
+              }
+            </select>
+          }
+          @if (m.tipoSegmento === 'TOPIC') {
+            <label class="field-label">Topic FCM *</label>
+            <input class="input" [(ngModel)]="m.topicCustom" placeholder="Ej. prov_tungurahua" />
+            <p class="subtle" style="font-size:11px; margin-top:6px;">
+              Solo se envía push, sin persistir en bandeja in-app.
+            </p>
+          }
+        </div>
+
+        <!-- Acción al tocar -->
+        <div class="card" style="padding:22px;">
+          <h3 class="section-title">¿Qué pasa al tocarla?</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:14px;">
+            Define a dónde lleva al usuario cuando toca la notificación.
+          </p>
+
+          <label class="field-label">Acción</label>
+          <select class="input" [(ngModel)]="m.tipoAccion" style="margin-bottom:12px;">
+            <option value="NINGUNA">Solo informativa (sin acción)</option>
+            <option value="LOCAL">Abrir local</option>
+            <option value="FLASH">Abrir promo flash</option>
+            <option value="URL">Abrir URL externa</option>
+          </select>
+
+          @if (m.tipoAccion === 'LOCAL' || m.tipoAccion === 'FLASH' || m.tipoAccion === 'PROMO') {
+            <label class="field-label">ID del recurso *</label>
+            <input class="input" [(ngModel)]="m.accionRefId" placeholder="ObjectId" />
+            <p class="subtle" style="font-size:11px; margin-top:6px;">
+              Pega el ID del local / promo flash al que apuntará el botón "Ver".
+            </p>
+          }
+          @if (m.tipoAccion === 'URL') {
+            <label class="field-label">URL *</label>
+            <input class="input" type="url" [(ngModel)]="m.accionUrl" placeholder="https://…" />
+          }
+        </div>
+
+      </div>
+
+      <!-- COLUMNA DERECHA: preview + envío -->
+      <div class="space-y-4">
+
+        <!-- Preview -->
+        <div class="card" style="padding:18px;">
+          <h3 class="section-title">Vista previa</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:12px;">
+            Aspecto aproximado del push.
+          </p>
+          <div
+            style="border:1px solid var(--stroke); border-radius:14px; padding:12px; background:var(--glass);"
+          >
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+              <div class="icon-box icon-box-accent" style="width:32px; height:32px; border-radius:8px;">
+                <lucide-icon name="bell" style="width:14px; height:14px;"></lucide-icon>
+              </div>
+              <div style="font-size:11px; color:var(--text-mute); font-weight:600;">ENJOY · ahora</div>
+            </div>
+            <div style="font-weight:700; color:var(--text); font-size:14px;">
+              {{ m.titulo || 'Tu título aparecerá aquí' }}
+            </div>
+            <div class="subtle" style="font-size:12.5px; margin-top:4px; white-space:pre-wrap;">
+              {{ m.cuerpo || 'El cuerpo del mensaje aparecerá aquí.' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Programación -->
+        <div class="card" style="padding:18px;">
+          <h3 class="section-title">Programación</h3>
+          <p class="subtle" style="font-size:12px; margin-bottom:12px;">
+            Si dejás vacío, se envía al tocar "Enviar ahora".
+          </p>
+          <label class="field-label">Fecha y hora</label>
+          <input type="datetime-local" class="input" [(ngModel)]="m.programadaPara" />
+        </div>
+
+        <!-- Métricas (solo edición de enviada) -->
+        @if (esEdicionEnviada) {
+          <div class="card" style="padding:18px;">
+            <h3 class="section-title">Métricas</h3>
+            <div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">
+              <div class="flex justify-between" style="font-size:13px;">
+                <span class="subtle">Destinatarios</span>
+                <strong>{{ m.totalDestinatarios || 0 }}</strong>
+              </div>
+              <div class="flex justify-between" style="font-size:13px;">
+                <span class="subtle">Push enviadas</span>
+                <strong>{{ m.totalEntregadasPush || 0 }}</strong>
+              </div>
+              <div class="flex justify-between" style="font-size:13px;">
+                <span class="subtle">Leídas</span>
+                <strong>{{ m.totalLeidas || 0 }}</strong>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Acciones -->
+        @if (!esEdicionEnviada) {
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" (click)="guardar('enviar_ahora')" [disabled]="saving">
+              <lucide-icon name="send" style="width:14px; height:14px;"></lucide-icon>
+              Enviar ahora
+            </button>
+            <button class="btn-ghost" (click)="guardar('programar')" [disabled]="saving || !m.programadaPara">
+              <lucide-icon name="clock" style="width:14px; height:14px;"></lucide-icon>
+              Programar
+            </button>
+            <button class="btn-ghost" (click)="guardar('borrador')" [disabled]="saving">
+              <lucide-icon name="save" style="width:14px; height:14px;"></lucide-icon>
+              Guardar borrador
+            </button>
+            <button class="btn-ghost" (click)="cancelar()" [disabled]="saving">Cancelar</button>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-2">
+            <button class="btn-ghost" (click)="cancelar()">Volver</button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

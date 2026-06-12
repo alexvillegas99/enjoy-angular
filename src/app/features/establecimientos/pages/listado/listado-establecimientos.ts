@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { EstablecimientosService } from '../../../../services/establecimientos.service';
 import { PermissionsService } from '../../../../core/services/permissions.service';
+import { AlertService } from '../../../../core/services/alert.service';
 
 interface Establecimiento {
   _id: string;
@@ -19,6 +20,14 @@ interface Establecimiento {
     imageUrl?: string;
     logoUrl?: string;
   };
+  /** Usuario que creó el establecimiento (populado por el backend). */
+  usuarioCreacion?: {
+    _id: string;
+    nombre: string;
+    email?: string;
+    rol?: string;
+  } | null;
+  createdAt?: string;
 }
 
 @Component({
@@ -31,9 +40,50 @@ export class ListadoEstablecimientos implements OnInit {
   private srv = inject(EstablecimientosService);
   private router = inject(Router);
   private perms = inject(PermissionsService);
+  private alert = inject(AlertService);
+
+  togglingId: string | null = null;
 
   get puedeCrear(): boolean {
     return this.perms.hasPermission('establecimientos.crear');
+  }
+
+  /** Activar/desactivar desde la lista: solo administradores. */
+  get puedeActivar(): boolean {
+    return this.perms.hasPermission('dashboard.ver');
+  }
+
+  async toggleEstado(est: Establecimiento, ev?: Event) {
+    ev?.stopPropagation();
+    if (this.togglingId) return;
+    const activar = !est.estado;
+    const ok = await this.alert.confirm({
+      title: activar ? 'Activar establecimiento' : 'Desactivar establecimiento',
+      text: activar
+        ? `"${est.nombre}" volverá a mostrarse a los clientes.`
+        : `"${est.nombre}" dejará de mostrarse a los clientes.`,
+      confirmText: activar ? 'Activar' : 'Desactivar',
+      icon: activar ? 'question' : 'warning',
+    });
+    if (!ok) return;
+    this.togglingId = est._id;
+    this.srv.update(est._id, { estado: activar }).subscribe({
+      next: () => {
+        est.estado = activar;
+        this.togglingId = null;
+        this.alert.success(
+          activar ? 'Activado' : 'Desactivado',
+          `"${est.nombre}" se actualizó correctamente.`,
+        );
+      },
+      error: (e) => {
+        this.togglingId = null;
+        this.alert.error(
+          'Error',
+          e?.error?.message || 'No se pudo actualizar el estado.',
+        );
+      },
+    });
   }
 
   // data

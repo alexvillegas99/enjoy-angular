@@ -1,41 +1,48 @@
-<div class="max-w-4xl mx-auto space-y-6 pb-28">
+<div class="max-w-4xl mx-auto space-y-8 pb-28 animate-in">
 
   <!-- HEADER -->
-  <div class="flex justify-between items-center">
-    <div>
-      <h2 class="text-xl font-semibold text-slate-800">
+  <div class="flex flex-wrap justify-between items-start gap-4">
+    <div class="space-y-1">
+      <h2 class="page-title">
         {{ modo === 'crear' ? 'Crear Rol' : 'Editar Rol' }}
       </h2>
-      <p class="text-sm text-slate-500">
+      <p class="subtle">
         {{ modo === 'crear' ? 'Define un nuevo rol con permisos personalizados' : 'Modifica los permisos del rol' }}
       </p>
     </div>
 
     <button
       (click)="volver()"
-      class="inline-flex items-center gap-2 border border-slate-300
-             px-4 py-2 rounded-lg text-sm hover:bg-slate-50 transition">
+      class="btn-outline btn-sm">
       <lucide-icon name="arrow-left" class="w-4 h-4"></lucide-icon>
       Volver
     </button>
   </div>
 
   @if (loading) {
-    <div class="text-center py-12 text-slate-500">Cargando...</div>
+    <div class="card flex flex-col items-center justify-center gap-3 py-16">
+      <div class="skeleton h-10 w-10 rounded-full"></div>
+      <p class="subtle">Cargando...</p>
+    </div>
   } @else {
 
     <!-- DATOS GENERALES -->
-    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
-      <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">
-        Información del Rol
-      </h3>
+    <div class="card p-6 space-y-5">
+      <div class="flex items-center gap-3">
+        <span class="icon-badge icon-badge-primary">
+          <lucide-icon name="shield" class="w-5 h-5"></lucide-icon>
+        </span>
+        <h3 class="section-title">
+          Información del Rol
+        </h3>
+      </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
-          <label class="block text-sm text-slate-600 mb-1">Nombre *</label>
+          <label class="form-label">Nombre *</label>
           <input
             type="text"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            class="input"
             [(ngModel)]="form.nombre"
             [disabled]="esSistema"
             placeholder="Ej: Vendedor"
@@ -43,24 +50,24 @@
         </div>
 
         <div>
-          <label class="block text-sm text-slate-600 mb-1">Slug</label>
+          <label class="form-label">Slug</label>
           <input
             type="text"
-            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+            class="input font-mono"
             [(ngModel)]="form.slug"
             [disabled]="modo === 'editar'"
             placeholder="Se genera automáticamente"
           />
           @if (modo === 'crear') {
-            <p class="text-xs text-slate-400 mt-1">Identificador único. Si lo dejas vacío se genera del nombre.</p>
+            <p class="form-hint">Identificador único. Si lo dejas vacío se genera del nombre.</p>
           }
         </div>
       </div>
 
       <div>
-        <label class="block text-sm text-slate-600 mb-1">Descripción</label>
+        <label class="form-label">Descripción</label>
         <textarea
-          class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          class="input"
           [(ngModel)]="form.descripcion"
           rows="2"
           placeholder="Descripción del rol..."
@@ -69,20 +76,26 @@
     </div>
 
     <!-- PERMISOS -->
-    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-4">
-      <div class="flex justify-between items-center">
-        <h3 class="text-sm font-semibold text-slate-700 uppercase tracking-wider">
-          Permisos ({{ form.permisos.length }} seleccionados)
-        </h3>
+    <div class="card p-6 space-y-5">
+      <div class="flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+          <span class="icon-badge icon-badge-accent">
+            <lucide-icon name="key-round" class="w-5 h-5"></lucide-icon>
+          </span>
+          <h3 class="section-title">
+            Permisos
+            <span class="badge badge-primary ml-1">{{ form.permisos.length }} seleccionados</span>
+          </h3>
+        </div>
 
         <div class="flex gap-2">
           <button
-            class="text-xs px-3 py-1.5 border border-slate-300 rounded-md hover:bg-slate-50"
+            class="btn-ghost btn-sm"
             (click)="seleccionarTodos()">
             Seleccionar todos
           </button>
           <button
-            class="text-xs px-3 py-1.5 border border-slate-300 rounded-md hover:bg-slate-50"
+            class="btn-ghost btn-sm"
             (click)="deseleccionarTodos()">
             Deseleccionar todos
           </button>
@@ -91,23 +104,23 @@
 
       <div class="space-y-4">
         @for (grupo of gruposPermisos; track grupo.modulo) {
-          <div class="border border-slate-200 rounded-lg overflow-hidden">
+          <div class="card-flat rounded-xl overflow-hidden">
 
             <!-- Header del grupo -->
             <div
-              class="flex items-center gap-3 px-4 py-3 bg-slate-50 cursor-pointer select-none"
+              class="flex items-center gap-3 px-4 py-3 bg-surface-muted cursor-pointer select-none transition-colors hover:bg-surface-hover"
               (click)="toggleGrupo(grupo)">
               <input
                 type="checkbox"
-                class="rounded border-slate-300 text-slate-900 w-4 h-4"
+                class="rounded border-border-soft text-accent w-4 h-4"
                 [checked]="grupoCompleto(grupo)"
                 [indeterminate]="grupoParcial(grupo)"
                 (click)="$event.stopPropagation(); toggleGrupo(grupo)"
               />
-              <span class="text-sm font-medium text-slate-700">
+              <span class="text-sm font-semibold text-text-dark">
                 {{ grupo.nombre }}
               </span>
-              <span class="text-xs text-slate-400 ml-auto">
+              <span class="badge badge-muted ml-auto font-mono">
                 {{ grupo.modulo }}
               </span>
             </div>
@@ -115,16 +128,16 @@
             <!-- Permisos del grupo -->
             <div class="px-4 py-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               @for (p of grupo.permisos; track p.clave) {
-                <label class="flex items-center gap-2 cursor-pointer py-1 px-2 rounded hover:bg-slate-50">
+                <label class="flex items-center gap-2.5 cursor-pointer py-1.5 px-2 rounded-lg transition-colors hover:bg-surface-hover">
                   <input
                     type="checkbox"
-                    class="rounded border-slate-300 text-slate-900 w-4 h-4"
+                    class="rounded border-border-soft text-accent w-4 h-4"
                     [checked]="tienePermiso(p.clave)"
                     (change)="togglePermiso(p.clave)"
                   />
                   <div>
-                    <span class="text-sm text-slate-700">{{ p.nombre }}</span>
-                    <p class="text-xs text-slate-400">{{ p.clave }}</p>
+                    <span class="text-sm text-text-dark">{{ p.nombre }}</span>
+                    <p class="text-xs text-text-faint font-mono">{{ p.clave }}</p>
                   </div>
                 </label>
               }
@@ -137,13 +150,13 @@
     <!-- ACCIONES -->
     <div class="flex justify-end gap-3">
       <button
-        class="px-6 py-2.5 border border-slate-300 rounded-lg text-sm hover:bg-slate-50"
+        class="btn-outline btn-lg"
         (click)="volver()">
         Cancelar
       </button>
 
       <button
-        class="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50"
+        class="btn-primary btn-lg"
         [disabled]="saving"
         (click)="guardar()">
         {{ saving ? 'Guardando...' : (modo === 'crear' ? 'Crear Rol' : 'Guardar Cambios') }}

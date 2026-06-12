@@ -4,240 +4,55 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-terms-and-conditions',
   standalone: true,
   template: `
-    <style>
-      :host {
-        display: block;
-        --bg: #0f172a;
-        --bg-soft: #111827;
-        --card: rgba(255, 255, 255, 0.08);
-        --card-border: rgba(255, 255, 255, 0.12);
-        --text: #e5e7eb;
-        --muted: #94a3b8;
-        --primary: #8b5cf6;
-        --primary-2: #ec4899;
-        --white: #ffffff;
-        --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-        --radius: 22px;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      .terms-page {
-        min-height: 100vh;
-        background:
-          radial-gradient(circle at top left, rgba(139, 92, 246, 0.18), transparent 30%),
-          radial-gradient(circle at top right, rgba(236, 72, 153, 0.14), transparent 30%),
-          linear-gradient(180deg, #0b1120 0%, #0f172a 45%, #111827 100%);
-        color: var(--text);
-        padding: 32px 16px 64px;
-      }
-
-      .container {
-        width: min(100%, 1100px);
-        margin: 0 auto;
-      }
-
-      .hero-card {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(236, 72, 153, 0.16));
-        border: 1px solid var(--card-border);
-        border-radius: 32px;
-        box-shadow: var(--shadow);
-        padding: 32px 24px;
-        margin-bottom: 24px;
-      }
-
-      .badge {
-        display: inline-flex;
-        padding: 0.45rem 0.9rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #ddd6fe;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin-bottom: 16px;
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: clamp(2rem, 4vw, 3.5rem);
-        line-height: 1.05;
-        color: var(--white);
-      }
-
-      .hero-card p {
-        margin: 0;
-        color: #dbe4f0;
-        max-width: 800px;
-        font-size: 1rem;
-        line-height: 1.7;
-      }
-
-      .updated {
-        margin-top: 16px !important;
-        color: #cbd5e1 !important;
-        font-size: 0.92rem !important;
-      }
-
-      .content-grid {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        gap: 24px;
-      }
-
-      .toc,
-      .content-card {
-        background: var(--card);
-        border: 1px solid var(--card-border);
-        border-radius: 24px;
-        box-shadow: var(--shadow);
-      }
-
-      .toc {
-        padding: 20px;
-        position: sticky;
-        top: 24px;
-        height: fit-content;
-      }
-
-      .toc h2 {
-        margin: 0 0 14px;
-        font-size: 1rem;
-        color: var(--white);
-      }
-
-      .toc a {
-        display: block;
-        color: var(--muted);
-        text-decoration: none;
-        padding: 8px 0;
-        font-size: 0.95rem;
-      }
-
-      .toc a:hover {
-        color: var(--white);
-      }
-
-      .content-card {
-        padding: 28px 22px;
-      }
-
-      section + section {
-        margin-top: 28px;
-        padding-top: 28px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      h3 {
-        margin: 0 0 12px;
-        color: var(--white);
-        font-size: 1.2rem;
-      }
-
-      p, li {
-        color: var(--text);
-        line-height: 1.8;
-        font-size: 0.98rem;
-      }
-
-      ul {
-        margin: 12px 0 0;
-        padding-left: 20px;
-      }
-
-      .note {
-        margin-top: 18px;
-        padding: 14px 16px;
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #dbe4f0;
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 32px;
-      }
-
-      .btn {
-        border: none;
-        border-radius: 999px;
-        padding: 0.95rem 1.35rem;
-        cursor: pointer;
-        font-weight: 700;
-        transition: 0.25s ease;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.55rem;
-        text-align: center;
-        text-decoration: none;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, var(--primary), var(--primary-2));
-        color: var(--white);
-        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.28);
-      }
-
-      .btn-outline {
-        background: transparent;
-        color: var(--white);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-      }
-
-      .btn:hover {
-        transform: translateY(-1px);
-      }
-
-      @media (max-width: 900px) {
-        .content-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .toc {
-          position: static;
-        }
-      }
-    </style>
-
-    <div class="terms-page">
-      <div class="container">
-        <div class="hero-card">
-          <div class="badge">Enjoy · Legal</div>
-          <h1>Términos y Condiciones</h1>
-          <p>
+    <div class="min-h-screen bg-surface-muted font-roboto px-4 py-10 sm:py-12">
+      <div class="mx-auto w-full max-w-[1100px]">
+        <!-- Hero -->
+        <div class="surface-brand rounded-2xl p-8 sm:p-10 mb-8 animate-in">
+          <span class="badge badge-warning mb-4">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>
+            Enjoy · Legal
+          </span>
+          <h1 class="page-title text-white! mb-3">Términos y Condiciones</h1>
+          <p class="max-w-3xl text-base leading-relaxed text-white/85">
             Estos Términos y Condiciones regulan el acceso, navegación y uso de la plataforma
             Enjoy, incluyendo su sitio web, aplicación móvil, promociones, cupones, beneficios,
             formularios de contacto y servicios relacionados para clientes y negocios aliados.
           </p>
-          <p class="updated">Última actualización: 24 de marzo de 2026</p>
+          <p class="mt-5 inline-flex items-center gap-2 text-sm text-white/70">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><circle cx="16" cy="16" r="6"/><path d="M16 14v2l1 1"/></svg>
+            Última actualización: 24 de marzo de 2026
+          </p>
         </div>
 
-        <div class="content-grid">
-          <aside class="toc">
-            <h2>Contenido</h2>
-               <a href="/privacy-policy#aceptacion">1. Aceptación</a>
-            <a href="/privacy-policy#objeto">2. Objeto del servicio</a>
-            <a href="/privacy-policy#registro">3. Registro y cuentas</a>
-            <a href="/privacy-policy#clientes">4. Uso para clientes</a>
-            <a href="/privacy-policy#negocios">5. Uso para negocios aliados</a>
-            <a href="/privacy-policy#cupones">6. Cupones y promociones</a>
-            <a href="/privacy-policy#propiedad">7. Propiedad intelectual</a>
-            <a href="/privacy-policy#prohibiciones">8. Conductas prohibidas</a>
-            <a href="/privacy-policy#responsabilidad">9. Limitación de responsabilidad</a>
-            <a href="/privacy-policy#privacidad">10. Privacidad y datos</a>
-            <a href="/privacy-policy#cambios">11. Modificaciones</a>
-            <a href="/privacy-policy#terminacion">12. Suspensión o terminación</a>
-            <a href="/privacy-policy#ley">13. Ley aplicable</a>
-            <a href="/privacy-policy#contacto">14. Contacto</a>
+        <div class="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
+          <!-- Table of contents -->
+          <aside class="card p-5 lg:sticky lg:top-6 h-fit">
+            <h2 class="section-title flex items-center gap-2 mb-3">
+              <span class="icon-badge icon-badge-primary w-8 h-8">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h.01"/><path d="M3 18h.01"/><path d="M3 6h.01"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M8 6h13"/></svg>
+              </span>
+              Contenido
+            </h2>
+            <nav class="flex flex-col">
+              <a href="/privacy-policy#aceptacion" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">1. Aceptación</a>
+              <a href="/privacy-policy#objeto" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">2. Objeto del servicio</a>
+              <a href="/privacy-policy#registro" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">3. Registro y cuentas</a>
+              <a href="/privacy-policy#clientes" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">4. Uso para clientes</a>
+              <a href="/privacy-policy#negocios" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">5. Uso para negocios aliados</a>
+              <a href="/privacy-policy#cupones" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">6. Cupones y promociones</a>
+              <a href="/privacy-policy#propiedad" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">7. Propiedad intelectual</a>
+              <a href="/privacy-policy#prohibiciones" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">8. Conductas prohibidas</a>
+              <a href="/privacy-policy#responsabilidad" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">9. Limitación de responsabilidad</a>
+              <a href="/privacy-policy#privacidad" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">10. Privacidad y datos</a>
+              <a href="/privacy-policy#cambios" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">11. Modificaciones</a>
+              <a href="/privacy-policy#terminacion" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">12. Suspensión o terminación</a>
+              <a href="/privacy-policy#ley" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">13. Ley aplicable</a>
+              <a href="/privacy-policy#contacto" class="block rounded-md px-3 py-2 text-sm text-text-body hover:bg-accent-soft hover:text-accent transition-colors">14. Contacto</a>
+            </nav>
           </aside>
 
-          <div class="content-card">
+          <!-- Content -->
+          <div class="card p-7 sm:p-8 [&_section+section]:mt-7 [&_section+section]:pt-7 [&_section+section]:border-t [&_section+section]:border-border-soft [&_h3]:section-title [&_h3]:text-lg [&_h3]:mb-3 [&_p]:text-text-body [&_p]:leading-relaxed [&_p]:text-[0.98rem] [&_li]:text-text-body [&_li]:leading-relaxed [&_ul]:mt-3 [&_ul]:pl-5 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_p+p]:mt-3">
             <section id="aceptacion">
               <h3>1. Aceptación de los términos</h3>
               <p>
@@ -360,9 +175,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
                 la plataforma, aceptas el tratamiento de los datos estrictamente necesarios para el funcionamiento,
                 seguridad, soporte, analítica, contacto comercial y mejora del servicio.
               </p>
-              <div class="note">
-                Recomendado: enlazar esta sección a tu ruta pública
-                <strong>/privacy-policy</strong>.
+              <div class="mt-4 flex items-start gap-3 rounded-xl border border-info-soft bg-info-soft/40 p-4 text-sm text-text-body">
+                <svg class="w-5 h-5 text-info shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                <span>
+                  Recomendado: enlazar esta sección a tu ruta pública
+                  <strong class="text-text-dark">/privacy-policy</strong>.
+                </span>
               </div>
             </section>
 
@@ -398,11 +216,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
                 a través de sus canales oficiales, sitio web o correo de soporte.
               </p>
 
-              <div class="actions">
-                <a class="btn btn-primary" href="https://ecuenjoy.com/" target="_blank" rel="noopener noreferrer">
+              <div class="flex flex-wrap gap-3 mt-8">
+                <a class="btn-primary" href="https://ecuenjoy.com/" target="_blank" rel="noopener noreferrer">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                   Ir a Enjoy
                 </a>
-                <a class="btn btn-outline" href="/privacy-policy">
+                <a class="btn-outline" href="/privacy-policy">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
                   Ver Política de Privacidad
                 </a>
               </div>

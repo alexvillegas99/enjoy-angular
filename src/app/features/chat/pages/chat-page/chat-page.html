@@ -1,0 +1,456 @@
+<div class="h-[calc(100vh-7rem)] flex flex-col">
+  <!-- HEADER -->
+  <div class="flex items-start gap-4 mb-4">
+    <div class="icon-badge icon-badge-primary shrink-0">
+      <lucide-icon name="headphones" class="w-5 h-5"></lucide-icon>
+    </div>
+    <div class="flex-1">
+      <h2 class="page-title">Soporte</h2>
+      <p class="subtle">
+        @if (esSoporte) {
+          Bandeja compartida del equipo · responde a los locales en vivo
+        } @else {
+          Conversación con el equipo de soporte
+        }
+      </p>
+    </div>
+    @if (esSoporte && puedeResponder) {
+      <a routerLink="/chat/config" class="btn-ghost" title="Configurar equipo de soporte">
+        <lucide-icon name="settings" style="width:14px; height:14px;"></lucide-icon>
+        Equipo
+      </a>
+    }
+  </div>
+
+  <!-- LAYOUT 2 COLUMNAS -->
+  <div class="flex-1 min-h-0 grid grid-cols-12 gap-4">
+    <!-- LISTA HILOS (solo soporte) -->
+    @if (esSoporte) {
+      <div class="card col-span-4 flex flex-col min-h-0 p-3">
+        <!-- Buscador -->
+        <div class="relative mb-3">
+          <lucide-icon
+            name="search"
+            class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-faint pointer-events-none"
+          ></lucide-icon>
+          <input
+            type="text"
+            placeholder="Buscar local…"
+            class="input pl-9"
+            [(ngModel)]="q"
+            (ngModelChange)="onSearch()"
+          />
+        </div>
+
+        <!-- Filtros chips -->
+        <div class="flex gap-2 mb-3 flex-wrap">
+          <button
+            class="chip"
+            [class.chip-active]="filtroEstado === 'ABIERTA'"
+            (click)="filtroEstado = 'ABIERTA'; cargarHilos()"
+          >
+            Abiertos
+          </button>
+          <button
+            class="chip"
+            [class.chip-active]="filtroEstado === 'CERRADA'"
+            (click)="filtroEstado = 'CERRADA'; cargarHilos()"
+          >
+            Cerrados
+          </button>
+          <button
+            class="chip"
+            [class.chip-active]="filtroEstado === 'TODOS'"
+            (click)="filtroEstado = 'TODOS'; cargarHilos()"
+          >
+            Todos
+          </button>
+          <button
+            class="chip"
+            [class.chip-active]="soloMisAsignados"
+            (click)="soloMisAsignados = !soloMisAsignados; cargarHilos()"
+          >
+            Mis asignados
+          </button>
+        </div>
+
+        <!-- Lista -->
+        <div class="flex-1 overflow-y-auto -mx-1">
+          @if (loadingHilos) {
+            <div class="py-10 text-center subtle">Cargando…</div>
+          } @else if (hilos.length === 0) {
+            <div class="py-14 text-center subtle px-4">
+              <lucide-icon
+                name="message-square-dashed"
+                class="w-10 h-10 mx-auto mb-3 opacity-50"
+              ></lucide-icon>
+              <div class="font-medium mb-1">Sin conversaciones</div>
+              <div class="text-xs">
+                Cuando un local te escriba, aparecerá aquí.
+              </div>
+            </div>
+          } @else {
+            @for (h of hilos; track h._id) {
+              <button
+                class="w-full text-left transition flex gap-3 items-center"
+                [style.background]="hiloActivo?._id === h._id ? 'rgba(255,159,28,0.10)' : 'transparent'"
+                [style.border]="hiloActivo?._id === h._id ? '1px solid rgba(255,159,28,0.35)' : '1px solid transparent'"
+                style="padding:12px; border-radius:12px; cursor:pointer; width:100%;"
+                onmouseover="this.style.background='var(--glass)'"
+                onmouseout="this.style.background=(this.dataset.active==='1'?'rgba(255,159,28,0.10)':'transparent')"
+                [attr.data-active]="hiloActivo?._id === h._id ? '1' : '0'"
+                (click)="abrirHilo(h)"
+              >
+                <div
+                  class="rounded-full flex items-center justify-center shrink-0 overflow-hidden"
+                  style="width:40px; height:40px; background:var(--glass-strong); border:1px solid var(--stroke);"
+                >
+                  @if (h.localLogo) {
+                    <img [src]="h.localLogo" class="w-full h-full object-cover" />
+                  } @else {
+                    <lucide-icon
+                      name="store"
+                      class="w-5 h-5 text-text-faint"
+                    ></lucide-icon>
+                  }
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="font-semibold truncate flex-1"
+                      [class.text-primary]="noLeidos(h) > 0"
+                    >
+                      {{ h.localNombre || '(Sin nombre)' }}
+                    </span>
+                    <span class="text-xs text-text-faint">
+                      {{ formatTiempo(h.ultimoMensaje?.fecha || h.updatedAt) }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span
+                      class="text-xs truncate flex-1"
+                      [class.font-semibold]="noLeidos(h) > 0"
+                      [class.text-text]="noLeidos(h) > 0"
+                      [class.text-text-faint]="noLeidos(h) === 0"
+                    >
+                      {{ h.ultimoMensaje?.texto || 'Sin mensajes aún' }}
+                    </span>
+                    @if (noLeidos(h) > 0) {
+                      <span
+                        style="background: var(--accent-grad); color: var(--on-accent); font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; min-width:20px; text-align:center; box-shadow:0 2px 8px rgba(255,159,28,0.4);"
+                      >
+                        {{ noLeidos(h) > 99 ? '99+' : noLeidos(h) }}
+                      </span>
+                    } @else if (h.estado === 'CERRADA') {
+                      <span class="text-[10px] subtle">Cerrada</span>
+                    }
+                  </div>
+                  @if (atendidoPorOtro(h)) {
+                    <div style="margin-top:4px; display:flex; align-items:center; gap:5px;">
+                      <span style="width:6px; height:6px; border-radius:999px; background:#2BD67B; display:inline-block; box-shadow:0 0 0 2px rgba(43,214,123,0.25);"></span>
+                      <span style="font-size:10.5px; color:#2BD67B; font-weight:600;">{{ nombreAtiende(h) }} atendiendo</span>
+                    </div>
+                  } @else if (atendidoPorMi(h)) {
+                    <div style="margin-top:4px;">
+                      <span class="pill pill-orange" style="font-size:9.5px; padding:2px 8px;">Tú atiendes</span>
+                    </div>
+                  }
+                </div>
+              </button>
+            }
+          }
+        </div>
+      </div>
+    }
+
+    <!-- CONVERSACIÓN -->
+    <div
+      class="card flex flex-col min-h-0 p-0"
+      [class.col-span-8]="esSoporte"
+      [class.col-span-12]="!esSoporte"
+    >
+      @if (!hiloActivo) {
+        <div class="flex-1 flex items-center justify-center subtle">
+          <div class="text-center">
+            <lucide-icon
+              name="message-square"
+              class="w-12 h-12 mx-auto mb-3 opacity-50"
+            ></lucide-icon>
+            <div>Selecciona una conversación</div>
+          </div>
+        </div>
+      } @else {
+        <!-- Header conversación -->
+        <div
+          class="p-4 flex items-center gap-3"
+          style="border-bottom: 1px solid var(--stroke);"
+        >
+          <div
+            class="rounded-full flex items-center justify-center overflow-hidden"
+            style="width:40px; height:40px; background:var(--glass-strong); border:1px solid var(--stroke);"
+          >
+            @if (hiloActivo.localLogo) {
+              <img
+                [src]="hiloActivo.localLogo"
+                class="w-full h-full object-cover"
+              />
+            } @else {
+              <lucide-icon
+                name="store"
+                class="w-5 h-5 text-text-faint"
+              ></lucide-icon>
+            }
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="font-semibold truncate flex items-center gap-2">
+              <span>{{
+                esSoporte
+                  ? hiloActivo.localNombre || 'Conversación'
+                  : 'Soporte Enjoy'
+              }}</span>
+              @if (esSoporte && atendidoPorMi(hiloActivo)) {
+                <span class="pill pill-orange" style="font-size:10px; padding:2px 8px;">
+                  <lucide-icon name="user-check" style="width:10px; height:10px;"></lucide-icon>
+                  Tú atiendes
+                </span>
+              } @else if (esSoporte && atendidoPorOtro(hiloActivo)) {
+                <span class="pill" style="font-size:10px; padding:2px 8px; background:rgba(43,214,123,0.15); color:#2BD67B; border-color:rgba(43,214,123,0.35);">
+                  <span style="width:6px; height:6px; border-radius:999px; background:#2BD67B; display:inline-block; animation: blink 1.4s infinite;"></span>
+                  {{ nombreAtiende(hiloActivo) }} atendiendo
+                </span>
+              }
+            </div>
+            <div class="text-xs subtle flex items-center gap-2 flex-wrap">
+              @if (peerEscribiendo) {
+                <span class="text-primary">escribiendo…</span>
+              } @else if (hiloActivo.estado === 'CERRADA') {
+                <span>Conversación cerrada</span>
+              } @else {
+                <span>Conversación abierta</span>
+              }
+              @if (esSoporte && asignadoNombre(hiloActivo)) {
+                <span style="color:var(--text-mute);">·</span>
+                <span style="display:inline-flex; align-items:center; gap:4px; color:var(--text-soft);">
+                  <lucide-icon name="user-check" style="width:11px; height:11px; color:var(--orange);"></lucide-icon>
+                  Asignado a <strong style="color:var(--text);">{{ asignadoNombre(hiloActivo) }}</strong>
+                </span>
+              }
+            </div>
+          </div>
+          @if (esSoporte && puedeResponder) {
+            <button
+              class="btn-ghost text-xs"
+              (click)="abrirTransferir()"
+              title="Transferir a otro agente"
+            >
+              <lucide-icon name="send" style="width:14px; height:14px;"></lucide-icon>
+              Transferir
+            </button>
+            <button
+              class="btn-ghost text-xs"
+              (click)="toggleEstado()"
+              [title]="hiloActivo.estado === 'CERRADA' ? 'Reabrir' : 'Cerrar'"
+            >
+              <lucide-icon
+                [name]="hiloActivo.estado === 'CERRADA' ? 'unlock' : 'lock'"
+                style="width:14px; height:14px;"
+              ></lucide-icon>
+              {{ hiloActivo.estado === 'CERRADA' ? 'Reabrir' : 'Cerrar' }}
+            </button>
+          }
+        </div>
+
+        <!-- Historial de transferencias (colapsable) -->
+        @if (esSoporte && hiloActivo.historialTransferencias?.length > 0) {
+          <details style="border-bottom:1px solid var(--stroke);">
+            <summary
+              style="cursor:pointer; padding:10px 18px; font-size:12px; color:var(--text-soft); display:flex; align-items:center; gap:8px; user-select:none;"
+            >
+              <lucide-icon name="history" style="width:13px; height:13px;"></lucide-icon>
+              Historial de transferencias ({{ hiloActivo.historialTransferencias.length }})
+            </summary>
+            <div style="padding:8px 18px 12px;">
+              @for (h of hiloActivo.historialTransferencias; track $index) {
+                <div
+                  style="display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--stroke);"
+                  [style.borderBottom]="$last ? 'none' : '1px solid var(--stroke)'"
+                >
+                  <span
+                    class="pill"
+                    [class.pill-orange]="h.tipo === 'TRANSFERENCIA'"
+                    [class.pill-red]="h.tipo === 'ESCALACION'"
+                    [class.pill-blue]="h.tipo === 'ASIGNACION_INICIAL'"
+                    style="font-size:10px; padding:2px 8px; height:fit-content;"
+                  >
+                    {{ h.tipo === 'TRANSFERENCIA' ? 'Transfer' : h.tipo === 'ESCALACION' ? 'Escalación' : 'Auto' }}
+                  </span>
+                  <div style="flex:1; font-size:12px;">
+                    <div>
+                      @if (h.deNombre) {
+                        <span style="color:var(--text-mute);">{{ h.deNombre }}</span>
+                        <span style="color:var(--text-mute); margin:0 4px;">→</span>
+                      }
+                      <strong style="color:var(--text);">{{ h.paraNombre }}</strong>
+                    </div>
+                    @if (h.observacion) {
+                      <div style="color:var(--text-soft); margin-top:2px; font-style:italic;">"{{ h.observacion }}"</div>
+                    }
+                  </div>
+                  <span style="font-size:10.5px; color:var(--text-mute); white-space:nowrap;">
+                    {{ h.fecha | date:'short' }}
+                  </span>
+                </div>
+              }
+            </div>
+          </details>
+        }
+
+        <!-- Mensajes -->
+        <div
+          #msgScroll
+          class="flex-1 overflow-y-auto p-4 space-y-2"
+          (scroll)="onScrollMensajes()"
+        >
+          @if (cargandoMensajes && mensajes.length === 0) {
+            <div class="text-center subtle py-6">Cargando…</div>
+          } @else if (mensajes.length === 0) {
+            <div class="text-center subtle py-6">Empieza la conversación</div>
+          }
+          @if (cargandoMensajes && mensajes.length > 0) {
+            <div class="text-center subtle py-2 text-xs">Cargando…</div>
+          }
+          @for (m of mensajes; track m._id) {
+            <div
+              class="flex"
+              [class.justify-end]="esMio(m)"
+              [class.justify-start]="!esMio(m)"
+            >
+              <div
+                [style.background]="esMio(m) ? 'var(--accent-grad)' : 'var(--glass)'"
+                [style.color]="esMio(m) ? 'var(--on-accent)' : 'var(--text)'"
+                [style.border]="esMio(m) ? '0' : '1px solid var(--stroke)'"
+                [style.borderRadius]="esMio(m) ? '14px 14px 4px 14px' : '14px 14px 14px 4px'"
+                [style.boxShadow]="esMio(m) ? '0 4px 14px rgba(255,159,28,0.25)' : 'none'"
+                style="max-width:70%; padding:10px 14px; font-size:13.5px;"
+              >
+                @if (m.adjuntoUrl) {
+                  <img
+                    [src]="m.adjuntoUrl"
+                    class="rounded-lg mb-1 cursor-pointer"
+                    style="max-width:260px; display:block;"
+                    (click)="abrirImagen(m.adjuntoUrl)"
+                  />
+                }
+                @if (m.texto) {
+                  <div class="whitespace-pre-wrap break-words">{{ m.texto }}</div>
+                }
+                <div
+                  class="flex items-center justify-end gap-1 mt-1"
+                  [style.color]="esMio(m) ? 'rgba(26,18,6,0.65)' : 'var(--text-mute)'"
+                  style="font-size:10px;"
+                >
+                  <span>{{ formatHora(m.createdAt) }}</span>
+                  @if (esMio(m)) {
+                    <lucide-icon
+                      [name]="m.leidoEn ? 'check-check' : 'check'"
+                      style="width:12px; height:12px;"
+                    ></lucide-icon>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Composer -->
+        <div class="p-3 flex items-end gap-2" style="border-top: 1px solid var(--stroke);">
+          <button
+            class="btn-icon-ghost"
+            [disabled]="enviando"
+            (click)="abrirSelector()"
+            title="Adjuntar imagen"
+          >
+            <lucide-icon name="image" class="w-5 h-5"></lucide-icon>
+          </button>
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            class="hidden"
+            (change)="onFile($event)"
+          />
+          <textarea
+            rows="1"
+            placeholder="Escribe un mensaje…"
+            class="input flex-1 resize-none max-h-32"
+            [(ngModel)]="texto"
+            (ngModelChange)="onTextoChange()"
+            (keydown.enter)="$event.preventDefault(); enviar()"
+          ></textarea>
+          <button
+            class="btn-primary !rounded-full !p-2.5"
+            [disabled]="enviando || (!texto.trim())"
+            (click)="enviar()"
+            title="Enviar"
+          >
+            <lucide-icon name="send" class="w-4 h-4"></lucide-icon>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal transferir conversación ───────────────────────────────── -->
+@if (mostrarTransferir) {
+  <div
+    style="position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:24px;"
+    (click)="cerrarTransferir()"
+  >
+    <div
+      class="card animate-in"
+      style="width:100%; max-width:520px; padding:24px;"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start gap-3 mb-4">
+        <div class="icon-box icon-box-accent" style="width:42px; height:42px;">
+          <lucide-icon name="send" style="width:18px; height:18px;"></lucide-icon>
+        </div>
+        <div class="flex-1">
+          <h3 class="section-title">Transferir conversación</h3>
+          <p class="subtle" style="font-size:12px;">
+            El agente destinatario recibirá una notificación con tu observación.
+          </p>
+        </div>
+        <button class="btn-icon" (click)="cerrarTransferir()" title="Cerrar">
+          <lucide-icon name="x" style="width:14px; height:14px;"></lucide-icon>
+        </button>
+      </div>
+
+      <label class="field-label">Transferir a</label>
+      <select class="input" [(ngModel)]="paraUserId" style="margin-bottom:14px;">
+        <option value="">— Selecciona un agente —</option>
+        @for (a of agentesDisponibles; track a._id) {
+          <option [value]="a._id">{{ a.nombre }} ({{ a.rol }})</option>
+        }
+      </select>
+
+      <label class="field-label">Observación (obligatoria)</label>
+      <textarea
+        class="input"
+        rows="4"
+        [(ngModel)]="observacionTransferir"
+        placeholder="Ej: este local quiere hacer una nueva sesión de fotos, derivo al equipo de marketing."
+        style="margin-bottom:18px; resize:vertical;"
+      ></textarea>
+
+      <div class="flex justify-end gap-2">
+        <button class="btn-ghost" (click)="cerrarTransferir()">Cancelar</button>
+        <button class="btn-primary" (click)="confirmarTransferir()">
+          <lucide-icon name="send" style="width:14px; height:14px;"></lucide-icon>
+          Transferir
+        </button>
+      </div>
+    </div>
+  </div>
+}

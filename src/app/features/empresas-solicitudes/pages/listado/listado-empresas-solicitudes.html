@@ -1,0 +1,221 @@
+<div class="p-6 space-y-6 max-w-7xl mx-auto pb-20">
+
+  <!-- HEADER -->
+  <div class="flex items-center gap-4 animate-in">
+    <span class="icon-badge icon-badge-primary">
+      <lucide-icon name="building-2" class="w-5 h-5"></lucide-icon>
+    </span>
+    <div>
+      <h1 class="page-title">Solicitudes de Empresas</h1>
+      <p class="subtle">Negocios que solicitan acceso a Enjoy desde la app</p>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card animate-in">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+      <div>
+        <label class="form-label">Estado</label>
+        <select
+          class="input"
+          [(ngModel)]="filtros.estado"
+          (change)="buscar()"
+        >
+          <option value="">Todos</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="CONTACTADO">Contactado</option>
+          <option value="APROBADO">Aprobado</option>
+          <option value="RECHAZADO">Rechazado</option>
+        </select>
+      </div>
+
+      <div class="md:col-span-1"></div>
+
+      <button class="btn-secondary btn-block flex items-center justify-center gap-2" (click)="buscar()">
+        <lucide-icon name="refresh-cw" class="w-4 h-4"></lucide-icon>
+        Actualizar
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  @if (loading) {
+    <div class="flex items-center justify-center py-16">
+      <div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
+
+  <!-- LISTADO -->
+  @if (!loading) {
+    <div class="space-y-4">
+
+      @for (sol of solicitudes; track sol._id) {
+        <div class="card animate-in">
+
+          <!-- Encabezado: empresa + badge -->
+          <div class="flex flex-wrap items-center gap-3">
+            <span class="icon-badge icon-badge-primary flex-shrink-0">
+              <lucide-icon name="store" class="w-5 h-5"></lucide-icon>
+            </span>
+            <div class="min-w-0">
+              <h3 class="text-sm font-semibold text-text-dark truncate">{{ sol.empresa }}</h3>
+              <p class="text-xs text-text-body">{{ sol.contacto }}</p>
+            </div>
+            <span class="badge ml-auto" [ngClass]="getBadgeClasses(sol.estado)">
+              {{ sol.estado }}
+            </span>
+          </div>
+
+          <!-- Detalles en grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm mt-4">
+
+            <div class="flex items-center gap-2">
+              <lucide-icon name="mail" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
+              <a [href]="'mailto:' + sol.email" class="text-text-body hover:text-accent truncate">{{ sol.email }}</a>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <lucide-icon name="phone" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
+              <button type="button" class="text-text-body hover:text-accent" (click)="abrirWhatsApp(sol.telefono)">
+                {{ sol.telefono }}
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <lucide-icon name="map-pin" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
+              <span class="text-text-body">{{ sol.ciudad }}</span>
+            </div>
+
+            @if (sol.ruc) {
+              <div class="flex items-center gap-2">
+                <lucide-icon name="hash" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
+                <span class="text-text-body">RUC: <strong class="text-text-dark">{{ sol.ruc }}</strong></span>
+              </div>
+            }
+
+            <div class="flex items-center gap-2">
+              <lucide-icon name="calendar" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
+              <span class="text-text-body">{{ formatFecha(sol.createdAt) }}</span>
+            </div>
+
+            @if (sol.origen) {
+              <div class="flex items-center gap-2">
+                <lucide-icon name="smartphone" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
+                <span class="text-text-body">{{ sol.origen }}</span>
+              </div>
+            }
+
+          </div>
+
+          <!-- Mensaje -->
+          @if (sol.mensaje) {
+            <div class="surface-sunken rounded-lg px-3 py-2 border border-border-subtle mt-3">
+              <p class="text-xs text-text-body"><strong class="text-text-dark">Mensaje:</strong> {{ sol.mensaje }}</p>
+            </div>
+          }
+
+          <!-- Nota admin (si existe) -->
+          @if (sol.notaAdmin) {
+            <div class="bg-danger-soft rounded-lg px-3 py-2 border border-danger/20 mt-3">
+              <p class="text-xs text-danger"><strong>Nota admin:</strong> {{ sol.notaAdmin }}</p>
+            </div>
+          }
+
+          <!-- ACCIONES -->
+          <div class="border-t border-border-soft mt-4 pt-4 space-y-3">
+
+            <!-- Gestión (solo si PENDIENTE o CONTACTADO) -->
+            @if (sol.estado === 'PENDIENTE' || sol.estado === 'CONTACTADO') {
+              <div>
+                <label class="form-label">Nota del administrador (opcional)</label>
+                <input
+                  type="text"
+                  class="input"
+                  placeholder="Motivo del rechazo u observación..."
+                  [ngModel]="notaAdminMap[sol._id] || ''"
+                  (ngModelChange)="notaAdminMap[sol._id] = $event"
+                />
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                @if (sol.estado === 'PENDIENTE') {
+                  <button
+                    class="btn-secondary btn-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    [disabled]="procesandoId === sol._id"
+                    (click)="marcarContactado(sol)"
+                  >
+                    <lucide-icon name="phone-call" class="w-4 h-4"></lucide-icon>
+                    Contactado
+                  </button>
+                }
+                <button
+                  class="btn-primary btn-sm flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="procesandoId === sol._id"
+                  (click)="aprobar(sol)"
+                >
+                  @if (procesandoId === sol._id) {
+                    <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    Procesando…
+                  } @else {
+                    <lucide-icon name="check-circle" class="w-4 h-4"></lucide-icon>
+                    Aprobar
+                  }
+                </button>
+                <button
+                  class="btn-outline btn-sm flex items-center gap-2 text-danger! border-danger/40! disabled:opacity-50 disabled:cursor-not-allowed"
+                  [disabled]="procesandoId === sol._id"
+                  (click)="rechazar(sol)"
+                >
+                  <lucide-icon name="circle-x" class="w-4 h-4"></lucide-icon>
+                  Rechazar
+                </button>
+                <button
+                  class="btn-ghost btn-sm flex items-center gap-2 ml-auto text-text-body disabled:opacity-50"
+                  [disabled]="procesandoId === sol._id"
+                  (click)="eliminar(sol)"
+                >
+                  <lucide-icon name="trash-2" class="w-4 h-4"></lucide-icon>
+                  Eliminar
+                </button>
+              </div>
+            } @else {
+              <!-- Ya resuelta: solo eliminar -->
+              <div class="flex justify-end">
+                <button
+                  class="btn-ghost btn-sm flex items-center gap-2 text-text-body disabled:opacity-50"
+                  [disabled]="procesandoId === sol._id"
+                  (click)="eliminar(sol)"
+                >
+                  <lucide-icon name="trash-2" class="w-4 h-4"></lucide-icon>
+                  Eliminar
+                </button>
+              </div>
+            }
+
+          </div>
+
+        </div>
+      }
+
+      <!-- VACIO -->
+      @if (solicitudes.length === 0) {
+        <div class="card text-center py-12 animate-in">
+          <span class="icon-badge icon-badge-primary mx-auto mb-4">
+            <lucide-icon name="building-2" class="w-6 h-6"></lucide-icon>
+          </span>
+          <p class="section-title">No se encontraron solicitudes</p>
+          <p class="subtle mt-1">Aún no hay negocios que hayan solicitado acceso para este filtro.</p>
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- INFO TOTAL -->
+  @if (!loading && solicitudes.length > 0) {
+    <p class="text-center text-xs text-text-body">
+      {{ solicitudes.length }} solicitud{{ solicitudes.length === 1 ? '' : 'es' }}
+    </p>
+  }
+
+</div>

@@ -1,33 +1,36 @@
-<div class="space-y-3">
+<div class="space-y-4">
   <!-- Buscador + contador -->
-  <div class="flex items-center gap-2">
+  <div class="flex items-center gap-3">
     <div class="relative flex-1">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-faint" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
       <input
         type="text"
         [(ngModel)]="query"
         placeholder="Buscar categoría…"
-        class="w-full border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+        class="input pl-10"
       />
-      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"></circle>
-        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-      </svg>
     </div>
-    <span class="text-xs text-text-body whitespace-nowrap">{{ selectedIds.length }} seleccionada(s)</span>
+    <span class="badge badge-muted whitespace-nowrap">{{ selectedIds.length }} seleccionada(s)</span>
   </div>
 
   <!-- Seleccionadas (resumen, siempre visibles) -->
   @if (categoriasSeleccionadas.length) {
-    <div class="flex flex-wrap gap-2 pb-1 border-b border-gray-100">
+    <div class="flex flex-wrap gap-2 pb-3 border-b border-border-soft animate-in">
       @for (cat of categoriasSeleccionadas; track cat._id) {
         <button
           type="button"
-          class="px-3 py-1.5 rounded-full text-xs font-medium bg-accent text-white border border-accent flex items-center gap-1"
+          class="chip is-active gap-1.5"
           (click)="toggle(cat._id)"
           title="Quitar"
         >
           {{ cat.nombre }}
-          <span class="text-white/80">✕</span>
+          <svg class="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       }
     </div>
@@ -38,18 +41,14 @@
     @for (cat of categoriasFiltradas; track cat._id) {
       <button
         type="button"
-        class="px-4 py-1.5 rounded-full text-xs font-medium border transition"
-        [class.bg-accent]="isSelected(cat._id)"
-        [class.text-white]="isSelected(cat._id)"
-        [class.border-accent]="isSelected(cat._id)"
-        [class.border-gray-200]="!isSelected(cat._id)"
-        [class.text-text-body]="!isSelected(cat._id)"
+        class="chip"
+        [class.is-active]="isSelected(cat._id)"
         (click)="toggle(cat._id)"
       >
         {{ cat.nombre }}
       </button>
     } @empty {
-      <p class="text-xs text-text-body py-2">No se encontraron categorías para “{{ query }}”.</p>
+      <p class="subtle text-sm py-3">No se encontraron categorías para “{{ query }}”.</p>
     }
   </div>
 </div>

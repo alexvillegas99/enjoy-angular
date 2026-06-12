@@ -1,235 +1,151 @@
-<div class="max-w-7xl mx-auto space-y-6 pb-28">
+<section class="page animate-in">
 
   <!-- HEADER -->
- <div class="flex justify-between items-center">
-
-  <div>
-    <h2 class="text-xl font-semibold text-slate-800">
-      Gestión de Usuarios
-    </h2>
-    <p class="text-sm text-slate-500">
-      Administración general del sistema
-    </p>
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="users" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Usuarios</h1>
+      <p class="subtle">Equipo y operadores de la plataforma.</p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-primary" (click)="nuevo()">
+        <lucide-icon name="circle-plus" style="width:14px; height:14px;"></lucide-icon>
+        Crear usuario
+      </button>
+    </div>
   </div>
 
-  <a
-    (click)="nuevo()"
-    class="inline-flex items-center gap-2
-           bg-slate-900 text-white
-           px-4 py-2 rounded-lg text-sm
-           hover:bg-slate-800 transition">
-
-    <lucide-icon
-      name="circle-plus"
-      class="w-4 h-4">
-    </lucide-icon>
-
-    Crear usuario
-
-  </a>
-
-</div>
   <!-- FILTROS -->
-  <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-
-      <input
-        type="text"
-        placeholder="Buscar usuario..."
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        [(ngModel)]="filtros.q"
-        (keyup.enter)="buscar()"
-      />
-
-      <select
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        [(ngModel)]="filtros.rol"
-        (change)="buscar()"
-      >
+  <div class="card filter-card mb-4">
+    <div class="filter-card-header">
+      <div class="filter-card-title">
+        <lucide-icon name="sliders-horizontal" style="width:15px; height:15px;"></lucide-icon>
+        Buscar y filtrar
+      </div>
+      <span class="subtle">{{ usuarios.length }} resultado(s)</span>
+    </div>
+    <div class="filter-bar">
+      <div class="search-field" style="grid-column: span 2;">
+        <lucide-icon
+          name="search"
+        ></lucide-icon>
+        <input
+          type="text"
+          placeholder="Buscar por nombre o email…"
+          class="input"
+          [(ngModel)]="filtros.q"
+          (keyup.enter)="buscar()"
+        />
+      </div>
+      <select class="input" [(ngModel)]="filtros.rol" (change)="buscar()">
         <option value="">Todos los roles</option>
-        <option value="admin">ADMIN</option>
-        <option value="admin-local">ADMIN_LOCAL</option>
-        <option value="staff">STAFF</option>
+        <option value="admin">Admin</option>
+        <option value="admin-local">Admin Local</option>
+        <option value="staff">Staff</option>
+        <option value="vendedor">Vendedor</option>
+        <option value="marketing">Marketing</option>
       </select>
-
-      <select
-        class="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-        [(ngModel)]="filtros.estado"
-        (change)="buscar()"
-      >
-        <option value="">Todos</option>
+      <select class="input" [(ngModel)]="filtros.estado" (change)="buscar()">
+        <option value="">Todos los estados</option>
         <option value="true">Activos</option>
         <option value="false">Inactivos</option>
       </select>
-
-      <button
-        class="bg-slate-900 text-white rounded-lg px-4 py-2 text-sm hover:bg-slate-800"
-        (click)="buscar()">
+      <button class="btn-primary" (click)="buscar()">
+        <lucide-icon name="search" style="width:14px; height:14px;"></lucide-icon>
         Buscar
       </button>
+    </div>
+  </div>
 
+  <!-- TABLA -->
+  <div class="card data-table">
+    <div class="data-table-head">
+      <h3 class="section-title">Listado</h3>
+      <p class="subtle" style="font-size:12px;">
+        {{ usuarios.length }} usuario(s)
+      </p>
     </div>
 
-  </div>
-
-  <!-- ===================== -->
-  <!-- MOBILE CARDS -->
-  <!-- ===================== -->
-
-  <div class="md:hidden space-y-3">
-
-    @if (loading) {
-      <div class="text-center py-6 text-slate-500">
-        Cargando...
-      </div>
-    }
-
-    @for (u of usuarios; track u._id) {
-
-      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
-
-        <div class="flex justify-between items-start">
-
-          <div>
-            <p class="font-medium text-slate-800">
-              {{ u.nombre }}
-            </p>
-
-            <p class="text-xs text-slate-500">
-              {{ u.email }}
-            </p>
-          </div>
-
-          <span
-            class="px-2 py-1 text-xs rounded-full"
-            [class.bg-emerald-100]="u.estado"
-            [class.text-emerald-700]="u.estado"
-            [class.bg-rose-100]="!u.estado"
-            [class.text-rose-700]="!u.estado"
-          >
-            {{ u.estado ? 'Activo' : 'Inactivo' }}
-          </span>
-
-        </div>
-
-        <div class="text-xs text-slate-500">
-          Rol: <span class="text-slate-700 font-medium">{{ u.rol }}</span>
-        </div>
-
-        <div class="flex gap-2 pt-2">
-
-          <button
-            class="flex-1 border border-slate-300 rounded-md py-2 text-xs"
-            (click)="editar(u._id)">
-            Editar
-          </button>
-
-          <button
-            class="flex-1 border rounded-md py-2 text-xs"
-            [class.border-amber-300]="u.estado"
-            [class.text-amber-700]="u.estado"
-            [class.border-emerald-300]="!u.estado"
-            [class.text-emerald-700]="!u.estado"
-            (click)="toggleEstado(u)">
-            {{ u.estado ? 'Desactivar' : 'Activar' }}
-          </button>
-
-        </div>
-
-      </div>
-
-    }
-
-    @if (!loading && !usuarios.length) {
-      <div class="text-center py-6 text-slate-500">
-        No se encontraron registros
-      </div>
-    }
-
-  </div>
-
-
-  <!-- ===================== -->
-  <!-- DESKTOP TABLA -->
-  <!-- ===================== -->
-
-  <div class="hidden md:block bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-
-    <div class="overflow-x-auto">
-
-      <table class="min-w-full text-sm">
-
-        <thead class="bg-slate-50 border-b border-slate-200 text-slate-600">
+    <table class="table table-responsive">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th style="text-align:right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (loading) {
           <tr>
-            <th class="text-left px-4 py-3">Nombre</th>
-            <th class="text-left px-4 py-3">Email</th>
-            <th class="text-left px-4 py-3">Rol</th>
-            <th class="text-left px-4 py-3">Estado</th>
-            <th class="text-right px-4 py-3">Acciones</th>
+            <td colspan="5" style="text-align:center; padding:32px; color:var(--text-mute);">
+              <lucide-icon name="loader" style="width:14px; height:14px; vertical-align:middle; margin-right:6px;"></lucide-icon>
+              Cargando…
+            </td>
           </tr>
-        </thead>
-
-        <tbody class="divide-y divide-slate-100">
-
-          @for (u of usuarios; track u._id) {
-
-            <tr class="hover:bg-slate-50">
-
-              <td class="px-4 py-3 font-medium text-slate-800">
-                {{ u.nombre }}
-              </td>
-
-              <td class="px-4 py-3 text-slate-600">
-                {{ u.email }}
-              </td>
-
-              <td class="px-4 py-3 text-slate-600">
-                {{ u.rol }}
-              </td>
-
-              <td class="px-4 py-3">
-                <span
-                  class="px-2 py-1 text-xs rounded-full"
-                  [class.bg-emerald-100]="u.estado"
-                  [class.text-emerald-700]="u.estado"
-                  [class.bg-rose-100]="!u.estado"
-                  [class.text-rose-700]="!u.estado"
-                >
-                  {{ u.estado ? 'Activo' : 'Inactivo' }}
-                </span>
-              </td>
-
-              <td class="px-4 py-3 text-right">
-
-                <div class="flex justify-end gap-2">
-
-                  <button
-                    class="px-3 py-1.5 text-xs border border-slate-300 rounded-md"
-                    (click)="editar(u._id)">
-                    Editar
-                  </button>
-
-                  <button
-                    class="px-3 py-1.5 text-xs border rounded-md"
-                    (click)="toggleEstado(u)">
-                    {{ u.estado ? 'Desactivar' : 'Activar' }}
-                  </button>
-
+        } @else if (!usuarios.length) {
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="icon">
+                  <lucide-icon name="users" style="width:22px; height:22px;"></lucide-icon>
                 </div>
-
+                <div class="empty-title">Sin usuarios</div>
+                <div class="empty-msg">No encontramos usuarios con esos filtros.</div>
+              </div>
+            </td>
+          </tr>
+        } @else {
+          @for (u of usuarios; track u._id) {
+            <tr>
+              <td data-primary="true" data-label="Usuario">
+                <div class="table-primary">
+                  <div class="avatar">
+                    {{ (u.nombre || '?').charAt(0).toUpperCase() }}
+                  </div>
+                  <div class="table-primary-copy">
+                    <div class="table-primary-title">{{ u.nombre }}</div>
+                    <div class="table-primary-meta">{{ u.email }}</div>
+                  </div>
+                </div>
               </td>
-
+              <td data-label="Email" class="subtle">{{ u.email }}</td>
+              <td data-label="Rol">
+                <span class="pill" style="text-transform:capitalize;">{{ u.rol }}</span>
+              </td>
+              <td data-label="Estado">
+                @if (u.estado) {
+                  <span class="pill pill-green pill-dot">Activo</span>
+                } @else {
+                  <span class="pill pill-red">Inactivo</span>
+                }
+              </td>
+              <td data-label="Acciones" data-actions="true" style="text-align:right; white-space:nowrap;">
+                <div class="action-group">
+                  <button class="btn-icon" (click)="editar(u._id)" title="Editar usuario" aria-label="Editar usuario">
+                    <lucide-icon name="pencil" style="width:14px; height:14px;"></lucide-icon>
+                  </button>
+                  <button
+                    class="btn-icon"
+                    (click)="toggleEstado(u)"
+                    [title]="u.estado ? 'Desactivar usuario' : 'Activar usuario'"
+                    [attr.aria-label]="u.estado ? 'Desactivar usuario' : 'Activar usuario'"
+                  >
+                    <lucide-icon
+                      [name]="u.estado ? 'toggle-right' : 'toggle-left'"
+                      style="width:14px; height:14px;"
+                      [style.color]="u.estado ? 'var(--green)' : 'var(--text-mute)'"
+                    ></lucide-icon>
+                  </button>
+                </div>
+              </td>
             </tr>
-
           }
-
-        </tbody>
-
-      </table>
-
-    </div>
-
+        }
+      </tbody>
+    </table>
   </div>
-
-</div>
+</section>

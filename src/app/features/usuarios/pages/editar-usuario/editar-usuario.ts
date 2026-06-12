@@ -5,11 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UsuariosService } from '../../../../services/usuario.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { RolesService } from '../../../../core/services/roles.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   standalone: true,
   selector: 'app-editar-usuario',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './editar-usuario.html',
 })
 export class EditarUsuario {

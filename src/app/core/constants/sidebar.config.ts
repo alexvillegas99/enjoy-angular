@@ -16,14 +16,19 @@ export const SIDEBAR_MENU_FULL: SidebarItem[] = [
   { label: 'Crear cupón', route: '/cupones/nuevo', icon: 'circle-plus', permission: 'cupones.crear' },
   { label: 'Categorías', route: '/catalogos', icon: 'tags', permission: 'categorias.ver' },
   { label: 'Reportes', route: '/reportes', icon: 'chart-column', permission: 'reportes.ver' },
+  { label: 'Notificaciones', route: '/notificaciones', icon: 'bell', permission: 'notificaciones.ver' },
   { label: 'Usuarios', route: '/usuarios', icon: 'users', permission: 'usuarios.ver', mobile: true },
   { label: 'Clientes', route: '/clientes', icon: 'user', permission: 'clientes.ver' },
   { label: 'Establecimientos', route: '/establecimientos', icon: 'store', permission: 'establecimientos.ver', mobile: true },
   { label: 'Configuración', route: '/configuracion', icon: 'settings', permission: 'configuracion.ver' },
-  { label: 'Solicitudes', route: '/solicitudes-cuponera', icon: 'landmark', permission: 'solicitudes.ver' },
+  { label: 'Solicitudes Cuponera', route: '/solicitudes-cuponera', icon: 'landmark', permission: 'solicitudes.ver' },
+  { label: 'Solicitudes Empresas', route: '/empresas-solicitudes', icon: 'building-2', permission: 'solicitudes.ver' },
   { label: 'Historial Cambios', route: '/historial-establecimientos', icon: 'history', permission: 'dashboard.ver' },
   { label: 'Pagos', route: '/pagos', icon: 'credit-card', permission: 'pagos.configurar' },
   { label: 'Roles', route: '/roles', icon: 'shield', permission: 'roles.ver' },
+  // Soporte siempre AL FINAL
+  { label: 'Soporte', route: '/chat', icon: 'headphones', permission: 'chat.ver', mobile: true },
+  { label: 'Soporte', route: '/chat', icon: 'headphones', permission: 'perfil-local.ver', mobile: true },
 ];
 
 // ── Legacy: menús hardcodeados (fallback para usuarios sin permisos cargados) ──
@@ -38,7 +43,8 @@ export const SIDEBAR_MENU_ADMIN: SidebarItem[] = [
   { label: 'Clientes', route: '/clientes', icon: 'user' },
   { label: 'Establecimientos', route: '/establecimientos', icon: 'store' },
   { label: 'Configuración', route: '/configuracion', icon: 'settings' },
-  { label: 'Solicitudes', route: '/solicitudes-cuponera', icon: 'landmark' },
+  { label: 'Solicitudes Cuponera', route: '/solicitudes-cuponera', icon: 'landmark' },
+  { label: 'Solicitudes Empresas', route: '/empresas-solicitudes', icon: 'building-2' },
   { label: 'Pagos', route: '/pagos', icon: 'credit-card' },
   { label: 'Roles', route: '/roles', icon: 'shield' },
 ];
@@ -47,6 +53,7 @@ export const SIDEBAR_MENU_ADMIN_LOCAL: SidebarItem[] = [
   { label: 'Dashboard Local', route: '/dashboard-local', icon: 'layout-dashboard' },
   { label: 'Usuarios Local', route: '/dashboard-local/usuarios', icon: 'users' },
   { label: 'Perfil Local', route: '/dashboard-local/perfil', icon: 'user' },
+  { label: 'Soporte', route: '/chat', icon: 'headphones' },
 ];
 
 export const SIDEBAR_MENU_ADMIN_MOBILE: SidebarItem[] = [

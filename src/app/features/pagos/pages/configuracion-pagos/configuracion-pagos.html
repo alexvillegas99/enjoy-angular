@@ -1,64 +1,71 @@
-<div class="max-w-3xl mx-auto space-y-6 pb-28 px-6 py-6">
+<div class="form-page space-y-6 animate-in">
 
   <!-- HEADER -->
-  <div>
-    <h2 class="text-xl font-semibold text-slate-800">Configuracion de Pagos</h2>
-    <p class="text-sm text-slate-500">Administra los metodos de pago disponibles en la app</p>
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="credit-card" class="w-5 h-5"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h2 class="page-title">Configuración de pagos</h2>
+      <p class="subtle">Administra los métodos de pago disponibles en la app.</p>
+    </div>
   </div>
 
   @if (loading) {
-    <div class="text-center py-12 text-slate-500">Cargando...</div>
+    <div class="card text-center py-16 subtle">Cargando...</div>
   } @else {
 
     <!-- PAYPHONE -->
-    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-            <lucide-icon name="credit-card" class="w-5 h-5 text-blue-600"></lucide-icon>
+    <div class="card form-section space-y-6">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="icon-badge icon-badge-primary">
+            <lucide-icon name="credit-card" class="w-5 h-5"></lucide-icon>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-slate-700">PayPhone</h3>
-            <p class="text-xs text-slate-400">Pagos con tarjeta y wallet</p>
+            <h3 class="section-title">PayPhone</h3>
+            <p class="text-sm subtle">Pagos con tarjeta y wallet</p>
           </div>
         </div>
 
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" [(ngModel)]="payphoneActivo"
             class="sr-only peer" />
-          <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-blue-300
+          <div class="w-11 h-6 bg-surface-sunken peer-focus:ring-2 peer-focus:ring-primary-tint
                       rounded-full peer peer-checked:after:translate-x-full
                       peer-checked:after:border-white after:content-['']
                       after:absolute after:top-[2px] after:left-[2px]
-                      after:bg-white after:border-gray-300 after:border
+                      after:bg-white after:border-border-soft after:border
                       after:rounded-full after:h-5 after:w-5 after:transition-all
-                      peer-checked:bg-blue-600"></div>
-          <span class="ml-2 text-sm" [class.text-emerald-600]="payphoneActivo"
-                [class.text-slate-400]="!payphoneActivo">
-            {{ payphoneActivo ? 'Activo' : 'Inactivo' }}
+                      peer-checked:bg-primary"></div>
+          <span class="ml-3">
+            <span class="badge" [class.badge-success]="payphoneActivo"
+                  [class.badge-muted]="!payphoneActivo">
+              {{ payphoneActivo ? 'Activo' : 'Inactivo' }}
+            </span>
           </span>
         </label>
       </div>
 
       @if (payphoneActivo) {
-        <div class="space-y-4">
+        <div class="space-y-4 divider pt-6">
           <div>
-            <label class="block text-sm text-slate-600 mb-1">API Token</label>
+            <label class="form-label">API Token</label>
             <input type="password"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+              class="input font-mono"
               [(ngModel)]="payphoneToken"
               placeholder="Bearer token de PayPhone" />
           </div>
           <div>
-            <label class="block text-sm text-slate-600 mb-1">Store ID</label>
+            <label class="form-label">Store ID</label>
             <input type="text"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+              class="input font-mono"
               [(ngModel)]="payphoneStoreId"
               placeholder="StoreID de tu sucursal" />
-            <p class="text-xs text-slate-400 mt-1">
+            <p class="form-hint">
               Obtener Token y StoreID desde
               <a href="https://appdeveloper.payphonetodoesposible.com/" target="_blank"
-                 class="text-blue-500 underline">portal de desarrolladores PayPhone</a>
+                 class="btn-link">portal de desarrolladores PayPhone</a>
             </p>
           </div>
         </div>
@@ -66,64 +73,66 @@
     </div>
 
     <!-- PAYPAL -->
-    <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm space-y-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">
-            <lucide-icon name="wallet" class="w-5 h-5 text-yellow-600"></lucide-icon>
+    <div class="card form-section space-y-6">
+      <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="icon-badge icon-badge-accent">
+            <lucide-icon name="wallet" class="w-5 h-5"></lucide-icon>
           </div>
           <div>
-            <h3 class="text-sm font-semibold text-slate-700">PayPal</h3>
-            <p class="text-xs text-slate-400">Pagos internacionales con tarjeta y cuenta PayPal</p>
+            <h3 class="section-title">PayPal</h3>
+            <p class="text-sm subtle">Pagos internacionales con tarjeta y cuenta PayPal</p>
           </div>
         </div>
 
         <label class="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" [(ngModel)]="paypalActivo"
             class="sr-only peer" />
-          <div class="w-11 h-6 bg-gray-200 peer-focus:ring-2 peer-focus:ring-yellow-300
+          <div class="w-11 h-6 bg-surface-sunken peer-focus:ring-2 peer-focus:ring-accent-light
                       rounded-full peer peer-checked:after:translate-x-full
                       peer-checked:after:border-white after:content-['']
                       after:absolute after:top-[2px] after:left-[2px]
-                      after:bg-white after:border-gray-300 after:border
+                      after:bg-white after:border-border-soft after:border
                       after:rounded-full after:h-5 after:w-5 after:transition-all
-                      peer-checked:bg-yellow-500"></div>
-          <span class="ml-2 text-sm" [class.text-emerald-600]="paypalActivo"
-                [class.text-slate-400]="!paypalActivo">
-            {{ paypalActivo ? 'Activo' : 'Inactivo' }}
+                      peer-checked:bg-accent"></div>
+          <span class="ml-3">
+            <span class="badge" [class.badge-success]="paypalActivo"
+                  [class.badge-muted]="!paypalActivo">
+              {{ paypalActivo ? 'Activo' : 'Inactivo' }}
+            </span>
           </span>
         </label>
       </div>
 
       @if (paypalActivo) {
-        <div class="space-y-4">
+        <div class="space-y-4 divider pt-6">
           <div>
-            <label class="block text-sm text-slate-600 mb-1">Client ID</label>
+            <label class="form-label">Client ID</label>
             <input type="text"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+              class="input font-mono"
               [(ngModel)]="paypalClientId"
               placeholder="PayPal Client ID" />
           </div>
 
           <div>
-            <label class="block text-sm text-slate-600 mb-1">Secret</label>
+            <label class="form-label">Secret</label>
             <input type="password"
-              class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono"
+              class="input font-mono"
               [(ngModel)]="paypalSecret"
               placeholder="PayPal Secret Key" />
-            <p class="text-xs text-slate-400 mt-1">
+            <p class="form-hint">
               Obtener desde
               <a href="https://developer.paypal.com/dashboard/applications" target="_blank"
-                 class="text-blue-500 underline">PayPal Developer Dashboard</a>
+                 class="btn-link">PayPal Developer Dashboard</a>
             </p>
           </div>
 
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 rounded-lg bg-surface-muted border border-border-soft p-4">
             <input type="checkbox" [(ngModel)]="paypalSandbox"
-              class="rounded border-slate-300 w-4 h-4" />
+              class="rounded border-border-soft w-4 h-4" />
             <div>
-              <span class="text-sm text-slate-700">Modo Sandbox (pruebas)</span>
-              <p class="text-xs text-slate-400">Desactiva esto cuando vayas a produccion</p>
+              <span class="text-sm font-medium text-text-dark">Modo Sandbox (pruebas)</span>
+              <p class="text-xs subtle">Desactiva esto cuando vayas a produccion</p>
             </div>
           </div>
         </div>
@@ -131,9 +140,9 @@
     </div>
 
     <!-- GUARDAR -->
-    <div class="flex justify-end">
+    <div class="form-actions">
       <button
-        class="px-6 py-2.5 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50"
+        class="btn-primary btn-lg"
         [disabled]="saving"
         (click)="guardar()">
         {{ saving ? 'Guardando...' : 'Guardar cambios' }}

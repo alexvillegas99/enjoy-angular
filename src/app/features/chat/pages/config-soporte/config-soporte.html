@@ -1,0 +1,179 @@
+<section class="animate-in mx-auto w-full max-w-4xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start gap-4 mb-6">
+    <a routerLink="/chat" class="btn-icon" title="Volver">
+      <lucide-icon name="arrow-left" style="width:16px; height:16px;"></lucide-icon>
+    </a>
+    <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+      <lucide-icon name="headphones" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div>
+      <h1 class="page-title">Equipo de Soporte</h1>
+      <p class="subtle mt-1">
+        Define el equipo de primera línea que recibe las conversaciones entrantes.
+        Si el agente asignado no responde a tiempo, el chat se escala al siguiente del pool.
+      </p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <div class="subtle">Cargando…</div>
+    </div>
+  } @else {
+
+    <!-- AJUSTES GENERALES -->
+    <div class="card mb-4" style="padding:22px;">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="section-title">Ajustes</h3>
+          <p class="subtle" style="font-size:12px;">Activa el routing automático y define el tiempo de escalación.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="field-label">Routing automático</label>
+          <div
+            class="flex items-center justify-between input"
+            style="cursor:pointer; padding:12px 14px;"
+            (click)="habilitado = !habilitado"
+          >
+            <span style="font-weight:600;">
+              {{ habilitado ? 'Activado' : 'Desactivado' }}
+            </span>
+            <span
+              [style.background]="habilitado ? 'var(--accent-grad)' : 'var(--glass-strong)'"
+              [style.borderColor]="habilitado ? 'var(--orange)' : 'var(--stroke)'"
+              style="width:38px; height:22px; border:1px solid; border-radius:999px; position:relative; transition:.15s;"
+            >
+              <span
+                [style.left]="habilitado ? '18px' : '2px'"
+                style="position:absolute; top:2px; width:16px; height:16px; border-radius:50%; background:white; transition:left .15s ease;"
+              ></span>
+            </span>
+          </div>
+          <p class="subtle" style="font-size:11px; margin-top:6px;">
+            Cuando está desactivado, los mensajes llegan a todos los agentes con <code>chat.responder</code>.
+          </p>
+        </div>
+
+        <div>
+          <label class="field-label">Tiempo de escalación (min)</label>
+          <input
+            type="number"
+            class="input"
+            [(ngModel)]="escalacionMin"
+            min="1"
+            max="720"
+          />
+          <p class="subtle" style="font-size:11px; margin-top:6px;">
+            Si el agente asignado no responde en este tiempo, el chat pasa al siguiente del pool.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- POOL -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="padding:18px 22px;">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="section-title">Pool de primera línea</h3>
+            <p class="subtle" style="font-size:12px;">
+              Orden en que se asignan los chats entrantes (round-robin).
+            </p>
+          </div>
+          <span class="pill pill-orange">{{ pool.length }} en pool</span>
+        </div>
+      </div>
+
+      @if (pool.length === 0) {
+        <div style="padding:48px 22px; text-align:center;">
+          <lucide-icon
+            name="users"
+            style="width:40px; height:40px; opacity:0.5; color:var(--text-mute); margin-bottom:8px;"
+          ></lucide-icon>
+          <div class="subtle">No hay agentes en el pool todavía.</div>
+        </div>
+      } @else {
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:48px;">Orden</th>
+              <th>Agente</th>
+              <th style="text-align:right; width:200px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of pool; track m.userId; let i = $index) {
+              <tr>
+                <td>
+                  <span
+                    style="width:28px; height:28px; border-radius:50%; background:var(--accent-grad); color:var(--on-accent); display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:12px;"
+                  >{{ i + 1 }}</span>
+                </td>
+                <td>
+                  <div style="font-weight:600;">{{ m.nombre }}</div>
+                </td>
+                <td style="text-align:right;">
+                  <button
+                    class="btn-icon"
+                    (click)="subir(i)"
+                    [disabled]="i === 0"
+                    title="Subir"
+                  >
+                    <lucide-icon name="arrow-left" style="width:14px; height:14px; transform:rotate(90deg);"></lucide-icon>
+                  </button>
+                  <button
+                    class="btn-icon"
+                    (click)="bajar(i)"
+                    [disabled]="i === pool.length - 1"
+                    title="Bajar"
+                  >
+                    <lucide-icon name="arrow-left" style="width:14px; height:14px; transform:rotate(-90deg);"></lucide-icon>
+                  </button>
+                  <button class="btn-icon" (click)="quitar(i)" title="Quitar del pool">
+                    <lucide-icon name="x" style="width:14px; height:14px; color:var(--red);"></lucide-icon>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+
+      <!-- Agregar -->
+      <div style="padding:18px 22px; border-top:1px solid var(--stroke); display:flex; gap:8px; align-items:end;">
+        <div style="flex:1;">
+          <label class="field-label">Agregar agente al pool</label>
+          <select class="input" [(ngModel)]="agenteAAgregar">
+            <option value="">— Selecciona un agente disponible —</option>
+            @for (a of agentesNoEnPool(); track a._id) {
+              <option [value]="a._id">{{ a.nombre }} ({{ a.rol }})</option>
+            }
+          </select>
+        </div>
+        <button class="btn-primary" (click)="agregar()" [disabled]="!agenteAAgregar">
+          <lucide-icon name="plus" style="width:14px; height:14px;"></lucide-icon>
+          Agregar
+        </button>
+      </div>
+    </div>
+
+    <!-- Guardar -->
+    <div class="flex justify-end mt-6">
+      <button class="btn-primary" (click)="guardar()" [disabled]="saving">
+        @if (saving) {
+          Guardando…
+        } @else {
+          <ng-container>
+            <lucide-icon name="save" style="width:14px; height:14px;"></lucide-icon>
+            Guardar configuración
+          </ng-container>
+        }
+      </button>
+    </div>
+  }
+</section>
