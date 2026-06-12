@@ -39,4 +39,12 @@ export class CampanasService {
   eliminar(id: string) {
     return this.http.delete<any>(`${this.baseUrl}/${id}/hard`);
   }
+
+  /**
+   * Clona una campaña como BORRADOR. Devuelve la nueva campaña — el front
+   * navega al editor para que el admin la revise antes de enviar.
+   */
+  duplicar(id: string) {
+    return this.http.post<any>(`${this.baseUrl}/${id}/duplicar`, {});
+  }
 }

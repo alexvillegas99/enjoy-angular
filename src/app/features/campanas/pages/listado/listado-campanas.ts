@@ -104,6 +104,31 @@ export class ListadoCampanas implements OnInit {
     });
   }
 
+  async reenviar(c: any) {
+    const ok = await this.alert.confirm({
+      title: 'Reenviar campaña',
+      text: `Se creará una copia de "${c.titulo}" como borrador para que la revises antes de enviar de nuevo.`,
+      confirmText: 'Sí, crear copia',
+      cancelText: 'Volver',
+      icon: 'question',
+    });
+    if (!ok) return;
+    this.svc.duplicar(c._id).subscribe({
+      next: (nueva) => {
+        this.alert.success(
+          'Copia creada',
+          'Revisa el contenido y la segmentación, luego envíala.',
+        );
+        this.router.navigate(['/notificaciones', nueva._id]);
+      },
+      error: (e) =>
+        this.alert.error(
+          'Error',
+          e?.error?.message || 'No se pudo duplicar la campaña.',
+        ),
+    });
+  }
+
   async eliminar(c: any) {
     const ok = await this.alert.confirm({
       title: 'Eliminar campaña',

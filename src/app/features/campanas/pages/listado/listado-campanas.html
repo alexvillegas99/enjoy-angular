@@ -132,6 +132,14 @@
                   <button class="btn-icon" (click)="editar(c)" title="Ver detalle">
                     <lucide-icon name="eye" style="width:14px; height:14px;"></lucide-icon>
                   </button>
+                  <button class="btn-icon" (click)="reenviar(c)" title="Reenviar (clonar como borrador)">
+                    <lucide-icon name="copy" style="width:14px; height:14px; color:var(--orange);"></lucide-icon>
+                  </button>
+                }
+                @if (c.estado === 'CANCELADA' || c.estado === 'FALLIDA') {
+                  <button class="btn-icon" (click)="reenviar(c)" title="Reintentar (clonar como borrador)">
+                    <lucide-icon name="refresh-cw" style="width:14px; height:14px; color:var(--orange);"></lucide-icon>
+                  </button>
                 }
                 @if (c.estado === 'ENVIADA' || c.estado === 'CANCELADA' || c.estado === 'FALLIDA') {
                   <button class="btn-icon" (click)="eliminar(c)" title="Eliminar definitivamente">

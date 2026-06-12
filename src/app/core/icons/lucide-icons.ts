@@ -2,6 +2,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import * as icons from 'lucide-angular';
 
 const ICON_LIST = [
+  'Copy',
   'Database',
   'Eye',
   'EyeOff',
