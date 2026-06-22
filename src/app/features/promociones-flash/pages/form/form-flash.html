@@ -1,0 +1,172 @@
+<section class="page animate-in" style="max-width:880px; margin:0 auto;">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <button class="back-icon-button" (click)="cancelar()" title="Volver">
+      <lucide-icon name="arrow-left" style="width:18px; height:18px;"></lucide-icon>
+    </button>
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="zap" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">{{ id ? 'Editar promoción' : 'Nueva promoción flash' }}</h1>
+      <p class="subtle">Anuncio o beneficio corto que aparece en el feed de tus clientes.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="card empty-state">
+      <lucide-icon name="loader" style="width:18px; height:18px; vertical-align:middle; margin-right:8px;"></lucide-icon>
+      Cargando…
+    </div>
+  } @else {
+
+    <!-- IMAGEN -->
+    <div class="card" style="padding:20px; margin-bottom:18px;">
+      <h3 class="section-title">Imagen *</h3>
+      <p class="subtle" style="font-size:12px;">Cuadrada o vertical funciona mejor. Máx 5 MB.</p>
+
+      <div style="margin-top:12px; display:flex; gap:14px; align-items:flex-start;">
+        <div
+          style="width:160px; height:160px; border-radius:14px; background:var(--glass-strong); border:1px dashed var(--stroke); overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; position:relative;"
+        >
+          @if (previewUrl) {
+            <img [src]="previewUrl" style="width:100%; height:100%; object-fit:cover;" />
+            <button
+              type="button"
+              (click)="quitarImagen()"
+              style="position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(0,0,0,0.55); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;"
+              title="Quitar imagen"
+            >
+              <lucide-icon name="x" style="width:14px; height:14px;"></lucide-icon>
+            </button>
+          } @else {
+            <lucide-icon name="image" style="width:34px; height:34px; color:var(--text-mute);"></lucide-icon>
+          }
+        </div>
+        <div style="flex:1;">
+          <label class="btn-ghost" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+            <lucide-icon name="image" style="width:14px; height:14px;"></lucide-icon>
+            {{ previewUrl ? 'Cambiar imagen' : 'Subir imagen' }}
+            <input type="file" accept="image/*" hidden (change)="onImagenSeleccionada($event)" />
+          </label>
+          <p class="subtle" style="font-size:11.5px; margin-top:8px;">
+            La imagen se publica en el feed Flash de los clientes de tu ciudad.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATOS BÁSICOS -->
+    <div class="card" style="padding:20px; margin-bottom:18px;">
+      <h3 class="section-title">Contenido</h3>
+
+      <div class="form-grid" style="margin-top:14px;">
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label">Título *</label>
+          <input class="input" [(ngModel)]="form.titulo" maxlength="80" placeholder="Ej. 2x1 hoy en hamburguesas clásicas" />
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label">Descripción</label>
+          <textarea class="input" rows="3" [(ngModel)]="form.descripcion" maxlength="400"
+            placeholder="Detalles de la promo. Ej: válido solo para consumo en local, hasta agotar stock…"></textarea>
+        </div>
+
+        <div>
+          <label class="field-label">Tipo</label>
+          <select class="input" [(ngModel)]="form.tipo">
+            @for (t of tipos; track t.value) {
+              <option [value]="t.value">{{ t.label }} — {{ t.desc }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label">Etiqueta (opcional)</label>
+          <input class="input" [(ngModel)]="form.etiqueta" maxlength="20" placeholder="Ej. 2x1, NUEVO, -30%" />
+        </div>
+
+        <div>
+          <label class="field-label">Precio (opcional)</label>
+          <input class="input" type="number" [(ngModel)]="form.precio" placeholder="0.00" />
+        </div>
+
+        <div>
+          <label class="field-label">Precio antes (opcional)</label>
+          <input class="input" type="number" [(ngModel)]="form.precioAntes" placeholder="0.00" />
+        </div>
+
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label">Vigencia hasta *</label>
+          <input class="input" type="datetime-local" [(ngModel)]="venceLocal" />
+          <p class="subtle" style="font-size:11.5px; margin-top:6px;">
+            Máximo 7 días desde hoy. Después la promo pasa a "Vencida".
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CANJEABLE -->
+    <div class="card" style="padding:20px; margin-bottom:18px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px;">
+        <div>
+          <h3 class="section-title">¿Es canjeable?</h3>
+          <p class="subtle" style="font-size:12.5px;">
+            Si lo activás, el cliente puede usar la promo desde la app y vos la cobrás escaneando su QR.
+            Si lo dejás apagado, es solo anuncio.
+          </p>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" [(ngModel)]="form.canjeable" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      @if (form.canjeable) {
+        <div class="form-grid" style="margin-top:14px;">
+          <div>
+            <label class="field-label">Cupos totales (opcional)</label>
+            <input class="input" type="number" [(ngModel)]="form.cupos" placeholder="Sin límite" />
+            <p class="subtle" style="font-size:11px; margin-top:4px;">Dejá vacío para ilimitado.</p>
+          </div>
+          <div>
+            <label class="field-label">Máx canjes por cliente</label>
+            <input class="input" type="number" min="1" [(ngModel)]="form.limitePorCliente" />
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- ACCIONES -->
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn-ghost" (click)="cancelar()" [disabled]="saving">Cancelar</button>
+      <button class="btn-primary" (click)="guardar()" [disabled]="saving">
+        @if (saving) {
+          <span style="width:13px; height:13px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; display:inline-block; animation: spin 0.6s linear infinite;"></span>
+        } @else {
+          <lucide-icon name="check" style="width:14px; height:14px;"></lucide-icon>
+        }
+        {{ id ? 'Guardar cambios' : 'Crear promoción' }}
+      </button>
+    </div>
+  }
+</section>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .toggle { position:relative; display:inline-block; width:46px; height:26px; cursor:pointer; flex-shrink:0; }
+  .toggle input { opacity:0; width:0; height:0; }
+  .toggle-slider {
+    position:absolute; cursor:pointer; inset:0;
+    background-color: var(--glass-strong);
+    border:1px solid var(--stroke);
+    border-radius: 999px; transition: .2s;
+  }
+  .toggle-slider:before {
+    position:absolute; content:""; height:18px; width:18px; left:3px; top:3px;
+    background-color: var(--text-mute); border-radius: 50%; transition: .2s;
+  }
+  .toggle input:checked + .toggle-slider { background: var(--accent-grad); border-color: var(--orange); }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(20px); background:#fff; }
+</style>

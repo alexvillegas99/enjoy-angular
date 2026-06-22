@@ -1,0 +1,134 @@
+<section class="page animate-in">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="zap" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Promociones Flash</h1>
+      <p class="subtle">
+        Anuncios y beneficios cortos para los clientes de tu local.
+        <span style="color:var(--text); font-weight:600;">{{ activas }} de {{ max }} activas</span>.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-primary" (click)="nueva()">
+        <lucide-icon name="plus" style="width:14px; height:14px;"></lucide-icon>
+        Nueva flash
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-4" style="padding:14px;">
+    <div class="flex flex-wrap gap-2">
+      <button class="chip" [class.is-active]="estadoFiltro === ''" (click)="estadoFiltro=''; cargar()">Todas</button>
+      <button class="chip" [class.is-active]="estadoFiltro === 'ACTIVA'" (click)="estadoFiltro='ACTIVA'; cargar()">Activas</button>
+      <button class="chip" [class.is-active]="estadoFiltro === 'PAUSADA'" (click)="estadoFiltro='PAUSADA'; cargar()">Pausadas</button>
+      <button class="chip" [class.is-active]="estadoFiltro === 'VENCIDA'" (click)="estadoFiltro='VENCIDA'; cargar()">Vencidas</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="card empty-state">
+      <lucide-icon name="loader" style="width:18px; height:18px; vertical-align:middle; margin-right:8px;"></lucide-icon>
+      Cargando promociones…
+    </div>
+  } @else if (items.length === 0) {
+    <div class="card empty-state">
+      <div class="icon">
+        <lucide-icon name="zap" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div class="empty-title">Sin promociones</div>
+      <div class="empty-msg">Crea tu primera promoción flash para llegar al feed de tus clientes.</div>
+    </div>
+  } @else {
+
+    <div class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+      @for (p of items; track p._id) {
+        <article
+          class="card"
+          style="padding:0; overflow:hidden; display:flex; flex-direction:column; transition:transform .15s ease, border-color .15s ease;"
+          onmouseover="this.style.transform='translateY(-2px)'; this.style.borderColor='rgba(255,159,28,0.4)'"
+          onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='var(--stroke)'"
+        >
+          <!-- IMAGEN -->
+          <div class="relative" style="height:140px; background: var(--glass-strong);">
+            @if (p.imagenUrl) {
+              <img [src]="p.imagenUrl" style="width:100%; height:100%; object-fit:cover;" />
+            } @else {
+              <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                <lucide-icon name="image" style="width:32px; height:32px; color:var(--text-mute);"></lucide-icon>
+              </div>
+            }
+            <div style="position:absolute; top:10px; left:10px;">
+              <span [class]="estadoPill(p.estado)" style="text-transform:capitalize;">{{ p.estado.toLowerCase() }}</span>
+            </div>
+            @if (p.etiqueta) {
+              <div style="position:absolute; top:10px; right:10px;">
+                <span class="pill pill-orange">{{ p.etiqueta }}</span>
+              </div>
+            }
+            @if (p.canjeable) {
+              <div style="position:absolute; bottom:10px; right:10px;">
+                <span class="pill" style="background:rgba(0,0,0,0.6); color:#fff;">
+                  <lucide-icon name="qr-code" style="width:11px; height:11px; vertical-align:middle; margin-right:3px;"></lucide-icon>
+                  Canjeable
+                </span>
+              </div>
+            }
+          </div>
+
+          <!-- CONTENIDO -->
+          <div style="padding:14px 16px; flex:1; display:flex; flex-direction:column; gap:8px;">
+            <h3 class="section-title" style="font-size:14.5px; margin:0;">{{ p.titulo }}</h3>
+
+            @if (p.descripcion) {
+              <p class="subtle" style="font-size:12px; margin:0; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.4;">
+                {{ p.descripcion }}
+              </p>
+            }
+
+            <div style="display:flex; gap:10px; font-size:11.5px; color:var(--text-mute);">
+              <span style="display:inline-flex; align-items:center; gap:3px;">
+                <lucide-icon name="eye" style="width:11px; height:11px;"></lucide-icon>
+                {{ p.vistas }}
+              </span>
+              <span style="display:inline-flex; align-items:center; gap:3px;">
+                <lucide-icon name="check" style="width:11px; height:11px;"></lucide-icon>
+                {{ p.canjes }} canjes
+              </span>
+              <span style="display:inline-flex; align-items:center; gap:3px; margin-left:auto;">
+                <lucide-icon name="clock" style="width:11px; height:11px;"></lucide-icon>
+                {{ textoRestante(p) }}
+              </span>
+            </div>
+
+            <div style="display:flex; gap:4px; padding-top:10px; border-top:1px solid var(--stroke); margin-top:auto;">
+              @if (p.estado === 'ACTIVA' || p.estado === 'PAUSADA') {
+                <button class="btn-icon" [disabled]="togglingId === p._id" (click)="togglePausa(p)" [title]="p.estado === 'ACTIVA' ? 'Pausar' : 'Reactivar'">
+                  @if (togglingId === p._id) {
+                    <span style="width:13px; height:13px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; display:inline-block; animation: spin 0.6s linear infinite;"></span>
+                  } @else {
+                    <lucide-icon [name]="p.estado === 'ACTIVA' ? 'pause' : 'play'" style="width:14px; height:14px;" [style.color]="p.estado === 'ACTIVA' ? 'var(--orange)' : 'var(--green)'"></lucide-icon>
+                  }
+                </button>
+              }
+              <button class="btn-icon" (click)="editar(p)" title="Editar">
+                <lucide-icon name="pencil" style="width:14px; height:14px;"></lucide-icon>
+              </button>
+              <button class="btn-icon" (click)="eliminar(p)" title="Eliminar" style="margin-left:auto;">
+                <lucide-icon name="trash-2" style="width:14px; height:14px; color:var(--red);"></lucide-icon>
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>

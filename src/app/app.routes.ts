@@ -126,6 +126,20 @@ export const routes: Routes = [
           ),
       },
 
+      // PROMOCIONES FLASH (admin-local gestiona las de su local)
+      {
+        path: 'promociones-flash',
+        canActivate: [roleGuard],
+        data: {
+          permissions: ['promociones-flash.gestionar'],
+          roles: ['admin', 'admin-local'],
+        },
+        loadChildren: () =>
+          import(
+            './features/promociones-flash/promociones-flash.routes'
+          ).then((m) => m.PROMOCIONES_FLASH_ROUTES),
+      },
+
       // RUTAS COMPARTIDAS
       {
         path: 'establecimientos',

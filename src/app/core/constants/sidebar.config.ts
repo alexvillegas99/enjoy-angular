@@ -12,6 +12,7 @@ export const SIDEBAR_MENU_FULL: SidebarItem[] = [
   { label: 'Dashboard Local', route: '/dashboard-local', icon: 'layout-dashboard', permission: 'dashboard-local.ver', mobile: true },
   { label: 'Usuarios Local', route: '/dashboard-local/usuarios', icon: 'users', permission: 'usuarios-local.ver', mobile: true },
   { label: 'Perfil Local', route: '/dashboard-local/perfil', icon: 'user', permission: 'perfil-local.ver', mobile: true },
+  { label: 'Promos Flash', route: '/promociones-flash', icon: 'zap', permission: 'promociones-flash.gestionar', mobile: true },
   { label: 'Cupones', route: '/cupones', icon: 'ticket', permission: 'cupones.ver', mobile: true },
   { label: 'Crear cupón', route: '/cupones/nuevo', icon: 'circle-plus', permission: 'cupones.crear' },
   { label: 'Categorías', route: '/catalogos', icon: 'tags', permission: 'categorias.ver' },
@@ -53,6 +54,7 @@ export const SIDEBAR_MENU_ADMIN_LOCAL: SidebarItem[] = [
   { label: 'Dashboard Local', route: '/dashboard-local', icon: 'layout-dashboard' },
   { label: 'Usuarios Local', route: '/dashboard-local/usuarios', icon: 'users' },
   { label: 'Perfil Local', route: '/dashboard-local/perfil', icon: 'user' },
+  { label: 'Promos Flash', route: '/promociones-flash', icon: 'zap' },
   { label: 'Soporte', route: '/chat', icon: 'headphones' },
 ];
 
