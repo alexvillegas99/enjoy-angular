@@ -1,0 +1,262 @@
+<section class="page animate-in" style="max-width:900px; margin:0 auto;">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="icon-badge icon-badge-primary">
+      <lucide-icon name="file-down" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Contrato de cooperación</h1>
+      <p class="subtle">
+        Antes de operar como local afiliado a Enjoy necesitamos que aceptes
+        este contrato. Es un único paso.
+      </p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="card empty-state">
+      <lucide-icon name="loader" style="width:18px; height:18px; vertical-align:middle; margin-right:8px;"></lucide-icon>
+      Cargando…
+    </div>
+  } @else {
+
+    <!-- DATOS DEL LOCAL -->
+    <div class="card" style="padding:20px; margin-bottom:18px;">
+      <h3 class="section-title">
+        <lucide-icon name="store" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></lucide-icon>
+        Datos del local
+      </h3>
+      <p class="subtle" style="font-size:12.5px;">
+        Estos datos se incluyen en el contrato. Si ya los tenías cargados, los podés revisar y editar.
+      </p>
+      <div class="form-grid" style="margin-top:14px;">
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label">RUC del local *</label>
+          <input class="input" [(ngModel)]="datosLocal.ruc" placeholder="1801234567001" />
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label class="field-label">Dirección del local *</label>
+          <input class="input" [(ngModel)]="datosLocal.direccion" placeholder="Calle, número, sector, Ambato" />
+        </div>
+        <div>
+          <label class="field-label">Representante legal *</label>
+          <input class="input" [(ngModel)]="datosLocal.representanteLegal" placeholder="Nombres y apellidos" />
+        </div>
+        <div>
+          <label class="field-label">Cédula del representante *</label>
+          <input class="input" [(ngModel)]="datosLocal.cedulaRepresentante" placeholder="1801234567" />
+        </div>
+        <div>
+          <label class="field-label">Estado civil</label>
+          <select class="input" [(ngModel)]="datosLocal.estadoCivilRepresentante">
+            <option value="soltero">Soltero/a</option>
+            <option value="casado">Casado/a</option>
+            <option value="divorciado">Divorciado/a</option>
+            <option value="viudo">Viudo/a</option>
+            <option value="union_libre">Unión libre</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label">Celular *</label>
+          <input class="input" [(ngModel)]="datosLocal.celular" placeholder="0991234567" />
+        </div>
+      </div>
+    </div>
+
+    <!-- TEXTO DEL CONTRATO -->
+    <div class="card" style="padding:0; margin-bottom:18px; overflow:hidden;">
+      <div style="padding:14px 18px; border-bottom:1px solid var(--stroke); display:flex; justify-content:space-between; align-items:center;">
+        <h3 class="section-title" style="margin:0;">
+          <lucide-icon name="file-down" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></lucide-icon>
+          Lee el contrato completo
+        </h3>
+        @if (scrollCompleto) {
+          <span class="pill pill-green pill-dot">Leído</span>
+        } @else {
+          <span class="pill" style="background:rgba(255,159,28,0.1); color:var(--orange);">Desplazá hasta el final ↓</span>
+        }
+      </div>
+      <div
+        #contratoBox
+        style="max-height:400px; overflow-y:auto; padding:18px 22px; background:var(--surface); font-size:13px; line-height:1.65; color:var(--text-soft);"
+      >
+        <h4 style="text-align:center; color:var(--text); margin-bottom:14px;">
+          CONTRATO DE COOPERACIÓN ENTRE MARCAS
+        </h4>
+        <p>
+          En la ciudad de Ambato, en la fecha de aceptación, comparecen, por una parte, <strong>CLUB ENJOY</strong>,
+          legalmente representada, quien comparece en calidad de CONTRATADO; y, por otra parte,
+          <strong>{{ datosLocal.representanteLegal || '__________' }}</strong>, representante legal de
+          <strong>{{ estado?.datosLocal?.nombreLocal || '__________' }}</strong>,
+          portador de la cédula N° {{ datosLocal.cedulaRepresentante || '__________' }},
+          mayor de edad, de estado civil {{ datosLocal.estadoCivilRepresentante || '__________' }},
+          quien comparece en calidad de CONTRATANTE.
+        </p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA PRIMERA: ANTECEDENTES</h5>
+        <p>1. CLUB ENJOY es una compañía ecuatoriana ubicada en Cevallos, Tungurahua.</p>
+        <p>2. ENJOY es una plataforma de beneficios mediante promociones en consumo de locales comerciales, que opera vía aplicación digital. Las personas suscritas acceden a descuentos y promociones.</p>
+        <p>3. CLUB ENJOY se dedica a la distribución profesional y estratégica de membresías temporales. Impulsa las ventas de los locales afiliados mediante distribución estratégica de promociones en redes sociales.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA SEGUNDA: OBJETO</h5>
+        <p>El objeto de este contrato es la cooperación entre las marcas, incorporando al local
+          <strong>{{ estado?.datosLocal?.nombreLocal || '__________' }}</strong> a la red de afiliados de Club Enjoy.
+          No involucra relación laboral entre las partes; cada una es independiente.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA TERCERA: OBLIGACIONES DEL LOCAL</h5>
+        <p>a) Honrar y aplicar todos los Beneficios ofrecidos en la aplicación a los Socios.</p>
+        <p>b) Mantener los Beneficios activos durante todo el horario de atención.</p>
+        <p>c) Validar cada Beneficio solo a través de la Plataforma (escaneo de QR).</p>
+        <p>d) Designar y capacitar al personal responsable.</p>
+        <p>e) Entregar información veraz y actualizada del establecimiento.</p>
+        <p>f) Notificar con anticipación cualquier cambio en horarios, ubicación o cierre.</p>
+        <p>g) Cumplir con la normativa: Ley del Consumidor, sanitaria, tributaria, municipal.</p>
+        <p>h) Atender todos los reclamos de los Socios y mantener un estándar de servicio adecuado.</p>
+        <p>i) Pagar a Club Enjoy el valor económico pactado en la suscripción.</p>
+        <p>j) Abstenerse de usar marcas o signos distintivos de Club Enjoy fuera de lo autorizado.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA CUARTA: OBLIGACIONES DE CLUB ENJOY</h5>
+        <p>a) Incorporar al local en la app y difundir sus beneficios entre los suscriptores.</p>
+        <p>b) Brindar acceso a la Plataforma y al panel para validación de cupones.</p>
+        <p>c) Proporcionar reportes y estadísticas de canjes, suscripciones y desempeño.</p>
+        <p>d) Brindar soporte y capacitación para el uso de la Plataforma.</p>
+        <p>e) Realizar acciones de promoción y marketing del local.</p>
+        <p>f) Emitir el comprobante de venta por la afiliación.</p>
+        <p>g) Tratar los Datos Personales conforme a la Ley vigente.</p>
+        <p>h) Notificar cualquier mantenimiento o cambio relevante de la Plataforma.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA QUINTA: EXCLUSIVIDAD</h5>
+        <p>Club Enjoy y el local acuerdan que el local no trabajará con otro aplicativo móvil
+          de promociones similares ni ofrecerá las mismas promociones en otras plataformas.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA SEXTA: CONFIDENCIALIDAD</h5>
+        <p>Las partes mantendrán absoluta confidencialidad de la información, hasta 1 año
+          después de terminado el contrato, salvo requerimiento de autoridad competente.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA SÉPTIMA: PROTECCIÓN DE DATOS</h5>
+        <p>Las partes se comprometen a proteger los datos personales conforme a la Ley Orgánica
+          de Protección de Datos Personales del Ecuador (Art. 66 num. 19 de la Constitución).</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA OCTAVA: RESPONSABILIDAD DE HIGIENE Y CALIDAD</h5>
+        <p>Cada parte responde por sus daños directos. Club Enjoy NO responde por la calidad
+          de los productos o servicios del local — son responsabilidad exclusiva del local,
+          incluyendo higiene y presentación.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA NOVENA: DISPOSICIONES GENERALES</h5>
+        <p>Este contrato constituye el acuerdo total. Cualquier modificación debe ser escrita
+          y aceptada por ambas partes. Si una cláusula es nula, las demás conservan su validez.
+          (Art. 1561 del Código Civil ecuatoriano.)</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA DÉCIMA: DURACIÓN Y RENOVACIÓN</h5>
+        <p>El contrato tiene vigencia de un año a partir de su suscripción y podrá ser renovado
+          por mutuo acuerdo de las partes.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA DÉCIMA PRIMERA: TERMINACIÓN ANTICIPADA</h5>
+        <p>Las causas de terminación anticipada son las previstas en el Código Civil ecuatoriano,
+          o por acuerdo escrito entre las partes.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA DÉCIMA SEGUNDA: CLÁUSULA PENAL</h5>
+        <p>El incumplimiento de una o varias cláusulas da derecho a la otra parte a una multa
+          económica, pagadera de manera inmediata al probarse el incumplimiento.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA DÉCIMA TERCERA: MEDIACIÓN</h5>
+        <p>Cualquier controversia se intentará resolver primero en un centro de mediación y
+          arbitraje de la ciudad de Ambato.</p>
+
+        <h5 style="color:var(--text); margin-top:14px;">CLÁUSULA DÉCIMA CUARTA: JURISDICCIÓN</h5>
+        <p>De no existir acuerdo amistoso, las partes se someten a los jueces competentes
+          de Ambato, provincia de Tungurahua.</p>
+
+        <p style="margin-top:18px; padding:12px; background:var(--glass-strong); border-radius:8px;">
+          <strong>Las partes aceptan todas y cada una de las cláusulas plasmadas en el presente instrumento.</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- FOTO DE CÉDULA -->
+    <div class="card" style="padding:20px; margin-bottom:18px;">
+      <h3 class="section-title">
+        <lucide-icon name="image" style="width:16px; height:16px; vertical-align:middle; margin-right:6px;"></lucide-icon>
+        Foto de la cédula del representante *
+      </h3>
+      <p class="subtle" style="font-size:12.5px;">
+        Subí una foto clara de tu cédula (frente). Se adjunta al contrato.
+      </p>
+      <div style="margin-top:14px; display:flex; gap:14px; align-items:flex-start;">
+        <div
+          style="width:200px; height:130px; border-radius:14px; background:var(--glass-strong); border:1px dashed var(--stroke); overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; position:relative;"
+        >
+          @if (cedulaPreviewUrl) {
+            <img [src]="cedulaPreviewUrl" style="width:100%; height:100%; object-fit:cover;" />
+            <button
+              type="button"
+              (click)="quitarCedula()"
+              style="position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(0,0,0,0.55); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center;"
+              title="Quitar"
+            >
+              <lucide-icon name="x" style="width:14px; height:14px;"></lucide-icon>
+            </button>
+          } @else {
+            <lucide-icon name="image" style="width:34px; height:34px; color:var(--text-mute);"></lucide-icon>
+          }
+        </div>
+        <div style="flex:1;">
+          <label class="btn-ghost" style="cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+            <lucide-icon name="image" style="width:14px; height:14px;"></lucide-icon>
+            {{ cedulaPreviewUrl ? 'Cambiar foto' : 'Subir foto' }}
+            <input type="file" accept="image/*" hidden (change)="onArchivoCedula($event)" />
+          </label>
+          <p class="subtle" style="font-size:11.5px; margin-top:8px;">
+            Foto del frente de la cédula. Máx 5 MB. Se almacena de forma segura.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACEPTACIÓN -->
+    <div class="card" style="padding:20px; margin-bottom:18px;">
+      <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer;">
+        <input
+          type="checkbox"
+          [(ngModel)]="aceptaTerminos"
+          [disabled]="!scrollCompleto"
+          style="width:18px; height:18px; margin-top:2px;"
+        />
+        <span style="color:var(--text); font-size:13.5px; line-height:1.5;">
+          <strong>Acepto los términos y condiciones</strong> del contrato de cooperación
+          entre marcas con Club Enjoy. Confirmo que leí el contrato en su totalidad y que
+          los datos que proporcioné son verídicos. Mi aceptación tiene el valor de firma
+          según la legislación ecuatoriana vigente.
+        </span>
+      </label>
+      @if (!scrollCompleto) {
+        <p class="subtle" style="margin-top:8px; font-size:12px; color:var(--orange);">
+          <lucide-icon name="clock" style="width:12px; height:12px; vertical-align:middle;"></lucide-icon>
+          Tenés que desplazar el contrato hasta el final para poder aceptar.
+        </p>
+      }
+    </div>
+
+    <!-- FIRMAR -->
+    <div style="display:flex; justify-content:flex-end;">
+      <button
+        class="btn-primary btn-lg"
+        (click)="firmar()"
+        [disabled]="!puedeFirmar || saving"
+      >
+        @if (saving) {
+          <span style="width:14px; height:14px; border:2px solid currentColor; border-top-color:transparent; border-radius:50%; display:inline-block; animation: spin 0.6s linear infinite;"></span>
+          Firmando…
+        } @else {
+          <lucide-icon name="check" style="width:14px; height:14px;"></lucide-icon>
+          Firmar y continuar
+        }
+      </button>
+    </div>
+  }
+</section>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>

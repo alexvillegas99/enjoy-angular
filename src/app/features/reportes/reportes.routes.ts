@@ -50,6 +50,14 @@ export const reportesRoutes: Routes = [
           import('./pages/flash/flash-reporte').then((m) => m.FlashReporte),
         data: { titulo: 'Flash & Solicitudes' },
       },
+      {
+        path: 'promotores',
+        loadComponent: () =>
+          import('./pages/promotores/promotores-reporte').then(
+            (m) => m.PromotoresReporte,
+          ),
+        data: { titulo: 'Programa de promotores' },
+      },
     ],
   },
 ];

@@ -173,6 +173,84 @@
     </div>
   </section>
 
+  <!-- ── PROGRAMA DE PROMOTORES (solo al editar, no en alta) ─────── -->
+  @if (isEdit) {
+    <section class="card" style="padding:20px; margin-top:16px;">
+      <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px;">
+        <div class="icon-badge icon-badge-primary" style="width:38px; height:38px;">
+          <lucide-icon name="user-check" style="width:18px; height:18px;"></lucide-icon>
+        </div>
+        <div style="flex:1;">
+          <h3 class="section-title">Programa de promotores</h3>
+          <p class="subtle" style="font-size:12px;">
+            Asigna un código a este cliente. Quien compre con ese código recibe
+            <strong>{{ promotor.porcentajeDescuento ?? promotorDefaults.descuento }}%</strong> de descuento,
+            y este promotor gana
+            <strong>{{ promotor.porcentajeComision ?? promotorDefaults.comision }}%</strong> de comisión.
+          </p>
+        </div>
+        @if (promotor.isPromotor) {
+          <span class="pill pill-green pill-dot">Activo</span>
+        }
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label class="field-label">Código (ej. ANA20)</label>
+          <input
+            class="input"
+            [(ngModel)]="promotor.codigoDescuento"
+            placeholder="ALEX20"
+            maxlength="20"
+            style="text-transform:uppercase; font-family:monospace;"
+          />
+        </div>
+        <div>
+          <label class="field-label">% Descuento al comprador (opcional)</label>
+          <input
+            class="input"
+            type="number"
+            min="1" max="90"
+            [(ngModel)]="promotor.porcentajeDescuento"
+            [placeholder]="'Default: ' + promotorDefaults.descuento + '%'"
+          />
+        </div>
+        <div>
+          <label class="field-label">% Comisión al promotor (opcional)</label>
+          <input
+            class="input"
+            type="number"
+            min="1" max="90"
+            [(ngModel)]="promotor.porcentajeComision"
+            [placeholder]="'Default: ' + promotorDefaults.comision + '%'"
+          />
+        </div>
+        <div>
+          <label class="field-label">Saldo acumulado</label>
+          <div style="padding:9px 12px; border-radius:10px; background:var(--glass-strong); font-weight:700; color:var(--green); font-family:monospace;">
+            ${{ promotor.saldoPromotor.toFixed(2) }}
+          </div>
+          <p class="subtle" style="font-size:11px; margin-top:4px;">
+            Pendiente de transferir al promotor.
+          </p>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:14px; justify-content:flex-end;">
+        @if (promotor.isPromotor) {
+          <button class="btn-ghost" (click)="desactivarPromotor()" [disabled]="guardandoPromotor">
+            <lucide-icon name="x" style="width:14px; height:14px;"></lucide-icon>
+            Desactivar
+          </button>
+        }
+        <button class="btn-primary" (click)="activarPromotor()" [disabled]="guardandoPromotor">
+          <lucide-icon name="check" style="width:14px; height:14px;"></lucide-icon>
+          {{ promotor.isPromotor ? 'Guardar cambios' : 'Activar como promotor' }}
+        </button>
+      </div>
+    </section>
+  }
+
   <!-- GUARDAR -->
   <div class="form-actions">
     <a routerLink="/clientes" class="btn-outline btn-lg">

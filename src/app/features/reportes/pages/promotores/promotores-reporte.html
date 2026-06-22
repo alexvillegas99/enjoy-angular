@@ -1,0 +1,130 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6 print-hide-flex">
+    <div class="flex items-start gap-4">
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="user-check" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Promotores</h1>
+        <p class="subtle mt-1">
+          Ventas hechas con código de promotor en el rango, descuentos otorgados y comisiones generadas.
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="btn-ghost" (click)="exportCsv()" [disabled]="!data">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV
+      </button>
+      <button class="btn-primary" (click)="imprimirPdf()" [disabled]="!data">
+        <lucide-icon name="printer" style="width:14px; height:14px;"></lucide-icon> Imprimir / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-6 print-hide" style="padding:18px;">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+      <div><label class="field-label">Desde</label><input type="date" class="input" [(ngModel)]="desde" /></div>
+      <div><label class="field-label">Hasta</label><input type="date" class="input" [(ngModel)]="hasta" /></div>
+      <button class="btn-primary" (click)="cargar()" [disabled]="loading">
+        <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
+      </button>
+    </div>
+  </div>
+
+  @if (loading && !data) {
+    <div class="card" style="padding:60px; text-align:center;">
+      <div class="subtle">Cargando…</div>
+    </div>
+  } @else if (data) {
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="card stat">
+        <div class="stat-label">Promotores con ventas</div>
+        <div class="stat-value">{{ fmtN(data.promotores.length) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">Ventas con código</div>
+        <div class="stat-value">{{ fmtN(data.totales.ventas) }}</div>
+      </div>
+      <div class="card stat">
+        <div class="stat-label">Descuentos otorgados</div>
+        <div class="stat-value" style="color: var(--text-soft);">{{ fmtMoneda(data.totales.totalDescuento) }}</div>
+      </div>
+      <div class="card stat card-accent">
+        <div class="stat-label">Comisiones generadas</div>
+        <div class="stat-value">{{ fmtMoneda(data.totales.totalComision) }}</div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="padding:18px 22px;">
+        <h3 class="section-title">Detalle por promotor</h3>
+        <p class="subtle" style="font-size:12px;">Ordenados por comisión generada en el período.</p>
+      </div>
+      <div style="overflow:auto;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Promotor</th>
+              <th>Código</th>
+              <th style="text-align:right;">Ventas</th>
+              <th style="text-align:right;">Bruto</th>
+              <th style="text-align:right;">Descuento</th>
+              <th style="text-align:right;">Comisión</th>
+              <th style="text-align:right;">Saldo actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of data.promotores; track p.promotorId) {
+              <tr>
+                <td>
+                  <div style="font-weight:600;">{{ p.nombre }}</div>
+                  @if (p.email) {
+                    <div class="subtle" style="font-size:11px;">{{ p.email }}</div>
+                  }
+                </td>
+                <td>
+                  <span class="pill pill-orange" style="font-family: monospace;">{{ p.codigo }}</span>
+                </td>
+                <td style="text-align:right; font-weight:600;">{{ fmtN(p.ventas) }}</td>
+                <td style="text-align:right;" class="subtle">{{ fmtMoneda(p.montoBruto) }}</td>
+                <td style="text-align:right;" class="subtle">{{ fmtMoneda(p.totalDescuento) }}</td>
+                <td style="text-align:right; font-weight:700; color:var(--orange);">{{ fmtMoneda(p.totalComision) }}</td>
+                <td style="text-align:right; font-weight:700; color:var(--green);">{{ fmtMoneda(p.saldoActual) }}</td>
+              </tr>
+            }
+            @if (!data.promotores?.length) {
+              <tr>
+                <td colspan="7" class="subtle" style="text-align:center; padding:32px;">
+                  Sin ventas con código de promotor en este período.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="subtle" style="margin-top:12px; font-size:12px;">
+      <strong>Saldo actual</strong> = total acumulado histórico que el promotor aún no ha cobrado.
+      El admin transfiere manualmente al promotor y luego puede ajustar el saldo si lo necesita.
+    </p>
+  }
+</section>
+
+<style>
+  @media print {
+    .print-hide, .print-hide-flex { display: none !important; }
+    app-dashboard-sidebar, app-dashboard-header, app-dashboard-bottom-nav { display: none !important; }
+    main { padding: 0 !important; }
+    body { background: white !important; color: black !important; }
+    .card { background: white !important; border: 1px solid #ddd !important; color: black !important; box-shadow: none !important; }
+    .stat-value, .page-title, .section-title { color: black !important; }
+    .subtle, .stat-label, td, th { color: #333 !important; }
+  }
+</style>

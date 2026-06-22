@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { noAuthGuard } from './core/guards/no-auth.guard';
 import { roleGuard } from './core/guards/role-guard';
+import { contratoGuard } from './core/guards/contrato.guard';
 
 export const routes: Routes = [
   {
@@ -53,12 +54,21 @@ export const routes: Routes = [
       ),
   },
 
+  // Contrato del admin-local — fuera del layout para no bloquearse a sí mismo
+  // con contratoGuard. Requiere auth válida.
+  {
+    path: 'contrato',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/contratos/contrato-page').then((m) => m.ContratoPage),
+  },
+
   // =====================
   // APP (LAYOUT PROTEGIDO)
   // =====================
   {
     path: '',
-    canActivate: [authGuard],
+    canActivate: [authGuard, contratoGuard],
     loadComponent: () =>
       import('./layout/dashboard-layout/dashboard-layout').then(
         (m) => m.DashboardLayout,

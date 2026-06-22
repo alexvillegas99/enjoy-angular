@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { ClientesService } from '../../../../services/cliente.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { environment } from '../../../../../environments/environment';
+import { PromotorService } from '../../../../services/promotor.service';
 
 @Component({
   selector: 'app-editar-cliente',
@@ -20,12 +21,24 @@ export class EditarCliente {
   private http = inject(HttpClient);
   private svc = inject(ClientesService);
   private alert = inject(AlertService);
+  private promotorSvc = inject(PromotorService);
 
   isEdit = false;
   loading = false;
   cargando = true;
 
   errors: Record<string, string> = {};
+
+  // ── Sección Promotor ──────────────────────────────────────────────
+  promotor = {
+    isPromotor: false,
+    codigoDescuento: '',
+    porcentajeDescuento: null as number | null,
+    porcentajeComision: null as number | null,
+    saldoPromotor: 0,
+  };
+  promotorDefaults = { descuento: 20, comision: 20 };
+  guardandoPromotor = false;
 
   model = {
     _id: '',
@@ -40,6 +53,80 @@ export class EditarCliente {
     estado: true,
   };
 
+  /** Carga defaults globales (%) y pobla la sección promotor del cliente. */
+  private _cargarPromotor(data: any) {
+    this.promotor = {
+      isPromotor: data?.isPromotor === true,
+      codigoDescuento: (data?.codigoDescuento ?? '').toString(),
+      porcentajeDescuento: data?.porcentajeDescuento ?? null,
+      porcentajeComision: data?.porcentajeComision ?? null,
+      saldoPromotor: Number(data?.saldoPromotor ?? 0),
+    };
+    this.promotorSvc.defaults().subscribe({
+      next: (d) => (this.promotorDefaults = d),
+      error: () => {},
+    });
+  }
+
+  async activarPromotor() {
+    const codigo = (this.promotor.codigoDescuento || '').trim().toUpperCase();
+    if (!codigo) {
+      this.alert.warning(
+        'Falta el código',
+        'Definí un código (3-20 caracteres alfanuméricos) para activar al promotor.',
+      );
+      return;
+    }
+    this.guardandoPromotor = true;
+    this.promotorSvc
+      .activar(this.model._id, {
+        codigoDescuento: codigo,
+        porcentajeDescuento: this.promotor.porcentajeDescuento,
+        porcentajeComision: this.promotor.porcentajeComision,
+      })
+      .subscribe({
+        next: (cli) => {
+          this.guardandoPromotor = false;
+          this.promotor.isPromotor = true;
+          this.promotor.codigoDescuento = cli?.codigoDescuento ?? codigo;
+          this.alert.success(
+            cli?.isPromotor ? 'Promotor activo' : 'Guardado',
+            `Código "${this.promotor.codigoDescuento}" listo para usar.`,
+          );
+        },
+        error: (e) => {
+          this.guardandoPromotor = false;
+          this.alert.error(
+            'No se pudo guardar',
+            e?.error?.message || 'Verificá el código (podría ya estar en uso).',
+          );
+        },
+      });
+  }
+
+  async desactivarPromotor() {
+    const ok = await this.alert.confirm({
+      title: 'Desactivar promotor',
+      text: 'El código dejará de funcionar para nuevos clientes. El saldo acumulado se mantiene.',
+      confirmText: 'Sí, desactivar',
+      icon: 'warning',
+    });
+    if (!ok) return;
+    this.guardandoPromotor = true;
+    this.promotorSvc.desactivar(this.model._id).subscribe({
+      next: () => {
+        this.guardandoPromotor = false;
+        this.promotor.isPromotor = false;
+        this.promotor.codigoDescuento = '';
+        this.alert.success('Desactivado', 'El cliente ya no es promotor.');
+      },
+      error: (e) => {
+        this.guardandoPromotor = false;
+        this.alert.error('Error', e?.error?.message || 'No se pudo desactivar.');
+      },
+    });
+  }
+
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
     this.isEdit = !!id;
@@ -52,6 +139,7 @@ export class EditarCliente {
             ...data,
             fechaNacimiento: data.fechaNacimiento ? new Date(data.fechaNacimiento) : null,
           };
+          this._cargarPromotor(data);
           this.cargando = false;
         },
         error: (err) => {

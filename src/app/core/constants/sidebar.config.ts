@@ -17,6 +17,7 @@ export const SIDEBAR_MENU_FULL: SidebarItem[] = [
   { label: 'Crear cupón', route: '/cupones/nuevo', icon: 'circle-plus', permission: 'cupones.crear' },
   { label: 'Categorías', route: '/catalogos', icon: 'tags', permission: 'categorias.ver' },
   { label: 'Reportes', route: '/reportes', icon: 'chart-column', permission: 'reportes.ver' },
+  { label: 'Promotores', route: '/reportes/promotores', icon: 'user-check', permission: 'reportes.ver' },
   { label: 'Notificaciones', route: '/notificaciones', icon: 'bell', permission: 'notificaciones.ver' },
   { label: 'Usuarios', route: '/usuarios', icon: 'users', permission: 'usuarios.ver', mobile: true },
   { label: 'Clientes', route: '/clientes', icon: 'user', permission: 'clientes.ver' },
