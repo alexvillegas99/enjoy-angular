@@ -32,10 +32,19 @@ export class DashboardSidebar implements OnInit {
     const permisos: string[] = user?.permisos ?? [];
 
     if (permisos.length > 0) {
-      // Nuevo: filtrar menú por permisos del usuario
-      this.menu = SIDEBAR_MENU_FULL.filter(
+      // Nuevo: filtrar menú por permisos del usuario.
+      const filtrados = SIDEBAR_MENU_FULL.filter(
         (item) => !item.permission || permisos.includes(item.permission),
       );
+      // Dedupe por ruta — algunos ítems duplicados están en el catálogo
+      // a propósito con permisos distintos (ej. Soporte para 'chat.ver' y
+      // 'perfil-local.ver'); en el sidebar tiene que aparecer una sola vez.
+      const vistos = new Set<string>();
+      this.menu = filtrados.filter((item) => {
+        if (vistos.has(item.route)) return false;
+        vistos.add(item.route);
+        return true;
+      });
     } else {
       // Legacy: fallback por rol string
       if (user?.rol === 'admin') {

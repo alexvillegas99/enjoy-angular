@@ -27,10 +27,17 @@ export class DashboardBottomNav implements OnInit {
     const permisos: string[] = user?.permisos ?? [];
 
     if (permisos.length > 0) {
-      // Nuevo: filtrar solo items marcados como mobile
-      this.menu = SIDEBAR_MENU_FULL.filter(
+      // Nuevo: filtrar solo items marcados como mobile + dedupe por ruta
+      // (ej. 'Soporte' tiene 2 entradas con permisos distintos en el catálogo).
+      const filtrados = SIDEBAR_MENU_FULL.filter(
         (item) => item.mobile && (!item.permission || permisos.includes(item.permission)),
       );
+      const vistos = new Set<string>();
+      this.menu = filtrados.filter((item) => {
+        if (vistos.has(item.route)) return false;
+        vistos.add(item.route);
+        return true;
+      });
     } else {
       // Legacy: fallback por rol string
       if (user?.rol === 'admin') {
