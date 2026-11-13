@@ -79,6 +79,17 @@ export class CrearEditarEstablecimiento {
     'domingo',
   ];
 
+  /** Nombre del día para mostrar (el valor guardado va sin tilde). */
+  readonly diaLabel: Record<string, string> = {
+    lunes: 'Lunes',
+    martes: 'Martes',
+    miercoles: 'Miércoles',
+    jueves: 'Jueves',
+    viernes: 'Viernes',
+    sabado: 'Sábado',
+    domingo: 'Domingo',
+  };
+
   errors: Record<string, string> = {};
 
   // ───────────────────────── Wizard por pasos ─────────────────────────

@@ -103,7 +103,7 @@ export class FormFlash implements OnInit {
     const file = (ev.target as HTMLInputElement).files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      this.alert.warning('Imagen muy grande', 'Elegí una imagen menor a 5 MB.');
+      this.alert.warning('Imagen muy grande', 'Elige una imagen menor a 5 MB.');
       return;
     }
     const reader = new FileReader();
@@ -134,7 +134,7 @@ export class FormFlash implements OnInit {
       return;
     }
     if (!this.venceLocal) {
-      this.alert.warning('Falta vencimiento', 'Indicá hasta cuándo está activa.');
+      this.alert.warning('Falta vencimiento', 'Indica hasta cuándo está activa.');
       return;
     }
     const venceDate = new Date(this.venceLocal);

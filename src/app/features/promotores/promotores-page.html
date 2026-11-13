@@ -8,7 +8,7 @@
     <div class="page-header-title">
       <h1 class="page-title">Promotores</h1>
       <p class="subtle">
-        Buscá un cliente y convertilo en promotor. Defaults: {{ defaults.descuento }}% descuento / {{ defaults.comision }}% comisión.
+        Busca un cliente y convertilo en promotor. Defaults: {{ defaults.descuento }}% descuento / {{ defaults.comision }}% comisión.
       </p>
     </div>
     <div class="page-header-actions">
@@ -26,7 +26,7 @@
       <h3 style="margin:0; font-size:17px; font-weight:700;">Buscar cliente para agregar</h3>
     </div>
     <p class="subtle mb-4" style="font-size:13px;">
-      Escribí nombre, email o cédula. Si el cliente existe, podés convertirlo en promotor desde acá.
+      Escribe nombre, email o cédula. Si el cliente existe, puedes convertirlo en promotor desde aquí.
     </p>
 
     <div class="flex gap-2 items-stretch">
@@ -135,7 +135,7 @@
     } @else {
       <div class="mt-4 text-center" style="padding:24px;">
         <lucide-icon name="search" style="width:32px; height:32px; color: var(--text-mute); margin: 0 auto 10px;"></lucide-icon>
-        <p class="subtle">Escribí algo y pulsá <b>Buscar</b> para empezar.</p>
+        <p class="subtle">Escribe algo y pulsa <b>Buscar</b> para empezar.</p>
       </div>
     }
   </div>
@@ -157,7 +157,7 @@
       <p class="subtle">Cargando…</p>
     } @else if (promotores.length === 0) {
       <div class="text-center" style="padding:28px 12px;">
-        <p class="subtle">Todavía no hay promotores. Buscá un cliente arriba y agregalo.</p>
+        <p class="subtle">Todavía no hay promotores. Busca un cliente arriba y agregalo.</p>
       </div>
     } @else {
       <div style="overflow-x:auto;">

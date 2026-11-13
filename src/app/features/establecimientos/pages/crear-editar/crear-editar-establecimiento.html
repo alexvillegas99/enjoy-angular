@@ -525,7 +525,7 @@
       </div>
       <div class="flex-1">
         <h3 class="section-title text-sm">Horario de la promoción</h3>
-        <p class="subtle text-xs">Definí cuándo está activa. Si marcás "Aplica todos los días" usás un solo horario; sino, elegís los días específicos con su horario propio.</p>
+        <p class="subtle text-xs">Define cuándo está activa. Si marcas "Aplica todos los días" usas un solo horario; si no, eliges los días específicos con su horario propio.</p>
       </div>
     </header>
 
@@ -576,7 +576,7 @@
             [class.is-active]="model.detallePromocion.diasAplicables.includes(dia)"
             (click)="toggleDia(dia); actualizarScheduleLabel()"
           >
-            {{ dia }}
+            {{ diaLabel[dia] ?? dia }}
           </button>
         }
       </div>
@@ -585,7 +585,7 @@
         <div class="space-y-3">
           @for (dia of model.detallePromocion.diasAplicables; track dia) {
             <div class="editor-day-row">
-              <span class="w-24 capitalize text-sm font-medium text-text-dark">{{ dia }}</span>
+              <span class="w-24 text-sm font-medium text-text-dark">{{ diaLabel[dia] ?? dia }}</span>
               <div class="flex items-center gap-2">
                 <label class="text-xs text-text-body">Abre</label>
                 <input
@@ -608,7 +608,7 @@
           }
         </div>
       } @else {
-        <p class="subtle text-xs italic">Seleccioná los días en los que la promoción está activa.</p>
+        <p class="subtle text-xs italic">Selecciona los días en los que la promoción está activa.</p>
       }
     }
 

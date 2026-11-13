@@ -69,7 +69,7 @@ export class PromotoresPage implements OnInit {
     if (q.length < 2) {
       this.alert.warning(
         'Búsqueda muy corta',
-        'Escribí al menos 2 caracteres (nombre, email o cédula).',
+        'Escribe al menos 2 caracteres (nombre, email o cédula).',
       );
       return;
     }
@@ -134,7 +134,7 @@ export class PromotoresPage implements OnInit {
     if (codigo.length < 3) {
       this.alert.warning(
         'Código inválido',
-        'Usá entre 3 y 20 caracteres alfanuméricos.',
+        'Usa entre 3 y 20 caracteres alfanuméricos.',
       );
       return;
     }
@@ -168,7 +168,7 @@ export class PromotoresPage implements OnInit {
           this.alert.error(
             'No se pudo activar',
             e?.error?.message ||
-              'Verificá el código (podría ya estar en uso por otro promotor).',
+              'Verifica el código (podría ya estar en uso por otro promotor).',
           );
         },
       });
@@ -250,7 +250,7 @@ export class PromotoresPage implements OnInit {
       error: (e) =>
         this.alert.error(
           'No se pudo guardar',
-          e?.error?.message || 'Revisá el código.',
+          e?.error?.message || 'Revisa el código.',
         ),
     });
   }

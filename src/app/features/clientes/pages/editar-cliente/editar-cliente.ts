@@ -73,7 +73,7 @@ export class EditarCliente {
     if (!codigo) {
       this.alert.warning(
         'Falta el código',
-        'Definí un código (3-20 caracteres alfanuméricos) para activar al promotor.',
+        'Define un código (3-20 caracteres alfanuméricos) para activar al promotor.',
       );
       return;
     }
@@ -98,7 +98,7 @@ export class EditarCliente {
           this.guardandoPromotor = false;
           this.alert.error(
             'No se pudo guardar',
-            e?.error?.message || 'Verificá el código (podría ya estar en uso).',
+            e?.error?.message || 'Verifica el código (podría ya estar en uso).',
           );
         },
       });

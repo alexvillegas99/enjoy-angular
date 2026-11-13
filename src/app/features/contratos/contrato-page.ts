@@ -80,7 +80,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
         this.loading = false;
         this.alert.error(
           'Error',
-          'No pudimos cargar el estado del contrato. Recargá la página.',
+          'No pudimos cargar el estado del contrato. Recarga la página.',
         );
       },
     });
@@ -112,7 +112,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
     if (file.size > 5 * 1024 * 1024) {
       this.alert.warning(
         'Imagen muy grande',
-        'Elegí una foto menor a 5 MB.',
+        'Elige una foto menor a 5 MB.',
       );
       return;
     }
@@ -158,7 +158,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
     if (!this.puedeFirmar) {
       this.alert.warning(
         'Faltan datos',
-        'Completá los datos del local, leé todo el contrato, subí tu cédula y aceptá los términos.',
+        'Completa los datos del local, lee todo el contrato, sube tu cédula y acepta los términos.',
       );
       return;
     }
@@ -172,7 +172,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
       this.saving = false;
       this.alert.error(
         'No se pudo enviar el código',
-        e?.error?.message || 'Intentá en unos segundos.',
+        e?.error?.message || 'Intenta en unos segundos.',
       );
       return;
     }
@@ -209,7 +209,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
         const v = (document.getElementById('swal-otp') as HTMLInputElement)
           ?.value?.trim();
         if (!v || !/^\d{6}$/.test(v)) {
-          Swal.showValidationMessage('Ingresá los 6 dígitos.');
+          Swal.showValidationMessage('Ingresa los 6 dígitos.');
           return false;
         }
         return v;
@@ -220,7 +220,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
     if (result.isDenied) {
       try {
         await this.svc.solicitarOtp().toPromise();
-        this.alert.success('Código reenviado', 'Revisá tu email.');
+        this.alert.success('Código reenviado', 'Revisa tu email.');
       } catch (_) {
         this.alert.error('Error', 'No se pudo reenviar.');
       }
@@ -244,7 +244,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
         next: () => {
           this.alert.success(
             'Contrato firmado',
-            'Tu contrato fue registrado con firma simple verificada por OTP. Ya tenés acceso al panel.',
+            'Tu contrato fue registrado con firma simple verificada por OTP. Ya tienes acceso al panel.',
           );
           this.router.navigate(['/dashboard-local']);
         },
@@ -252,7 +252,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
           this.saving = false;
           this.alert.error(
             'No se pudo firmar',
-            e?.error?.message || 'Reintentá en unos segundos.',
+            e?.error?.message || 'Reintenta en unos segundos.',
           );
         },
       });
@@ -276,14 +276,14 @@ export class ContratoPage implements OnInit, AfterViewInit {
     } catch (_) {
       this.alert.error(
         'Sin acceso a la cámara',
-        'Permití el acceso a la cámara desde el navegador para continuar.',
+        'Permite el acceso a la cámara desde el navegador para continuar.',
       );
       return null;
     }
 
     const html = `
       <p style="text-align:left; color:#a0aab8; font-size:13px; margin-bottom:10px;">
-        Mirá a la cámara y pulsá <b>Capturar</b>. La foto queda como anexo del contrato.
+        Mira a la cámara y pulsa <b>Capturar</b>. La foto queda como anexo del contrato.
       </p>
       <video id="swal-selfie-video" autoplay playsinline muted
              style="width:100%; max-width:380px; border-radius:14px; background:#000;

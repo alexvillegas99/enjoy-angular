@@ -356,14 +356,25 @@
 }
 
 .editor-day-row {
-  display: grid;
-  grid-template-columns: minmax(90px, 1fr) auto auto;
+  /* Flex con salto de línea: si el ancho no alcanza, Abre/Cierra bajan a la
+     siguiente línea en vez de salirse de la tarjeta. */
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 10px 14px;
   padding: 11px 13px;
   border: 1px solid var(--stroke);
   border-radius: 13px;
   background: var(--glass);
+}
+
+.editor-day-row > span {
+  flex: 1 0 100%; /* el día arriba; Abre y Cierra juntos debajo */
+}
+
+.editor-day-row .input {
+  width: 150px;
+  min-width: 0;
 }
 
 .editor-nested-card {
@@ -640,9 +651,6 @@
     min-width: 0;
   }
 
-  .editor-day-row {
-    grid-template-columns: 1fr;
-  }
 
   .editor-day-row > span {
     width: auto;
