@@ -16,7 +16,7 @@ export class ConfiguracionService {
   private base = `${environment.api}configuracion`;
 
   listar(): Observable<Configuracion[]> {
-    return this.http.get<Configuracion[]>(this.base);
+    return this.http.get<Configuracion[]>(`${this.base}/admin/todas`);
   }
 
   obtener(clave: string): Observable<Configuracion> {

@@ -37,7 +37,7 @@ export class ConfiguracionPagos {
 
   cargar() {
     this.loading = true;
-    this.http.get<any>(`${this.api}configuracion`).subscribe({
+    this.http.get<any>(`${this.api}configuracion/admin/todas`).subscribe({
       next: (configs: any[]) => {
         for (const c of configs) {
           if (c.clave === 'payphone_activo') this.payphoneActivo = c.valor === 'true';

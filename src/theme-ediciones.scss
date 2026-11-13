@@ -1,0 +1,209 @@
+/* ============================================================
+   ENJOY · Capa común para Edición Polar y Edición Tormenta
+   Estructura (no colores de marca): sidebar limpio, pills legibles,
+   jerarquía de texto, clases que faltaban, tablas, formularios.
+   Los temas antiguos (dark/light) no se ven afectados salvo por las
+   clases nuevas que antes no existían (stat-card, card-flat…).
+   ============================================================ */
+
+/* ---------- Clases usadas en templates que no estaban definidas ---------- */
+:root { --shadow-float: var(--shadow-lg); }
+.stat-card {
+  background: var(--glass);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.card-flat { box-shadow: none !important; }
+.card-interactive {
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--stroke-strong);
+}
+.icon-badge-accent {
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--orange);
+}
+
+/* Divisores de tabla: divide-border-* no existe y caía a currentColor */
+.divide-y > :not(:last-child),
+[class*="divide-border"] > * { border-color: var(--stroke) !important; }
+
+/* Hamburguesa del header solo en móvil (.btn-icon le ganaba a lg:hidden) */
+@media (min-width: 1024px) {
+  .btn-icon.lg\:hidden { display: none !important; }
+}
+
+:is([data-theme="polar"], [data-theme="tormenta"]) {
+
+  /* ---------- Sidebar limpio ---------- */
+  aside[style*="surface-grad"] .h-16 { border-bottom-color: transparent !important; }
+  aside[style*="surface-grad"] nav {
+    padding: 8px 12px 20px;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  aside[style*="surface-grad"] nav:hover { scrollbar-color: var(--stroke-strong) transparent; }
+  aside[style*="surface-grad"] nav::-webkit-scrollbar { width: 6px; }
+  aside[style*="surface-grad"] nav::-webkit-scrollbar-thumb { background: transparent; }
+  aside[style*="surface-grad"] nav:hover::-webkit-scrollbar-thumb { background: var(--stroke-strong); }
+
+  .nav-item, .nav-group {
+    min-height: 38px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 0;
+    font-size: 13.5px;
+  }
+  .nav-item { font-weight: 500; margin-bottom: 1px; }
+  .nav-group { font-weight: 600; margin-top: 6px; }
+  .nav-group > lucide-icon:last-child { opacity: .45 !important; transition: opacity .15s; }
+  .nav-group:hover > lucide-icon:last-child { opacity: .85 !important; }
+  .nav-group-children { padding-left: 0; margin: 0 0 6px; }
+  .nav-group-children::before { display: none; }
+  .nav-item-child { margin-left: 0; padding-left: 28px; font-size: 13px; }
+  .nav-item-child lucide-icon { opacity: .7; }
+  .nav-item.active::before,
+  .nav-item-child.active::before { display: none; }
+  .nav-item.active { font-weight: 600; }
+  .nav-item.active lucide-icon { opacity: 1; }
+
+  /* ---------- Header ---------- */
+  .app-header h1 { font-size: 14px; }
+  .app-header h1 span { font-weight: 700 !important; }
+  .app-header .avatar { border-radius: 12px; }
+
+  /* ---------- Pills y badges legibles (doble clase gana a .card *) ---------- */
+  .pill.pill-green, .badge.badge-success, .badge.badge-aprobado {
+    color: var(--st-ok-fg); background: var(--st-ok-bg); border-color: var(--st-ok-bd);
+  }
+  .pill.pill-yellow, .badge.badge-warning, .badge.badge-pendiente {
+    color: var(--st-warn-fg); background: var(--st-warn-bg); border-color: var(--st-warn-bd);
+  }
+  .pill.pill-red, .badge.badge-danger, .badge.badge-rechazado {
+    color: var(--st-danger-fg); background: var(--st-danger-bg); border-color: var(--st-danger-bd);
+  }
+  .pill.pill-blue, .badge.badge-info {
+    color: var(--st-info-fg); background: var(--st-info-bg); border-color: var(--st-info-bd);
+  }
+  .pill.pill-orange, .chip.chip-active, .chip.is-active {
+    color: var(--st-accent-fg); background: var(--st-accent-bg); border-color: var(--st-accent-bd);
+  }
+  .badge.badge-muted, .badge.badge-neutro, .pill:not([class*="pill-"]) {
+    color: var(--st-neutral-fg); background: var(--st-neutral-bg); border-color: var(--st-neutral-bd);
+  }
+  .badge:is(.badge-success, .badge-warning, .badge-danger, .badge-info, .badge-muted) {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .04em;
+    padding: 4px 10px; border-radius: 999px; line-height: 1.2;
+    white-space: nowrap;
+  }
+  .pill-dot::before { animation: none; }
+
+  /* Variantes de tarjeta con acento */
+  .card.card-left-accent { border-left: 3px solid var(--orange); }
+  .card.card-accent { border-color: rgba(var(--accent-rgb), .35); }
+
+  /* Íconos sueltos en tarjetas: neutros (el 10% es para lo clave) */
+  .card lucide-icon.text-accent,
+  .card lucide-icon.text-primary { color: var(--text-mute) !important; }
+
+  /* ---------- Jerarquía de texto dentro de tarjetas y modales ---------- */
+  :is(.card, .stat-card, [class*="modal"], [class*="dialog"], [class*="dropdown"])
+    :is(.subtle, .field-label, .stat-label, .table-primary-meta, .choice-card-help, .empty-msg) {
+    color: var(--text-mute);
+  }
+
+
+  /* ---------- Tablas ---------- */
+  table thead th { font-size: 11px; letter-spacing: .05em; font-weight: 700; }
+  table td { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Botones ---------- */
+  .btn-primary {
+    font-weight: 600;
+    letter-spacing: .005em;
+    box-shadow: 0 4px 12px rgba(var(--accent-rgb), .28);
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 6px 16px rgba(var(--accent-rgb), .36); }
+  .btn-primary:disabled { opacity: 1; box-shadow: none; }
+
+  /* ---------- Formularios ---------- */
+  .field-label {
+    text-transform: none;
+    font-size: 12.5px;
+    letter-spacing: 0;
+    color: var(--text-soft);
+  }
+
+  /* ---------- Estados vacíos ---------- */
+  .empty-state .icon { width: 64px; height: 64px; border-radius: 18px; }
+  .empty-state .empty-title { font-size: 15px; font-weight: 700; }
+  .empty-state .empty-msg { font-size: 13px; color: var(--text-mute); }
+}
+
+[data-theme="tormenta"] .toggle-switch-track { background: #2B2D31; }
+[data-theme="tormenta"] .toggle-switch input:checked + .toggle-switch-track { background: var(--naranja); }
+
+/* ============================================================
+   TIPOGRAFÍA — Sora (display) + Inter (texto)
+   Escala: 12 · 13 · 14 · 16 · 20 · 24 · 32
+   ============================================================ */
+:is([data-theme="polar"], [data-theme="tormenta"]) {
+  --font-display: 'Sora', system-ui, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  body { font-size: 14px; line-height: 1.5; }
+  .font-roboto { font-family: var(--font-body) !important; }
+
+  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.02em; }
+
+  /* Títulos */
+  .page-title { font-size: 24px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; }
+  .page-header .subtle, .page-title + .subtle { font-size: 13px; line-height: 1.45; margin-top: 4px; }
+  .section-title, .filter-card-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -0.015em; }
+  .card h2, .card h3 { font-weight: 700; }
+
+  /* KPIs y montos en Sora con cifras tabulares */
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums; line-height: 1.05;
+  }
+  .stat-label {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* Tablas */
+  table thead th, .table th {
+    font-family: var(--font-body);
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em;
+  }
+  .table td, table td { font-size: 13.5px; }
+  .table-primary-title { font-weight: 600; letter-spacing: -0.005em; }
+  .table-primary-meta { font-size: 12px; }
+
+  /* Navegación */
+  .nav-group { letter-spacing: -0.005em; }
+  .sidebar-section { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; }
+
+  /* Botones, pills y chips */
+  .btn, .btn-primary, .btn-secondary, .btn-ghost, .btn-outline { font-size: 13.5px; letter-spacing: 0; }
+  .badge, .pill { font-size: 11.5px; font-weight: 600; letter-spacing: 0.03em; }
+  .chip { font-size: 12.5px; font-weight: 600; }
+
+  /* Formularios */
+  .input, input.input, select.input, textarea.input { font-size: 14px; }
+  .input::placeholder { font-weight: 400; }
+
+  /* Texto largo legible (mensajes, descripciones) */
+  .card p:not([class*="stat-"]):not(.subtle):not(.page-title),
+  .card .whitespace-pre-line { line-height: 1.6; }
+  .card p.text-xs { font-size: 12.5px; line-height: 1.6; }
+}
