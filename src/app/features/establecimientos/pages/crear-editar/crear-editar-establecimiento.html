@@ -613,11 +613,14 @@
     }
 
     <!-- Preview del scheduleLabel generado -->
-    @if (model.detallePromocion.scheduleLabel) {
+    @if (horarioCliente) {
       <div class="mt-4 px-3 py-2 bg-surface-muted rounded-lg">
         <p class="text-xs text-text-body">
-          Texto que verán los clientes:
-          <span class="font-semibold text-text-dark">{{ model.detallePromocion.scheduleLabel }}</span>
+          Así lo verán los clientes:
+          <span class="font-semibold text-text-dark">{{ horarioCliente }}</span>
+        </p>
+        <p class="text-[11px] text-text-body mt-1">
+          Se arma con los días, el horario y las fechas excluidas de esta promoción.
         </p>
       </div>
     }

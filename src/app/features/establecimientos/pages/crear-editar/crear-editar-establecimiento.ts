@@ -13,6 +13,7 @@ import { CiudadesService } from '../../../../services/ciudad.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { PermissionsService } from '../../../../core/services/permissions.service';
 import { ImageCropperModal } from '../../../../shared/components/image-cropper-modal/image-cropper-modal';
+import { horarioVisible } from '../../../../core/utils/horario-visible';
 
 @Component({
   standalone: true,
@@ -860,6 +861,11 @@ export class CrearEditarEstablecimiento {
    * - Días específicos con el MISMO horario → "Lun, Mié, Vie 09:00-18:00".
    * - Días específicos con horarios distintos → "Lun 09-13, Mié 14-20, Vie 09-18".
    */
+  /** Texto exacto que verá el cliente (días + horas + fechas excluidas). */
+  get horarioCliente(): string {
+    return horarioVisible(this.model.detallePromocion);
+  }
+
   actualizarScheduleLabel() {
     const dp = this.model.detallePromocion;
     const fmt = (s: string) => (s || '').slice(0, 5);

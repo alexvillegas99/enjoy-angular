@@ -4,6 +4,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { UsuariosService } from '../../../../services/usuario.service';
 import { AlertService } from '../../../../core/services/alert.service';
 import { AuthService } from '../../../auth/services/auth';
+import { horarioVisible } from '../../../../core/utils/horario-visible';
 
 @Component({
   selector: 'app-perfil-local',
@@ -12,6 +13,7 @@ import { AuthService } from '../../../auth/services/auth';
   templateUrl: './perfil-local.html',
 })
 export class PerfilLocal implements OnInit {
+  readonly horarioVisible = horarioVisible;
 
   private service = inject(UsuariosService);
   private alert = inject(AlertService);
