@@ -643,7 +643,7 @@
         @for (fecha of model.detallePromocion.fechasExcluidas; track fecha; let i = $index) {
           <div class="flex items-center gap-3 px-3 py-2 bg-surface-muted rounded-lg">
             <lucide-icon name="calendar" class="w-4 h-4 text-text-body"></lucide-icon>
-            <span class="text-sm text-text-dark flex-1">{{ fecha | date: "dd/MM/yyyy" }}</span>
+            <span class="text-sm text-text-dark flex-1">{{ fecha | date: "dd/MM/yyyy" : "UTC" }}</span>
             <button type="button" class="text-danger hover:opacity-80 text-xs font-medium transition" (click)="removeFechaExcluida(i)">
               Eliminar
             </button>

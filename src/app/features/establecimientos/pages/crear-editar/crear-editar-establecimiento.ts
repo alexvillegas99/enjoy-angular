@@ -422,7 +422,8 @@ export class CrearEditarEstablecimiento {
     if (!isNaN(fecha.getTime())) {
       if (
         !this.model.detallePromocion.fechasExcluidas.some(
-          (f: Date) => f.toDateString() === fecha.toDateString(),
+          // Fechas a medianoche UTC (como las guarda el backend): comparar en UTC.
+          (f: Date) => f.toISOString().slice(0, 10) === fecha.toISOString().slice(0, 10),
         )
       ) {
         this.model.detallePromocion.fechasExcluidas.push(fecha);
