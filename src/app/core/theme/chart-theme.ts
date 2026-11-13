@@ -1,8 +1,8 @@
 /**
  * Colores de gráficos (ECharts) según el tema activo en <html data-theme>.
  * ECharts pinta en canvas y no lee variables CSS, por eso los colores viven aquí.
- * "polar"    = Edición Polar (Blanco Polar / Azul Glaciar / Rojo Racing).
- * "tormenta" = Edición Tormenta (Gris Tormenta / Negro Mate / Naranja Seguridad).
+ * "polar"    = claro, azul de marca (Blanco / Marino / Azul Real).
+ * "tormenta" = oscuro Grafito azul (Carbón / Grafito / Azul).
  * Cualquier otro valor conserva los colores originales.
  * Devuelve un objeto "vivo": siempre lee el tema activo en el momento de usarse.
  */
@@ -22,33 +22,33 @@ export interface ChartTheme {
 }
 
 const POLAR: ChartTheme = {
-  accent: '#E4002B',        // Rojo Racing
+  accent: '#1565D8',        // Rojo Racing
   accentRgb: '228,0,43',
-  accentLight: '#9DBDD8',   // Azul Glaciar
-  primary: '#2E5674',       // Glaciar profundo
+  accentLight: '#B7CDEE',   // Azul Glaciar
+  primary: '#0A2A6E',       // Glaciar profundo
   secondary: '#5F8DB5',     // Glaciar medio
-  mute: '#5F738B',
-  axis: '#D5E3EF',
-  split: '#EEF3F8',
+  mute: '#5A6E92',
+  axis: '#DCE6F4',
+  split: '#EEF3FB',
   ok: '#12A060',
   warn: '#D99A0B',
   danger: '#B4233A',
-  palette: ['#E4002B', '#2E5674', '#9DBDD8', '#5F8DB5', '#7FA3C4', '#1C2B3D', '#D99A0B'],
+  palette: ['#1565D8', '#0A2A6E', '#B7CDEE', '#5F8DB5', '#7FA3C4', '#0B1B45', '#D99A0B'],
 };
 
 const TORMENTA: ChartTheme = {
-  accent: '#FF5F00',        // Naranja Seguridad
+  accent: '#3D7FF0',        // Naranja Seguridad
   accentRgb: '255,95,0',
   accentLight: '#FFA366',
-  primary: '#1D1E21',       // Negro Mate
+  primary: '#0E1320',       // Negro Mate
   secondary: '#A3ABB5',     // Gris claro
-  mute: '#C4CAD2',
+  mute: '#9AA6BC',
   axis: '#6A717A',
   split: 'rgba(255,255,255,0.08)',
   ok: '#3DD68C',
   warn: '#F2B33D',
   danger: '#FF5A6A',
-  palette: ['#FF5F00', '#D1D6DC', '#1D1E21', '#FFA366', '#8A929C', '#F2B33D', '#6FB7E8'],
+  palette: ['#3D7FF0', '#D1D6DC', '#0E1320', '#FFA366', '#8A929C', '#F2B33D', '#6FB7E8'],
 };
 
 const LEGACY: ChartTheme = {

@@ -1,5 +1,5 @@
 /* ============================================================
-   ENJOY · Capa común para Edición Polar y Edición Tormenta
+   ENJOY · Capa común para el tema claro (azul de marca) y el oscuro (Grafito)
    Estructura (no colores de marca): sidebar limpio, pills legibles,
    jerarquía de texto, clases que faltaban, tablas, formularios.
    Los temas antiguos (dark/light) no se ven afectados salvo por las
@@ -148,7 +148,7 @@
   .empty-state .empty-msg { font-size: 13px; color: var(--text-mute); }
 }
 
-[data-theme="tormenta"] .toggle-switch-track { background: #2B2D31; }
+[data-theme="tormenta"] .toggle-switch-track { background: #161C29; }
 [data-theme="tormenta"] .toggle-switch input:checked + .toggle-switch-track { background: var(--naranja); }
 
 /* ============================================================

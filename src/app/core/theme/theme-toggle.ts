@@ -7,14 +7,14 @@ export function currentTheme(): EnjoyTheme {
   return document.documentElement.getAttribute('data-theme') === 'tormenta' ? 'tormenta' : 'polar';
 }
 
-/** Botón para alternar entre Edición Polar (claro) y Edición Tormenta (oscuro). */
+/** Botón para alternar entre el tema claro (azul de marca) y el oscuro (Grafito). */
 @Component({
   selector: 'app-theme-toggle',
   standalone: true,
   template: `
     <button type="button" class="btn-icon theme-toggle" (click)="toggle()"
       [attr.aria-label]="theme() === 'polar' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro'"
-      [title]="theme() === 'polar' ? 'Tema oscuro (Tormenta)' : 'Tema claro (Polar)'">
+      [title]="theme() === 'polar' ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro'">
       @if (theme() === 'polar') {
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
       } @else {

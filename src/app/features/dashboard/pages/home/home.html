@@ -201,9 +201,9 @@
                 <td class="py-3">
                   <span
                     class="badge"
-                    [class.badge-success]="c.estado === 'ACTIVO'"
-                    [class.badge-muted]="c.estado === 'INACTIVO'"
-                    [class.badge-danger]="c.estado === 'BLOQUEADO'"
+                    [class.badge-success]="(c.estado | uppercase) === 'ACTIVO'"
+                    [class.badge-muted]="(c.estado | uppercase) === 'INACTIVO'"
+                    [class.badge-danger]="(c.estado | uppercase) === 'BLOQUEADO'"
                   >
                     {{ c.estado }}
                   </span>

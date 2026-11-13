@@ -41,6 +41,9 @@ export class DashboardService {
       cupones: this.http.get<any>(`${this.api}cupones`, {
         params: { page: 1, limit: 20 },
       }),
+      conteo: this.http.get<{ activo: number; inactivo: number; bloqueado: number; total: number }>(
+        `${this.api}cupones/admin/conteo-estados`,
+      ),
       versiones: this.http.get<any[]>(`${this.api}versiones`),
       solicitudes: this.http.get<any[]>(`${this.api}empresas/solicitudes`),
       escaneos: this.http.get<any[]>(`${this.api}historico/buscar-por-fechas`, {
@@ -51,12 +54,10 @@ export class DashboardService {
         // Contar cupones por estado
         const cuponesList = res.cupones?.items || res.cupones?.data || [];
         const totalCupones = res.cupones?.total ?? cuponesList.length;
-        let activos = 0, inactivos = 0, bloqueados = 0;
-        for (const c of cuponesList) {
-          if (c.estado === 'ACTIVO') activos++;
-          else if (c.estado === 'INACTIVO') inactivos++;
-          else if (c.estado === 'BLOQUEADO') bloqueados++;
-        }
+        // Conteo real de TODOS los cupones (el estado se guarda en minúsculas).
+        const activos = res.conteo?.activo ?? 0;
+        const inactivos = res.conteo?.inactivo ?? 0;
+        const bloqueados = res.conteo?.bloqueado ?? 0;
 
         // Agrupar escaneos por día
         const escaneos = res.escaneos || [];
