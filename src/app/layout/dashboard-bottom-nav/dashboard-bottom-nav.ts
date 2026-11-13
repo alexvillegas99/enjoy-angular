@@ -27,15 +27,30 @@ export class DashboardBottomNav implements OnInit {
     const permisos: string[] = user?.permisos ?? [];
 
     if (permisos.length > 0) {
-      // Nuevo: filtrar solo items marcados como mobile + dedupe por ruta
-      // (ej. 'Soporte' tiene 2 entradas con permisos distintos en el catálogo).
-      const filtrados = SIDEBAR_MENU_FULL.filter(
-        (item) => item.mobile && (!item.permission || permisos.includes(item.permission)),
+      // El catálogo ahora soporta grupos; para el bottom-nav móvil aplanamos
+      // y nos quedamos solo con items mobile + dedupe por ruta. 'Soporte'
+      // aparece 2 veces en el catálogo con permisos distintos para matchear
+      // tanto admin como admin-local; mostramos la primera que coincida.
+      const flat: SidebarItem[] = [];
+      const recurse = (items: SidebarItem[]) => {
+        for (const i of items) {
+          if (i.children) recurse(i.children);
+          else flat.push(i);
+        }
+      };
+      recurse(SIDEBAR_MENU_FULL);
+
+      const filtrados = flat.filter(
+        (item) =>
+          item.mobile &&
+          !!item.route &&
+          (!item.permission || permisos.includes(item.permission)),
       );
       const vistos = new Set<string>();
       this.menu = filtrados.filter((item) => {
-        if (vistos.has(item.route)) return false;
-        vistos.add(item.route);
+        const route = item.route as string;
+        if (vistos.has(route)) return false;
+        vistos.add(route);
         return true;
       });
     } else {

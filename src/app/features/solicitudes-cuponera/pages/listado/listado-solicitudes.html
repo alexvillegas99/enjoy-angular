@@ -1,4 +1,4 @@
-<div class="p-6 space-y-6 max-w-7xl mx-auto pb-20">
+<div class="page space-y-6 pb-20">
 
   <!-- HEADER -->
   <div class="flex items-center gap-4 animate-in">
@@ -43,7 +43,7 @@
         </select>
       </div>
 
-      <button class="btn-primary btn-block flex items-center justify-center gap-2" (click)="filtros.page = 1; buscar()">
+      <button class="btn-secondary btn-block flex items-center justify-center gap-2" (click)="filtros.page = 1; buscar()">
         <lucide-icon name="search" style="width:14px; height:14px;"></lucide-icon>
         Buscar
       </button>
@@ -103,8 +103,43 @@
 
                 <div class="flex items-center gap-2">
                   <lucide-icon name="credit-card" class="w-4 h-4 text-accent flex-shrink-0"></lucide-icon>
-                  <span class="text-text-body">Precio: <strong class="text-text-dark">${{ sol.cuponeraPrecio }}</strong></span>
+                  @if (sol.codigoPromotor) {
+                    <span class="text-text-body">
+                      Precio neto:
+                      <strong class="text-text-dark" style="color: var(--green, #6ee7a3);">
+                        ${{ netoNegocio(sol).toFixed(2) }}
+                      </strong>
+                      <span style="text-decoration: line-through; color: var(--text-mute); margin-left:6px; font-size:11px;">
+                        ${{ sol.cuponeraPrecio }}
+                      </span>
+                    </span>
+                  } @else {
+                    <span class="text-text-body">Precio: <strong class="text-text-dark">${{ sol.cuponeraPrecio }}</strong></span>
+                  }
                 </div>
+
+                @if (sol.codigoPromotor) {
+                  <div class="flex items-center gap-2">
+                    <lucide-icon name="badge-percent" class="w-4 h-4 flex-shrink-0" style="color: var(--orange);"></lucide-icon>
+                    <span class="text-text-body">
+                      Código:
+                      <span class="badge badge-pendiente" style="font-family: monospace; margin-left:4px;">
+                        {{ sol.codigoPromotor }}
+                      </span>
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <lucide-icon name="user-check" class="w-4 h-4 flex-shrink-0" style="color: var(--text-mute);"></lucide-icon>
+                    <span class="text-text-body" style="font-size:12px;">
+                      Cliente pagó: <strong>${{ pagadoPorCliente(sol).toFixed(2) }}</strong>
+                      <span style="color: var(--text-mute);">
+                        · Desc −{{ sol.porcentajeDescuento }}% (−${{ sol.montoDescuento || 0 }})
+                        · Com −{{ sol.porcentajeComision }}% (−${{ sol.montoComision || 0 }})
+                      </span>
+                    </span>
+                  </div>
+                }
 
                 @if (sol.montoTransferido) {
                   <div class="flex items-center gap-2">

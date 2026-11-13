@@ -22,6 +22,9 @@ import {
   hoyISO,
   haceDiasISO,
 } from '../../utils/export';
+import { chartTheme } from '../../../../core/theme/chart-theme';
+
+const ct = chartTheme();
 
 echarts.use([
   PieChart,
@@ -109,19 +112,19 @@ export class ClientesReporte implements OnInit {
             {
               name: 'Recurrentes',
               value: this.data?.recurrentes || 0,
-              itemStyle: { color: '#FF9F1C' },
+              itemStyle: { color: ct.accent },
             },
             {
               name: 'Únicos',
               value: this.data?.unicos || 0,
-              itemStyle: { color: '#5BA4F0' },
+              itemStyle: { color: ct.secondary },
             },
           ],
         },
       ],
     };
 
-    const palette = ['#FF9F1C', '#5BA4F0', '#2BD67B', '#FFBF46', '#FF5C73', '#A07AFF', '#22C2D8'];
+    const palette = ct.palette.slice(0, 7);
     const provincias = this.data?.porProvincia ?? [];
     this.provinciasOption = {
       tooltip: { trigger: 'axis', backgroundColor: '#0E1B2E', borderColor: '#27406B', textStyle: { color: text } },

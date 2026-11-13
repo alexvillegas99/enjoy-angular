@@ -92,11 +92,11 @@
             @for (h of hilos; track h._id) {
               <button
                 class="w-full text-left transition flex gap-3 items-center"
-                [style.background]="hiloActivo?._id === h._id ? 'rgba(255,159,28,0.10)' : 'transparent'"
-                [style.border]="hiloActivo?._id === h._id ? '1px solid rgba(255,159,28,0.35)' : '1px solid transparent'"
+                [style.background]="hiloActivo?._id === h._id ? 'rgba(var(--accent-rgb), 0.10)' : 'transparent'"
+                [style.border]="hiloActivo?._id === h._id ? '1px solid rgba(var(--accent-rgb), 0.35)' : '1px solid transparent'"
                 style="padding:12px; border-radius:12px; cursor:pointer; width:100%;"
                 onmouseover="this.style.background='var(--glass)'"
-                onmouseout="this.style.background=(this.dataset.active==='1'?'rgba(255,159,28,0.10)':'transparent')"
+                onmouseout="this.style.background=(this.dataset.active==='1'?'rgba(var(--accent-rgb), 0.10)':'transparent')"
                 [attr.data-active]="hiloActivo?._id === h._id ? '1' : '0'"
                 (click)="abrirHilo(h)"
               >
@@ -136,7 +136,7 @@
                     </span>
                     @if (noLeidos(h) > 0) {
                       <span
-                        style="background: var(--accent-grad); color: var(--on-accent); font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; min-width:20px; text-align:center; box-shadow:0 2px 8px rgba(255,159,28,0.4);"
+                        style="background: var(--accent-grad); color: var(--on-accent); font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; min-width:20px; text-align:center; box-shadow:0 2px 8px rgba(var(--accent-rgb), 0.4);"
                       >
                         {{ noLeidos(h) > 99 ? '99+' : noLeidos(h) }}
                       </span>
@@ -329,7 +329,7 @@
                 [style.color]="esMio(m) ? 'var(--on-accent)' : 'var(--text)'"
                 [style.border]="esMio(m) ? '0' : '1px solid var(--stroke)'"
                 [style.borderRadius]="esMio(m) ? '14px 14px 4px 14px' : '14px 14px 14px 4px'"
-                [style.boxShadow]="esMio(m) ? '0 4px 14px rgba(255,159,28,0.25)' : 'none'"
+                [style.boxShadow]="esMio(m) ? '0 4px 14px rgba(var(--accent-rgb), 0.25)' : 'none'"
                 style="max-width:70%; padding:10px 14px; font-size:13.5px;"
               >
                 @if (m.adjuntoUrl) {

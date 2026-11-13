@@ -1,0 +1,174 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <div class="flex items-start justify-between mb-6 print-hide-flex">
+    <div class="flex items-start gap-4">
+      <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+        <lucide-icon name="ticket" style="width:22px; height:22px;"></lucide-icon>
+      </div>
+      <div>
+        <h1 class="page-title">Ventas de cuponeras</h1>
+        <p class="subtle mt-1">
+          Solicitudes <strong>APROBADAS</strong> en el rango, con desglose de descuentos y comisiones por código promotor.
+        </p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button class="btn-ghost" (click)="exportCsvSerie()" [disabled]="!data?.serie?.length">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV serie
+      </button>
+      <button class="btn-ghost" (click)="exportCsvCuponeras()" [disabled]="!data?.porCuponera?.length">
+        <lucide-icon name="file-down" style="width:14px; height:14px;"></lucide-icon> CSV cuponeras
+      </button>
+      <button class="btn-primary" (click)="imprimirPdf()" [disabled]="!data">
+        <lucide-icon name="printer" style="width:14px; height:14px;"></lucide-icon> Imprimir / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card mb-6 print-hide" style="padding:18px;">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+      <div><label class="field-label">Desde</label><input type="date" class="input" [(ngModel)]="desde" /></div>
+      <div><label class="field-label">Hasta</label><input type="date" class="input" [(ngModel)]="hasta" /></div>
+      <div>
+        <label class="field-label">Agrupar por</label>
+        <select class="input" [(ngModel)]="granularidad">
+          <option value="dia">Día</option>
+          <option value="semana">Semana</option>
+          <option value="mes">Mes</option>
+        </select>
+      </div>
+      <button class="btn-primary" (click)="cargar()" [disabled]="loading">
+        <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
+      </button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <p class="subtle">Cargando reporte…</p>
+  } @else if (!data) {
+    <p class="subtle">No se pudo cargar el reporte.</p>
+  } @else {
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
+      <div class="card" style="padding:14px;">
+        <div class="subtle" style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Ventas</div>
+        <div style="font-size:24px; font-weight:800;">{{ data.totales.ventas }}</div>
+        <div class="subtle" style="font-size:12px;">
+          {{ data.totales.ventasConPromotor }} con código · {{ data.totales.ventasSinPromotor }} sin
+        </div>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div class="subtle" style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Monto bruto</div>
+        <div style="font-size:24px; font-weight:800;">{{ fmtMoneda(data.totales.montoBruto) }}</div>
+        <div class="subtle" style="font-size:12px;">precios originales sumados</div>
+      </div>
+      <div class="card" style="padding:14px;">
+        <div class="subtle" style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Descuentos + comisiones</div>
+        <div style="font-size:24px; font-weight:800; color: var(--orange);">
+          −{{ fmtMoneda(data.totales.totalDescuento + data.totales.totalComision) }}
+        </div>
+        <div class="subtle" style="font-size:12px;">
+          desc {{ fmtMoneda(data.totales.totalDescuento) }} · com {{ fmtMoneda(data.totales.totalComision) }}
+        </div>
+      </div>
+      <div class="card card-accent" style="padding:14px;">
+        <div class="subtle" style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em;">Neto al negocio</div>
+        <div style="font-size:24px; font-weight:800; color: var(--green, #6ee7a3);">
+          {{ fmtMoneda(data.totales.neto) }}
+        </div>
+        <div class="subtle" style="font-size:12px;">
+          ticket promedio {{ fmtMoneda(data.totales.ticketPromedio) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- SERIE TEMPORAL -->
+    <div class="card mb-6" style="padding:18px;">
+      <h3 style="margin:0 0 14px 0; font-size:15px; font-weight:600;">
+        Serie por {{ granularidad }}
+      </h3>
+      @if (data.serie.length === 0) {
+        <p class="subtle">Sin datos en el rango.</p>
+      } @else {
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--stroke); text-align:left;">
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute);">Período</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Ventas</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Bruto</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Descuento</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Comisión</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Neto</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of data.serie; track s.periodo) {
+                <tr style="border-bottom: 1px solid var(--stroke);">
+                  <td style="padding:10px 8px; font-family: monospace; font-weight:600;">{{ s.periodo }}</td>
+                  <td style="padding:10px 8px; text-align:right;">{{ s.ventas }}</td>
+                  <td style="padding:10px 8px; text-align:right;">{{ fmtMoneda(s.montoBruto) }}</td>
+                  <td style="padding:10px 8px; text-align:right; color: var(--text-mute);">
+                    @if (s.totalDescuento > 0) { −{{ fmtMoneda(s.totalDescuento) }} } @else { — }
+                  </td>
+                  <td style="padding:10px 8px; text-align:right; color: var(--text-mute);">
+                    @if (s.totalComision > 0) { −{{ fmtMoneda(s.totalComision) }} } @else { — }
+                  </td>
+                  <td style="padding:10px 8px; text-align:right; font-weight:700; color: var(--green, #6ee7a3);">
+                    {{ fmtMoneda(s.neto) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- POR CUPONERA -->
+    <div class="card" style="padding:18px;">
+      <h3 style="margin:0 0 14px 0; font-size:15px; font-weight:600;">Por cuponera</h3>
+      @if (data.porCuponera.length === 0) {
+        <p class="subtle">Sin datos en el rango.</p>
+      } @else {
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--stroke); text-align:left;">
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute);">Cuponera</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Ventas</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Bruto</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Descuento</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Comisión</th>
+                <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Neto</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of data.porCuponera; track c.nombre) {
+                <tr style="border-bottom: 1px solid var(--stroke);">
+                  <td style="padding:10px 8px; font-weight:600;">{{ c.nombre }}</td>
+                  <td style="padding:10px 8px; text-align:right;">{{ c.ventas }}</td>
+                  <td style="padding:10px 8px; text-align:right;">{{ fmtMoneda(c.montoBruto) }}</td>
+                  <td style="padding:10px 8px; text-align:right; color: var(--text-mute);">
+                    @if (c.totalDescuento > 0) { −{{ fmtMoneda(c.totalDescuento) }} } @else { — }
+                  </td>
+                  <td style="padding:10px 8px; text-align:right; color: var(--text-mute);">
+                    @if (c.totalComision > 0) { −{{ fmtMoneda(c.totalComision) }} } @else { — }
+                  </td>
+                  <td style="padding:10px 8px; text-align:right; font-weight:700; color: var(--green, #6ee7a3);">
+                    {{ fmtMoneda(c.neto) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+  }
+
+</section>

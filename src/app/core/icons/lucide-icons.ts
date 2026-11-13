@@ -96,6 +96,7 @@ const ICON_LIST = [
   'ToggleRight',
   'ToggleLeft',
   'LogOut',
+  'LogIn',
   'ImagePlus',
   'Landmark',
   'Shield',
@@ -136,6 +137,11 @@ const ICON_LIST = [
   'Upload',
   'LockOpen',
   'EllipsisVertical',
+  // Promotores + sidebar agrupado
+  'UserX',
+  'UserMinus',
+  'ChevronUp',
+  'ChevronDown',
 ] as const;
 
 export const LUCIDE_ICONS = LucideAngularModule.pick(

@@ -4,13 +4,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { ThemeToggle } from '../../../../core/theme/theme-toggle';
 import { AuthService } from '../../services/auth';
 import { AlertService } from '../../../../core/services/alert.service';
 import { PermissionsService } from '../../../../core/services/permissions.service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, ThemeToggle],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })

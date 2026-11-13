@@ -18,7 +18,7 @@
   border: 1px solid var(--stroke);
   border-radius: 22px;
   background:
-    radial-gradient(circle at top right, rgba(255, 159, 28, .12), transparent 38%),
+    radial-gradient(circle at top right, rgba(var(--accent-rgb), .12), transparent 38%),
     var(--surface-grad);
   box-shadow: var(--shadow-md);
 }
@@ -159,7 +159,7 @@
   height: 100%;
   border-radius: inherit;
   background: var(--accent-grad);
-  box-shadow: 0 0 12px rgba(255, 159, 28, .35);
+  box-shadow: 0 0 12px rgba(var(--accent-rgb), .35);
   transition: width .25s ease;
 }
 
@@ -192,8 +192,8 @@
 }
 
 .editor-step.is-active {
-  border-color: rgba(255, 159, 28, .35);
-  background: rgba(255, 159, 28, .09);
+  border-color: rgba(var(--accent-rgb), .35);
+  background: rgba(var(--accent-rgb), .09);
   color: var(--text);
 }
 
@@ -216,7 +216,7 @@
   border-color: var(--orange);
   background: var(--accent-grad);
   color: var(--on-accent);
-  box-shadow: 0 5px 14px rgba(255, 159, 28, .25);
+  box-shadow: 0 5px 14px rgba(var(--accent-rgb), .25);
 }
 
 .editor-step.is-complete .editor-step-icon {
@@ -404,7 +404,7 @@
 .editor-add-button:hover,
 .editor-catalog-add:hover {
   border-color: var(--orange);
-  background: rgba(255, 159, 28, .07);
+  background: rgba(var(--accent-rgb), .07);
   color: var(--orange);
 }
 

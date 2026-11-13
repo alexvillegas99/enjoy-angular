@@ -124,6 +124,16 @@ export const routes: Routes = [
             (m) => m.reportesRoutes,
           ),
       },
+      // PROMOTORES (gestión — distinta de /clientes y del reporte mensual)
+      {
+        path: 'promotores',
+        canActivate: [roleGuard],
+        data: { permissions: ['promotores.ver'], roles: ['admin'] },
+        loadComponent: () =>
+          import('./features/promotores/promotores-page').then(
+            (m) => m.PromotoresPage,
+          ),
+      },
 
       // NOTIFICACIONES / CAMPAÑAS
       {

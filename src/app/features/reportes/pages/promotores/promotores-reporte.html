@@ -25,13 +25,25 @@
 
   <!-- FILTROS -->
   <div class="card mb-6 print-hide" style="padding:18px;">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
       <div><label class="field-label">Desde</label><input type="date" class="input" [(ngModel)]="desde" /></div>
       <div><label class="field-label">Hasta</label><input type="date" class="input" [(ngModel)]="hasta" /></div>
+      <div>
+        <label class="field-label">Estado de las solicitudes</label>
+        <select class="input" [(ngModel)]="estado">
+          <option value="APROBADO">Solo aprobadas (cobradas)</option>
+          <option value="PENDIENTE">Solo pendientes</option>
+          <option value="TODAS">Todas (aprobadas + pendientes)</option>
+        </select>
+      </div>
       <button class="btn-primary" (click)="cargar()" [disabled]="loading">
         <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon> Actualizar
       </button>
     </div>
+    <p class="subtle mt-3" style="font-size:12px;">
+      ⓘ La comisión solo se acredita al promotor cuando la solicitud pasa a <strong>APROBADO</strong>.
+      "Pendientes" sirve para ver la actividad reciente.
+    </p>
   </div>
 
   @if (loading && !data) {

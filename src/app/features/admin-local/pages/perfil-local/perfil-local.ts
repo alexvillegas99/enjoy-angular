@@ -39,8 +39,8 @@ export class PerfilLocal implements OnInit {
   // UI helpers
   getEstadoClass(): string {
     return this.data?.estado
-      ? 'bg-green-100 text-green-700'
-      : 'bg-red-100 text-red-700';
+      ? 'badge badge-aprobado'
+      : 'badge badge-rechazado';
   }
 
   getRol(): string {

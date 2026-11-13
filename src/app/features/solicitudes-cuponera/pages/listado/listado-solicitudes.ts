@@ -139,16 +139,33 @@ export class ListadoSolicitudes implements OnInit {
   }
 
   getBadgeClasses(estado: string): string {
+    // Badges con buen contraste tanto en dark como en light.
     switch (estado) {
       case 'PENDIENTE':
-        return 'bg-amber-100 text-amber-700';
+        return 'badge-pendiente';
       case 'APROBADO':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'badge-aprobado';
       case 'RECHAZADO':
-        return 'bg-rose-100 text-rose-700';
+        return 'badge-rechazado';
       default:
-        return 'bg-gray-100 text-gray-600';
+        return 'badge-neutro';
     }
+  }
+
+  /** Precio neto que recibe el negocio: precio - descuento - comisión. */
+  netoNegocio(sol: any): number {
+    const precio = Number(sol?.cuponeraPrecio) || 0;
+    const desc = Number(sol?.montoDescuento) || 0;
+    const com = Number(sol?.montoComision) || 0;
+    return Math.max(0, precio - desc - com);
+  }
+
+  /** Lo que efectivamente pagó/transfirió el cliente (precio - descuento). */
+  pagadoPorCliente(sol: any): number {
+    const precio = Number(sol?.cuponeraPrecio) || 0;
+    const desc = Number(sol?.montoDescuento) || 0;
+    const final = Number(sol?.montoFinal) || (precio - desc);
+    return final > 0 ? final : Math.max(0, precio - desc);
   }
 
   formatFecha(fecha: string): string {

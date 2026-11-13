@@ -25,6 +25,7 @@ export class PromotoresReporte implements OnInit {
 
   desde = haceDiasISO(30);
   hasta = hoyISO();
+  estado: 'APROBADO' | 'PENDIENTE' | 'TODAS' = 'TODAS';
   loading = true;
   data: ReportePromotores | null = null;
 
@@ -36,7 +37,9 @@ export class PromotoresReporte implements OnInit {
 
   cargar() {
     this.loading = true;
-    this.svc.reporte({ desde: this.desde, hasta: this.hasta }).subscribe({
+    this.svc
+      .reporte({ desde: this.desde, hasta: this.hasta }, this.estado)
+      .subscribe({
       next: (r) => {
         this.data = r;
         this.loading = false;

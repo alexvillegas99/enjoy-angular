@@ -115,10 +115,10 @@ export class ListadoHistorial implements OnInit {
 
   badgeClass(estado: string): string {
     switch (estado) {
-      case 'pendiente': return 'bg-amber-100 text-amber-700';
-      case 'aprobado': return 'bg-emerald-100 text-emerald-700';
-      case 'revertido': return 'bg-rose-100 text-rose-700';
-      default: return 'bg-gray-100 text-gray-600';
+      case 'pendiente': return 'badge badge-pendiente';
+      case 'aprobado': return 'badge badge-aprobado';
+      case 'revertido': return 'badge badge-rechazado';
+      default: return 'badge badge-neutro';
     }
   }
 

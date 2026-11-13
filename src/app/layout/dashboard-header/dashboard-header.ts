@@ -1,5 +1,6 @@
 import { AuthService } from './../../features/auth/services/auth';
 import { Component, HostListener, inject } from '@angular/core';
+import { ThemeToggle } from '../../core/theme/theme-toggle';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlertService } from '../../core/services/alert.service';
@@ -9,7 +10,7 @@ import { SidebarStore } from '../../core/services/sidebar-store';
 @Component({
   selector: 'app-dashboard-header',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, ThemeToggle],
   templateUrl: './dashboard-header.html',
 })
 export class DashboardHeader {

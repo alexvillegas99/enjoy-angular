@@ -21,6 +21,9 @@ import {
   hoyISO,
   haceDiasISO,
 } from '../../utils/export';
+import { chartTheme } from '../../../../core/theme/chart-theme';
+
+const ct = chartTheme();
 
 echarts.use([BarChart, PieChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -63,7 +66,7 @@ export class LocalesReporte implements OnInit {
 
   private buildCharts() {
     const mute = '#A8B5CC';
-    const palette = ['#FF9F1C', '#5BA4F0', '#2BD67B', '#FFBF46', '#FF5C73', '#A07AFF'];
+    const palette = ct.palette.slice(0, 6);
     this.provinciasOption = {
       tooltip: { trigger: 'item', backgroundColor: '#0E1B2E', borderColor: '#27406B', textStyle: { color: '#CFD8E8' } },
       legend: { bottom: 0, textStyle: { color: mute, fontSize: 11 } },

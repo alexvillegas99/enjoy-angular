@@ -1,0 +1,215 @@
+<section class="animate-in mx-auto w-full max-w-7xl">
+
+  <!-- HEADER -->
+  <header class="page-header mb-6">
+    <div class="icon-badge icon-badge-primary" style="width:48px; height:48px;">
+      <lucide-icon name="user-check" style="width:22px; height:22px;"></lucide-icon>
+    </div>
+    <div class="page-header-title">
+      <h1 class="page-title">Promotores</h1>
+      <p class="subtle">
+        Buscá un cliente y convertilo en promotor. Defaults: {{ defaults.descuento }}% descuento / {{ defaults.comision }}% comisión.
+      </p>
+    </div>
+    <div class="page-header-actions">
+      <button class="btn-ghost" (click)="irAReporte()">
+        <lucide-icon name="chart-column" style="width:14px; height:14px;"></lucide-icon>
+        Ver reporte mensual
+      </button>
+    </div>
+  </header>
+
+  <!-- ═════════════ BUSCADOR PRINCIPAL ═════════════ -->
+  <div class="card card-accent mb-6" style="padding:24px;">
+    <div class="flex items-center gap-2 mb-3">
+      <lucide-icon name="search" style="width:20px; height:20px; color: var(--orange);"></lucide-icon>
+      <h3 style="margin:0; font-size:17px; font-weight:700;">Buscar cliente para agregar</h3>
+    </div>
+    <p class="subtle mb-4" style="font-size:13px;">
+      Escribí nombre, email o cédula. Si el cliente existe, podés convertirlo en promotor desde acá.
+    </p>
+
+    <div class="flex gap-2 items-stretch">
+      <input class="input flex-1"
+             [(ngModel)]="busquedaQ"
+             (keyup.enter)="buscar()"
+             placeholder="ej. Ana Pérez · ana@correo.com · 1712345678"
+             style="font-size:15px; padding:12px 14px;" />
+      <button class="btn-primary" (click)="buscar()" [disabled]="buscando">
+        <lucide-icon name="search" style="width:16px; height:16px;"></lucide-icon>
+        {{ buscando ? 'Buscando…' : 'Buscar' }}
+      </button>
+      @if (busquedaHecha || busquedaQ) {
+        <button class="btn-ghost" (click)="limpiarBusqueda()" title="Limpiar">
+          <lucide-icon name="x" style="width:14px; height:14px;"></lucide-icon>
+        </button>
+      }
+    </div>
+
+    <!-- RESULTADOS -->
+    @if (buscando) {
+      <p class="subtle mt-4">Buscando clientes…</p>
+    } @else if (busquedaHecha && resultados.length === 0) {
+      <div class="mt-4 text-center" style="padding:24px;">
+        <lucide-icon name="user-x" style="width:32px; height:32px; color: var(--text-mute); margin: 0 auto 10px;"></lucide-icon>
+        <p class="subtle">No se encontraron clientes que coincidan con "{{ busquedaQ }}".</p>
+      </div>
+    } @else if (resultados.length > 0) {
+      <div class="mt-4 flex flex-col gap-2">
+        <p class="subtle" style="font-size:12px;">{{ resultados.length }} resultado(s):</p>
+
+        @for (c of resultados; track c._id) {
+          <div class="card" style="padding:14px; border:1px solid var(--stroke);"
+               [style.borderColor]="expandidoId === c._id ? 'var(--orange)' : 'var(--stroke)'">
+
+            <!-- FILA CLIENTE -->
+            <button type="button"
+                    style="display:block; width:100%; background:transparent; border:0; padding:0; text-align:left; cursor:pointer;"
+                    (click)="elegir(c)">
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                  <div class="icon-badge" style="background: rgba(var(--accent-rgb), 0.12); color: var(--orange); width:38px; height:38px; flex-shrink:0;">
+                    <lucide-icon name="user" style="width:16px; height:16px;"></lucide-icon>
+                  </div>
+                  <div class="min-w-0">
+                    <div style="font-weight:600;">
+                      {{ nombreCliente(c) }}
+                      @if (c.isPromotor) {
+                        <span class="chip chip-active" style="margin-left:8px; font-size:11px;">
+                          PROMOTOR · {{ c.codigoDescuento }}
+                        </span>
+                      }
+                    </div>
+                    <div class="subtle truncate" style="font-size:12px;">
+                      {{ c.email || 'sin email' }} · {{ c.identificacion || 'sin cédula' }}
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                  @if (c.isPromotor) {
+                    <span class="subtle" style="font-size:12px;">Click para editar</span>
+                    <lucide-icon name="pencil" style="width:14px; height:14px; color: var(--text-mute);"></lucide-icon>
+                  } @else {
+                    <span class="subtle" style="font-size:12px;">
+                      {{ expandidoId === c._id ? 'Configurando…' : 'Click para agregar' }}
+                    </span>
+                    <lucide-icon [name]="expandidoId === c._id ? 'chevron-up' : 'user-plus'"
+                                 style="width:14px; height:14px; color: var(--orange);"></lucide-icon>
+                  }
+                </div>
+              </div>
+            </button>
+
+            <!-- FORM INLINE (solo si está expandido y NO es promotor todavía) -->
+            @if (expandidoId === c._id && !c.isPromotor) {
+              <div class="mt-4 pt-4" style="border-top:1px dashed var(--stroke);">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+                  <div>
+                    <label class="field-label">Código *</label>
+                    <input class="input" [(ngModel)]="nuevoCodigo" maxlength="20"
+                           style="text-transform: uppercase;" placeholder="ej. ANA20" />
+                  </div>
+                  <div>
+                    <label class="field-label">% descuento</label>
+                    <input class="input" type="number" min="0" max="80"
+                           [(ngModel)]="nuevoPctDescuento" [placeholder]="defaults.descuento.toString()" />
+                  </div>
+                  <div>
+                    <label class="field-label">% comisión</label>
+                    <input class="input" type="number" min="0" max="80"
+                           [(ngModel)]="nuevoPctComision" [placeholder]="defaults.comision.toString()" />
+                  </div>
+                </div>
+                <div class="flex justify-end gap-2">
+                  <button class="btn-ghost" (click)="expandidoId = null">Cancelar</button>
+                  <button class="btn-primary" (click)="activar(c)" [disabled]="guardandoActivar">
+                    <lucide-icon name="check" style="width:14px; height:14px;"></lucide-icon>
+                    {{ guardandoActivar ? 'Activando…' : 'Activar promotor' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="mt-4 text-center" style="padding:24px;">
+        <lucide-icon name="search" style="width:32px; height:32px; color: var(--text-mute); margin: 0 auto 10px;"></lucide-icon>
+        <p class="subtle">Escribí algo y pulsá <b>Buscar</b> para empezar.</p>
+      </div>
+    }
+  </div>
+
+  <!-- ═════════════ PROMOTORES ACTIVOS (referencia) ═════════════ -->
+  <div class="card" style="padding:18px;">
+    <div class="flex items-center justify-between mb-4">
+      <h3 style="margin:0; font-size:15px; font-weight:600; display:flex; align-items:center; gap:8px;">
+        <lucide-icon name="user-check" style="width:16px; height:16px; color: var(--orange);"></lucide-icon>
+        Promotores activos
+        <span class="chip" style="font-size:11px;">{{ promotores.length }}</span>
+      </h3>
+      <button class="btn-ghost" (click)="cargarActivos()" [disabled]="loadingActivos" title="Refrescar">
+        <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon>
+      </button>
+    </div>
+
+    @if (loadingActivos) {
+      <p class="subtle">Cargando…</p>
+    } @else if (promotores.length === 0) {
+      <div class="text-center" style="padding:28px 12px;">
+        <p class="subtle">Todavía no hay promotores. Buscá un cliente arriba y agregalo.</p>
+      </div>
+    } @else {
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--stroke); text-align:left;">
+              <th style="padding:10px 8px; font-size:12px; color: var(--text-mute);">Promotor</th>
+              <th style="padding:10px 8px; font-size:12px; color: var(--text-mute);">Código</th>
+              <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:center;">% Desc.</th>
+              <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:center;">% Com.</th>
+              <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Saldo</th>
+              <th style="padding:10px 8px; font-size:12px; color: var(--text-mute); text-align:right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of promotores; track p._id) {
+              <tr style="border-bottom: 1px solid var(--stroke);">
+                <td style="padding:12px 8px;">
+                  <div style="font-weight:600;">{{ nombreCliente(p) }}</div>
+                  <div class="subtle" style="font-size:12px;">{{ p.email || '—' }}</div>
+                </td>
+                <td style="padding:12px 8px;">
+                  <span class="chip chip-active" style="font-family: monospace;">
+                    {{ p.codigoDescuento || '—' }}
+                  </span>
+                </td>
+                <td style="padding:12px 8px; text-align:center;">
+                  {{ (p.porcentajeDescuento ?? defaults.descuento) }}%
+                </td>
+                <td style="padding:12px 8px; text-align:center;">
+                  {{ (p.porcentajeComision ?? defaults.comision) }}%
+                </td>
+                <td style="padding:12px 8px; text-align:right; font-weight:600;">
+                  {{ fmtMoneda(p.saldoPromotor) }}
+                </td>
+                <td style="padding:12px 8px;">
+                  <div class="flex items-center justify-end gap-2">
+                    <button class="btn-ghost" (click)="editar(p)" title="Editar">
+                      <lucide-icon name="pencil" style="width:14px; height:14px;"></lucide-icon>
+                    </button>
+                    <button class="btn-ghost" (click)="desactivar(p)" title="Desactivar"
+                            style="color: var(--danger, #ef4444);">
+                      <lucide-icon name="user-x" style="width:14px; height:14px;"></lucide-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+</section>

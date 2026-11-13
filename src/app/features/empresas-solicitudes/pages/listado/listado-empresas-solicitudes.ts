@@ -129,15 +129,15 @@ export class ListadoEmpresasSolicitudes implements OnInit {
   getBadgeClasses(estado: string): string {
     switch (estado) {
       case 'PENDIENTE':
-        return 'bg-amber-100 text-amber-700';
+        return 'badge-pendiente';
       case 'CONTACTADO':
-        return 'bg-sky-100 text-sky-700';
+        return 'badge-info';
       case 'APROBADO':
-        return 'bg-emerald-100 text-emerald-700';
+        return 'badge-aprobado';
       case 'RECHAZADO':
-        return 'bg-rose-100 text-rose-700';
+        return 'badge-rechazado';
       default:
-        return 'bg-gray-100 text-gray-600';
+        return 'badge-neutro';
     }
   }
 

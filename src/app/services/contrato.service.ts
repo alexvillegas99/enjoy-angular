@@ -45,8 +45,17 @@ export class ContratoService {
       );
   }
 
+  /** Pide al back que envíe un OTP por email para firmar. */
+  solicitarOtp() {
+    return this.http.post<{ email: string; expiraEn: string }>(
+      `${this.baseUrl}/solicitar-otp`,
+      {},
+    );
+  }
+
   aceptar(body: {
     cedulaBase64: string;
+    selfieBase64?: string;
     datosLocal: {
       ruc?: string;
       direccion?: string;
@@ -56,6 +65,7 @@ export class ContratoService {
       celular?: string;
     };
     aceptaTerminos: boolean;
+    otp: string;
   }) {
     return this.http
       .post<{ contratoUrl: string; cedulaUrl: string }>(

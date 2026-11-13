@@ -70,10 +70,14 @@ export class PromotorService {
     );
   }
 
-  reporte(rango: { desde?: string; hasta?: string } = {}) {
+  reporte(
+    rango: { desde?: string; hasta?: string } = {},
+    estado: 'APROBADO' | 'PENDIENTE' | 'TODAS' = 'APROBADO',
+  ) {
     let p = new HttpParams();
     if (rango.desde) p = p.set('desde', rango.desde);
     if (rango.hasta) p = p.set('hasta', rango.hasta);
+    p = p.set('estado', estado);
     return this.http.get<ReportePromotores>(`${this.reportesUrl}/promotores`, {
       params: p,
     });

@@ -20,6 +20,14 @@ export class InicioReportes {
       kpis: ['Total canjes', 'Ingreso total', 'Top horarios'],
     },
     {
+      slug: 'ventas-cuponeras',
+      icono: 'ticket',
+      titulo: 'Ventas de cuponeras',
+      bajada:
+        'Cuponeras vendidas por mes (solicitudes aprobadas) con neto al negocio, restando descuentos y comisiones de promotores.',
+      kpis: ['Ventas/mes', 'Neto', 'Por cuponera'],
+    },
+    {
       slug: 'locales',
       icono: 'store',
       titulo: 'Locales & Vendedores',
@@ -42,6 +50,14 @@ export class InicioReportes {
       bajada:
         'Rendimiento de promos flash y embudo de solicitudes con tiempo de aprobación.',
       kpis: ['Conversión flash', 'Embudo', 'Tiempo aprob.'],
+    },
+    {
+      slug: 'promotores',
+      icono: 'user-check',
+      titulo: 'Programa de promotores',
+      bajada:
+        'Ventas por código de promotor: cantidad de canjes, descuentos otorgados, comisiones generadas y saldo actual.',
+      kpis: ['Ventas por código', 'Comisión', 'Saldo'],
     },
   ];
 }

@@ -20,29 +20,52 @@
 
     <!-- MENU -->
     <nav class="flex-1 overflow-y-auto py-4 px-3">
-      @for (item of menu; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          class="nav-item"
-        >
-          <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
-          <span class="truncate">{{ item.label }}</span>
-        </a>
+      @for (item of menu; track item.label + (item.route || '')) {
+        @if (item.children) {
+          <!-- GRUPO COLAPSABLE -->
+          <button
+            type="button"
+            class="nav-group"
+            [class.is-active]="isGroupActive(item, router.url)"
+            (click)="toggleGroup(item.label)"
+          >
+            <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+            <span class="truncate flex-1 text-left">{{ item.label }}</span>
+            <lucide-icon
+              [name]="isGroupOpen(item.label) ? 'chevron-down' : 'chevron-right'"
+              class="shrink-0"
+              style="width:14px; height:14px; opacity: 0.6;"
+            ></lucide-icon>
+          </button>
+          @if (isGroupOpen(item.label)) {
+            <div class="nav-group-children">
+              @for (child of item.children; track child.route) {
+                <a
+                  [routerLink]="child.route"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: !!child.exact }"
+                  class="nav-item nav-item-child"
+                >
+                  <lucide-icon [name]="child.icon" class="shrink-0" style="width:14px; height:14px;"></lucide-icon>
+                  <span class="truncate">{{ child.label }}</span>
+                </a>
+              }
+            </div>
+          }
+        } @else {
+          <!-- ITEM PLANO -->
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: !!item.exact }"
+            class="nav-item"
+          >
+            <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+            <span class="truncate">{{ item.label }}</span>
+          </a>
+        }
       }
     </nav>
-
-    <!-- FOOTER -->
-    <div class="px-3 py-3" style="border-top: 1px solid var(--stroke);">
-      <a
-        routerLink="/configuracion"
-        routerLinkActive="active"
-        class="nav-item"
-      >
-        <lucide-icon name="settings" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
-        <span>Configuración</span>
-      </a>
-    </div>
   </div>
 </aside>
 
@@ -80,32 +103,53 @@
       </button>
     </div>
 
-    <!-- MENU completo -->
+    <!-- MENU completo (mismo árbol con grupos) -->
     <nav class="flex-1 overflow-y-auto py-4 px-3">
-      @for (item of menu; track item.route) {
-        <a
-          [routerLink]="item.route"
-          routerLinkActive="active"
-          (click)="closeMobile()"
-          class="nav-item"
-        >
-          <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
-          <span class="truncate">{{ item.label }}</span>
-        </a>
+      @for (item of menu; track item.label + (item.route || '')) {
+        @if (item.children) {
+          <button
+            type="button"
+            class="nav-group"
+            [class.is-active]="isGroupActive(item, router.url)"
+            (click)="toggleGroup(item.label)"
+          >
+            <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+            <span class="truncate flex-1 text-left">{{ item.label }}</span>
+            <lucide-icon
+              [name]="isGroupOpen(item.label) ? 'chevron-down' : 'chevron-right'"
+              class="shrink-0"
+              style="width:14px; height:14px; opacity: 0.6;"
+            ></lucide-icon>
+          </button>
+          @if (isGroupOpen(item.label)) {
+            <div class="nav-group-children">
+              @for (child of item.children; track child.route) {
+                <a
+                  [routerLink]="child.route"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: !!child.exact }"
+                  (click)="closeMobile()"
+                  class="nav-item nav-item-child"
+                >
+                  <lucide-icon [name]="child.icon" class="shrink-0" style="width:14px; height:14px;"></lucide-icon>
+                  <span class="truncate">{{ child.label }}</span>
+                </a>
+              }
+            </div>
+          }
+        } @else {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: !!item.exact }"
+            (click)="closeMobile()"
+            class="nav-item"
+          >
+            <lucide-icon [name]="item.icon" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
+            <span class="truncate">{{ item.label }}</span>
+          </a>
+        }
       }
     </nav>
-
-    <!-- FOOTER -->
-    <div class="px-3 py-3" style="border-top: 1px solid var(--stroke);">
-      <a
-        routerLink="/configuracion"
-        routerLinkActive="active"
-        (click)="closeMobile()"
-        class="nav-item"
-      >
-        <lucide-icon name="settings" class="shrink-0" style="width:16px; height:16px;"></lucide-icon>
-        <span>Configuración</span>
-      </a>
-    </div>
   </aside>
 }

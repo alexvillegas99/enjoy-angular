@@ -28,14 +28,17 @@
                 "glob": "**/*",
                 "input": "public"
               },
-               {
+              {
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/theme-polar.scss",
+              "src/theme-tormenta.scss",
+              "src/theme-ediciones.scss"
             ]
           },
           "configurations": {
@@ -58,6 +61,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "local": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -70,6 +84,9 @@
             },
             "development": {
               "buildTarget": "enjoy-angular:build:development"
+            },
+            "local": {
+              "buildTarget": "enjoy-angular:build:local"
             }
           },
           "defaultConfiguration": "development"
@@ -93,7 +110,10 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/theme-polar.scss",
+              "src/theme-tormenta.scss",
+              "src/theme-ediciones.scss"
             ]
           }
         }

@@ -58,6 +58,14 @@ export const reportesRoutes: Routes = [
           ),
         data: { titulo: 'Programa de promotores' },
       },
+      {
+        path: 'ventas-cuponeras',
+        loadComponent: () =>
+          import(
+            './pages/ventas-cuponeras/ventas-cuponeras-reporte'
+          ).then((m) => m.VentasCuponerasReporte),
+        data: { titulo: 'Ventas de cuponeras' },
+      },
     ],
   },
 ];

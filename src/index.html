@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es" data-theme="polar">
 <head>
   <meta charset="utf-8">
   <title>Enjoy</title>
@@ -8,7 +8,9 @@
   <link rel="icon" type="image/x-icon" href="assets/logos/logoImagen.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    try { var t = localStorage.getItem('enjoy-theme'); if (t === 'polar' || t === 'tormenta') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  </script>
 </head>
 <body>
   <app-root></app-root>

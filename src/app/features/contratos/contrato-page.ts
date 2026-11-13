@@ -43,6 +43,9 @@ export class ContratoPage implements OnInit, AfterViewInit {
     celular: '',
   };
 
+  /** Selfie capturado por cámara (base64 data URL). */
+  selfieBase64: string | null = null;
+
   /** Foto de cédula en base64 (data URL). */
   cedulaPreviewUrl: string | null = null;
   cedulaBase64: string | null = null;
@@ -130,6 +133,7 @@ export class ContratoPage implements OnInit, AfterViewInit {
   get puedeFirmar(): boolean {
     return (
       this.scrollCompleto &&
+      !!this.selfieBase64 &&
       !!this.cedulaBase64 &&
       this.aceptaTerminos &&
       !!this.datosLocal.ruc.trim() &&
@@ -140,7 +144,17 @@ export class ContratoPage implements OnInit, AfterViewInit {
     );
   }
 
-  async firmar() {
+  /** Abre el modal de captura de selfie y guarda el resultado. */
+  async capturarSelfie(): Promise<void> {
+    const r = await this._capturarSelfieWeb();
+    if (r) this.selfieBase64 = r;
+  }
+
+  quitarSelfie() {
+    this.selfieBase64 = null;
+  }
+
+  async firmar(): Promise<void> {
     if (!this.puedeFirmar) {
       this.alert.warning(
         'Faltan datos',
@@ -148,20 +162,90 @@ export class ContratoPage implements OnInit, AfterViewInit {
       );
       return;
     }
+    // 1) Pedir OTP al back (lo envía por email)
+    this.saving = true;
+    let emailDest = '';
+    try {
+      const r = await this.svc.solicitarOtp().toPromise();
+      emailDest = r?.email ?? '';
+    } catch (e: any) {
+      this.saving = false;
+      this.alert.error(
+        'No se pudo enviar el código',
+        e?.error?.message || 'Intentá en unos segundos.',
+      );
+      return;
+    }
+    this.saving = false;
+
+    // 2) Pedir el código al usuario via SweetAlert
+    const Swal = (await import('sweetalert2')).default;
+    const result = await Swal.fire({
+      title: 'Código de firma enviado',
+      html: `
+        <p style="text-align:left; color:#a0aab8; font-size:13px; margin-bottom:14px;">
+          Te enviamos un código de <b>6 dígitos</b> a <b>${emailDest}</b>.
+          Ingresalo para confirmar tu firma.
+        </p>
+        <input id="swal-otp" inputmode="numeric" maxlength="6"
+               class="swal2-input"
+               style="text-align:center; letter-spacing:10px; font-size:28px;
+                      font-weight:800; margin:0;"
+               placeholder="------" />
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Confirmar firma',
+      cancelButtonText: 'Cancelar',
+      showDenyButton: true,
+      denyButtonText: 'Reenviar código',
+      customClass: {
+        popup: 'enjoy-swal-popup',
+        title: 'enjoy-swal-title',
+        confirmButton: 'enjoy-swal-confirm',
+        cancelButton: 'enjoy-swal-cancel',
+        denyButton: 'enjoy-swal-cancel',
+      },
+      preConfirm: () => {
+        const v = (document.getElementById('swal-otp') as HTMLInputElement)
+          ?.value?.trim();
+        if (!v || !/^\d{6}$/.test(v)) {
+          Swal.showValidationMessage('Ingresá los 6 dígitos.');
+          return false;
+        }
+        return v;
+      },
+    });
+
+    // El usuario pidió reenviar
+    if (result.isDenied) {
+      try {
+        await this.svc.solicitarOtp().toPromise();
+        this.alert.success('Código reenviado', 'Revisá tu email.');
+      } catch (_) {
+        this.alert.error('Error', 'No se pudo reenviar.');
+      }
+      // Recursivo para que pueda volver a ingresar
+      return this.firmar();
+    }
+    if (!result.isConfirmed || !result.value) return;
+    const otp = String(result.value);
+
+    // 3) Aceptar con OTP + selfie (ya capturado antes).
     this.saving = true;
     this.svc
       .aceptar({
         cedulaBase64: this.cedulaBase64!,
+        selfieBase64: this.selfieBase64 ?? undefined,
         datosLocal: this.datosLocal,
         aceptaTerminos: true,
+        otp,
       })
       .subscribe({
         next: () => {
           this.alert.success(
             'Contrato firmado',
-            'Tu contrato fue registrado. Ya tenés acceso al panel.',
+            'Tu contrato fue registrado con firma simple verificada por OTP. Ya tenés acceso al panel.',
           );
-          // Refrescar cache y navegar al home admin-local.
           this.router.navigate(['/dashboard-local']);
         },
         error: (e) => {
@@ -172,5 +256,87 @@ export class ContratoPage implements OnInit, AfterViewInit {
           );
         },
       });
+  }
+
+  /**
+   * Modal con preview de cámara frontal + botón "Capturar".
+   * Devuelve un dataURL base64 o null si el usuario canceló.
+   *
+   * No usa ML Kit (eso vive en la app móvil); en web es un selfie simple
+   * con la cámara del navegador — suficiente como anexo de identidad.
+   */
+  private async _capturarSelfieWeb(): Promise<string | null> {
+    const Swal = (await import('sweetalert2')).default;
+    let stream: MediaStream | null = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 480, height: 360 },
+        audio: false,
+      });
+    } catch (_) {
+      this.alert.error(
+        'Sin acceso a la cámara',
+        'Permití el acceso a la cámara desde el navegador para continuar.',
+      );
+      return null;
+    }
+
+    const html = `
+      <p style="text-align:left; color:#a0aab8; font-size:13px; margin-bottom:10px;">
+        Mirá a la cámara y pulsá <b>Capturar</b>. La foto queda como anexo del contrato.
+      </p>
+      <video id="swal-selfie-video" autoplay playsinline muted
+             style="width:100%; max-width:380px; border-radius:14px; background:#000;
+                    transform: scaleX(-1);"></video>
+      <canvas id="swal-selfie-canvas" style="display:none;"></canvas>
+    `;
+
+    return await new Promise<string | null>((resolve) => {
+      Swal.fire({
+        title: 'Selfie del representante',
+        html,
+        showCancelButton: true,
+        confirmButtonText: 'Capturar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+          popup: 'enjoy-swal-popup',
+          title: 'enjoy-swal-title',
+          confirmButton: 'enjoy-swal-confirm',
+          cancelButton: 'enjoy-swal-cancel',
+        },
+        didOpen: () => {
+          const v = document.getElementById(
+            'swal-selfie-video',
+          ) as HTMLVideoElement;
+          if (v && stream) v.srcObject = stream;
+        },
+        preConfirm: () => {
+          const v = document.getElementById(
+            'swal-selfie-video',
+          ) as HTMLVideoElement;
+          const c = document.getElementById(
+            'swal-selfie-canvas',
+          ) as HTMLCanvasElement;
+          if (!v || !c) return false;
+          c.width = v.videoWidth;
+          c.height = v.videoHeight;
+          const ctx = c.getContext('2d');
+          if (!ctx) return false;
+          // Invertir horizontalmente para coincidir con preview.
+          ctx.translate(c.width, 0);
+          ctx.scale(-1, 1);
+          ctx.drawImage(v, 0, 0, c.width, c.height);
+          return c.toDataURL('image/jpeg', 0.85);
+        },
+      }).then((r) => {
+        // Cerrar stream pase lo que pase.
+        stream?.getTracks().forEach((t) => t.stop());
+        if (r.isConfirmed && typeof r.value === 'string') {
+          resolve(r.value);
+        } else {
+          resolve(null);
+        }
+      });
+    });
   }
 }

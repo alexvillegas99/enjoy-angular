@@ -20,6 +20,9 @@ import {
   hoyISO,
   haceDiasISO,
 } from '../../utils/export';
+import { chartTheme } from '../../../../core/theme/chart-theme';
+
+const ct = chartTheme();
 
 echarts.use([LineChart, GridComponent, TooltipComponent, CanvasRenderer]);
 
@@ -73,7 +76,7 @@ export class CreadorDetalle implements OnInit {
 
   private buildChart() {
     const mute = '#A8B5CC';
-    const orange = '#FF9F1C';
+    const orange = ct.accent;
     const grid = 'rgba(255,255,255,0.08)';
     const text = '#CFD8E8';
     this.serieOption = {
@@ -110,8 +113,8 @@ export class CreadorDetalle implements OnInit {
               x2: 0,
               y2: 1,
               colorStops: [
-                { offset: 0, color: 'rgba(255,159,28,0.45)' },
-                { offset: 1, color: 'rgba(255,159,28,0.00)' },
+                { offset: 0, color: `rgba(${ct.accentRgb},0.45)` },
+                { offset: 1, color: `rgba(${ct.accentRgb},0.00)` },
               ],
             },
           },

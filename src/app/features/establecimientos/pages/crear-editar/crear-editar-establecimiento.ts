@@ -288,6 +288,9 @@ export class CrearEditarEstablecimiento {
       aplicaTodosLosDias: true,
       diasAplicables: [] as string[],
       horarioPorDia: {} as Record<string, { abre: string; cierra: string }>,
+      // Horario "todos los días" — solo UI, no se persiste como tal. Se usa
+      // para autogenerar `scheduleLabel` cuando aplicaTodosLosDias=true.
+      horarioGeneral: { abre: '09:00', cierra: '18:00' },
       scheduleLabel: '',
       tags: [] as string[],
       fechasExcluidas: [] as Date[],
@@ -376,6 +379,9 @@ export class CrearEditarEstablecimiento {
             this.provinciaSel = e.provinciaId ?? null;
 
             this.convertirFechas();
+            // Reconstituir horarioGeneral desde el scheduleLabel guardado
+            // para que el form pre-cargue con los valores correctos.
+            this.hidratarHorarioGeneral();
             this.loading = false;
           },
           error: (err) => {
@@ -841,6 +847,91 @@ export class CrearEditarEstablecimiento {
         abre: '09:00',
         cierra: '18:00',
       };
+    }
+  }
+
+  /**
+   * Genera el `scheduleLabel` (string que ven los clientes) a partir del
+   * estado actual del form. Sustituye al viejo `<app-horario-builder>` que
+   * mostraba un input separado.
+   *
+   * - "Aplica todos los días" → "Lun-Dom 09:00-18:00".
+   * - Días específicos con el MISMO horario → "Lun, Mié, Vie 09:00-18:00".
+   * - Días específicos con horarios distintos → "Lun 09-13, Mié 14-20, Vie 09-18".
+   */
+  actualizarScheduleLabel() {
+    const dp = this.model.detallePromocion;
+    const fmt = (s: string) => (s || '').slice(0, 5);
+
+    const abrevDia: Record<string, string> = {
+      lunes: 'Lun',
+      martes: 'Mar',
+      miercoles: 'Mié',
+      jueves: 'Jue',
+      viernes: 'Vie',
+      sabado: 'Sáb',
+      domingo: 'Dom',
+    };
+
+    if (dp.aplicaTodosLosDias) {
+      const a = fmt(dp.horarioGeneral?.abre ?? '09:00');
+      const c = fmt(dp.horarioGeneral?.cierra ?? '18:00');
+      dp.scheduleLabel = `Lun-Dom ${a}-${c}`;
+      return;
+    }
+
+    const dias: string[] = dp.diasAplicables ?? [];
+    if (!dias.length) {
+      dp.scheduleLabel = '';
+      return;
+    }
+
+    // Mantener orden semanal canónico, no el de selección del usuario.
+    const orden = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+    const ordenados = orden.filter((d) => dias.includes(d));
+
+    // ¿Todos los días seleccionados tienen el mismo horario?
+    const horarios = ordenados.map((d) => dp.horarioPorDia?.[d]);
+    const mismoHorario =
+      horarios.length > 0 &&
+      horarios.every(
+        (h) =>
+          h &&
+          fmt(h.abre) === fmt(horarios[0]?.abre ?? '') &&
+          fmt(h.cierra) === fmt(horarios[0]?.cierra ?? ''),
+      );
+
+    if (mismoHorario) {
+      const a = fmt(horarios[0]!.abre);
+      const c = fmt(horarios[0]!.cierra);
+      dp.scheduleLabel = `${ordenados.map((d) => abrevDia[d] ?? d).join(', ')} ${a}-${c}`;
+    } else {
+      dp.scheduleLabel = ordenados
+        .map((d) => {
+          const h = dp.horarioPorDia?.[d];
+          if (!h) return abrevDia[d] ?? d;
+          return `${abrevDia[d] ?? d} ${fmt(h.abre)}-${fmt(h.cierra)}`;
+        })
+        .join(' · ');
+    }
+  }
+
+  /**
+   * Al cargar un establecimiento existente, parsea el `scheduleLabel`
+   * (formato "Lun-Dom HH:MM-HH:MM") para reconstituir `horarioGeneral`.
+   * Si no matchea ese patrón, deja los defaults. Llamado desde ngOnInit
+   * después de mergear el documento.
+   */
+  hidratarHorarioGeneral() {
+    const dp = this.model.detallePromocion;
+    if (!dp.horarioGeneral) {
+      dp.horarioGeneral = { abre: '09:00', cierra: '18:00' };
+    }
+    const label = dp.scheduleLabel ?? '';
+    // Match laxo: "...HH:MM-HH:MM" o "...HH:MM - HH:MM" al final del string.
+    const m = label.match(/(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})\s*$/);
+    if (m) {
+      dp.horarioGeneral = { abre: m[1], cierra: m[2] };
     }
   }
 

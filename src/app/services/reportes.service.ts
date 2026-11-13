@@ -69,4 +69,13 @@ export class ReportesService {
       params: this.params(r),
     });
   }
+
+  ventasCuponeras(
+    r: RangoFechas,
+    granularidad: 'dia' | 'semana' | 'mes' = 'mes',
+  ) {
+    return this.http.get<any>(`${this.baseUrl}/ventas-cuponeras`, {
+      params: this.params(r, { granularidad }),
+    });
+  }
 }

@@ -22,6 +22,9 @@ import {
   hoyISO,
   haceDiasISO,
 } from '../../utils/export';
+import { chartTheme } from '../../../../core/theme/chart-theme';
+
+const ct = chartTheme();
 
 echarts.use([
   BarChart,
@@ -93,15 +96,15 @@ export class FlashReporte implements OnInit {
     const text = '#CFD8E8';
     const grid = 'rgba(255,255,255,0.08)';
     const palette: Record<string, string> = {
-      ACTIVA: '#2BD67B',
-      PAUSADA: '#FFBF46',
-      VENCIDA: '#5BA4F0',
-      ELIMINADA: '#FF5C73',
-      PENDIENTE: '#FFBF46',
-      APROBADA: '#2BD67B',
-      CONFIRMADA: '#2BD67B',
-      PAGADA: '#2BD67B',
-      RECHAZADA: '#FF5C73',
+      ACTIVA: ct.ok,
+      PAUSADA: ct.warn,
+      VENCIDA: ct.secondary,
+      ELIMINADA: ct.danger,
+      PENDIENTE: ct.warn,
+      APROBADA: ct.ok,
+      CONFIRMADA: ct.ok,
+      PAGADA: ct.ok,
+      RECHAZADA: ct.danger,
     };
 
     // Flash por estado
@@ -123,7 +126,7 @@ export class FlashReporte implements OnInit {
           data: (this.flash?.porEstado ?? []).map((e: any) => ({
             name: e.estado,
             value: e.total,
-            itemStyle: { color: palette[e.estado] || '#FF9F1C' },
+            itemStyle: { color: palette[e.estado] || ct.accent },
           })),
         },
       ],
@@ -156,7 +159,7 @@ export class FlashReporte implements OnInit {
           data: porEstado.map((p: any) => ({
             value: p.total,
             itemStyle: {
-              color: palette[p.estado] || '#FF9F1C',
+              color: palette[p.estado] || ct.accent,
               borderRadius: [0, 6, 6, 0],
             },
           })),
@@ -189,8 +192,8 @@ export class FlashReporte implements OnInit {
           type: 'line',
           smooth: true,
           symbolSize: 6,
-          lineStyle: { color: '#5BA4F0', width: 3 },
-          itemStyle: { color: '#5BA4F0' },
+          lineStyle: { color: ct.secondary, width: 3 },
+          itemStyle: { color: ct.secondary },
           areaStyle: {
             color: {
               type: 'linear',

@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ConfiguracionService, Configuracion } from '../../../../services/configuracion.service';
 import { AlertService } from '../../../../core/services/alert.service';
@@ -16,7 +17,7 @@ interface ConfigUI extends Configuracion {
 @Component({
   selector: 'app-ajustes',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, RouterModule, LucideAngularModule],
   templateUrl: './ajustes.html',
 })
 export class Ajustes implements OnInit {

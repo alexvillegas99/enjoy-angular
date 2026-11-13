@@ -5,6 +5,9 @@ import { RouterModule } from '@angular/router';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { EChartsOption } from 'echarts';
 import { DashboardService, DashboardResumen } from '../../../../services/dashboard.service';
+import { chartTheme } from '../../../../core/theme/chart-theme';
+
+const ct = chartTheme();
 
 @Component({
   selector: 'app-home',
@@ -93,10 +96,10 @@ export class Home implements OnInit {
   }
 
   private generarGraficos(d: DashboardResumen) {
-    const accent = '#FF9F1C';
-    const primary = '#152A47';
-    const accentLight = '#FFBF46';
-    const grayMedium = '#7A869A';
+    const accent = ct.accent;
+    const primary = ct.primary;
+    const accentLight = ct.accentLight;
+    const grayMedium = ct.mute;
 
     // Pie: Estado de cupones
     this.estadoCuponesChart = {
@@ -131,13 +134,13 @@ export class Home implements OnInit {
         type: 'category',
         data: labels,
         axisLabel: { fontSize: 10, color: grayMedium },
-        axisLine: { lineStyle: { color: '#E5E7EB' } },
+        axisLine: { lineStyle: { color: ct.axis } },
       },
       yAxis: {
         type: 'value',
         minInterval: 1,
         axisLabel: { fontSize: 10, color: grayMedium },
-        splitLine: { lineStyle: { color: '#F3F4F6' } },
+        splitLine: { lineStyle: { color: ct.split } },
       },
       series: [
         {
@@ -153,8 +156,8 @@ export class Home implements OnInit {
               type: 'linear',
               x: 0, y: 0, x2: 0, y2: 1,
               colorStops: [
-                { offset: 0, color: 'rgba(255,159,28,0.25)' },
-                { offset: 1, color: 'rgba(255,159,28,0.02)' },
+                { offset: 0, color: `rgba(${ct.accentRgb},0.25)` },
+                { offset: 1, color: `rgba(${ct.accentRgb},0.02)` },
               ],
             },
           },
@@ -170,7 +173,7 @@ export class Home implements OnInit {
         type: 'value',
         minInterval: 1,
         axisLabel: { fontSize: 10, color: grayMedium },
-        splitLine: { lineStyle: { color: '#F3F4F6' } },
+        splitLine: { lineStyle: { color: ct.split } },
       },
       yAxis: {
         type: 'category',
@@ -185,7 +188,7 @@ export class Home implements OnInit {
           barWidth: 18,
           data: [
             { value: this.solicitudesRechazadas, itemStyle: { color: grayMedium } },
-            { value: this.solicitudesAprobadas, itemStyle: { color: '#22C55E' } },
+            { value: this.solicitudesAprobadas, itemStyle: { color: ct.ok } },
             { value: this.solicitudesContactadas, itemStyle: { color: accentLight } },
             { value: this.solicitudesPendientes, itemStyle: { color: accent } },
           ],

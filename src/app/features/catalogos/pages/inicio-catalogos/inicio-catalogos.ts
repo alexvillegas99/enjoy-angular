@@ -53,7 +53,7 @@ export class InicioCatalogos {
       descripcion:
         'Define y organiza las categorías usadas en el sistema.',
       icono: 'tags',
-      iconBg: 'rgba(255, 159, 28, 0.16)',
+      iconBg: 'rgba(var(--accent-rgb), 0.16)',
       iconColor: 'var(--orange)',
       route: '/catalogos/categorias',
     },

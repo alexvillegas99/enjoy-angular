@@ -478,21 +478,6 @@
       </div>
 
       <div class="md:col-span-2">
-        <label class="form-label">Horario de la promoción</label>
-        <p class="form-hint mb-2">Selecciona los días y el rango de hora; el texto se arma solo en un formato estándar.</p>
-        @if (model.detallePromocion.scheduleLabel) {
-          <p class="text-xs text-text-body mb-1">Actual: <span class="font-medium text-text-dark">{{ model.detallePromocion.scheduleLabel }}</span></p>
-        }
-        <app-horario-builder
-          [value]="model.detallePromocion.scheduleLabel"
-          (valueChange)="model.detallePromocion.scheduleLabel = $event"
-        ></app-horario-builder>
-        @if (errors['scheduleLabel']) {
-          <p class="form-hint text-danger">{{ errors['scheduleLabel'] }}</p>
-        }
-      </div>
-
-      <div class="md:col-span-2">
         <label class="form-label">Descripción del local</label>
         <textarea
           class="input min-h-[90px]"
@@ -529,15 +514,116 @@
         </div>
       </div>
 
-      <!-- Checkboxes -->
-      <div class="md:col-span-2 flex flex-wrap gap-6">
-        <!-- 2x1 ya no es editable: todas las promos son 2x1 (siempre true). -->
-        <label class="flex items-center gap-2 text-sm text-text-dark cursor-pointer">
-          <input type="checkbox" class="accent-accent w-4 h-4" [(ngModel)]="model.detallePromocion.aplicaTodosLosDias" (change)="toggleAplicaTodosLosDias()" />
-          Aplica todos los días
-        </label>
-      </div>
     </div>
+  </section>
+
+  <!-- HORARIO DE LA PROMOCIÓN (unificado) -->
+  <section class="card editor-form-section">
+    <header class="editor-card-header">
+      <div class="icon-badge icon-badge-primary">
+        <lucide-icon name="calendar-clock" class="w-4 h-4"></lucide-icon>
+      </div>
+      <div class="flex-1">
+        <h3 class="section-title text-sm">Horario de la promoción</h3>
+        <p class="subtle text-xs">Definí cuándo está activa. Si marcás "Aplica todos los días" usás un solo horario; sino, elegís los días específicos con su horario propio.</p>
+      </div>
+    </header>
+
+    <!-- Toggle "Aplica todos los días" -->
+    <label class="flex items-center gap-2 text-sm text-text-dark cursor-pointer mb-4">
+      <input
+        type="checkbox"
+        class="accent-accent w-4 h-4"
+        [(ngModel)]="model.detallePromocion.aplicaTodosLosDias"
+        (change)="toggleAplicaTodosLosDias(); actualizarScheduleLabel()"
+      />
+      <strong>Aplica todos los días</strong>
+      <span class="subtle text-xs">(Lun a Dom con el mismo horario)</span>
+    </label>
+
+    <!-- CASO A: un solo horario para toda la semana -->
+    @if (model.detallePromocion.aplicaTodosLosDias) {
+      <div class="editor-day-row">
+        <span class="w-32 text-sm font-medium text-text-dark">Lunes a Domingo</span>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-text-body">Abre</label>
+          <input
+            type="time"
+            class="input w-auto px-2 py-1 text-xs"
+            [(ngModel)]="model.detallePromocion.horarioGeneral.abre"
+            (ngModelChange)="actualizarScheduleLabel()"
+          />
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-text-body">Cierra</label>
+          <input
+            type="time"
+            class="input w-auto px-2 py-1 text-xs"
+            [(ngModel)]="model.detallePromocion.horarioGeneral.cierra"
+            (ngModelChange)="actualizarScheduleLabel()"
+          />
+        </div>
+      </div>
+    }
+
+    <!-- CASO B: días específicos -->
+    @if (!model.detallePromocion.aplicaTodosLosDias) {
+      <div class="flex flex-wrap gap-2 mb-4">
+        @for (dia of dias; track dia) {
+          <button
+            type="button"
+            class="chip"
+            [class.is-active]="model.detallePromocion.diasAplicables.includes(dia)"
+            (click)="toggleDia(dia); actualizarScheduleLabel()"
+          >
+            {{ dia }}
+          </button>
+        }
+      </div>
+
+      @if (model.detallePromocion.diasAplicables.length) {
+        <div class="space-y-3">
+          @for (dia of model.detallePromocion.diasAplicables; track dia) {
+            <div class="editor-day-row">
+              <span class="w-24 capitalize text-sm font-medium text-text-dark">{{ dia }}</span>
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-text-body">Abre</label>
+                <input
+                  type="time"
+                  class="input w-auto px-2 py-1 text-xs"
+                  [(ngModel)]="model.detallePromocion.horarioPorDia[dia].abre"
+                  (ngModelChange)="actualizarScheduleLabel()"
+                />
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-text-body">Cierra</label>
+                <input
+                  type="time"
+                  class="input w-auto px-2 py-1 text-xs"
+                  [(ngModel)]="model.detallePromocion.horarioPorDia[dia].cierra"
+                  (ngModelChange)="actualizarScheduleLabel()"
+                />
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="subtle text-xs italic">Seleccioná los días en los que la promoción está activa.</p>
+      }
+    }
+
+    <!-- Preview del scheduleLabel generado -->
+    @if (model.detallePromocion.scheduleLabel) {
+      <div class="mt-4 px-3 py-2 bg-surface-muted rounded-lg">
+        <p class="text-xs text-text-body">
+          Texto que verán los clientes:
+          <span class="font-semibold text-text-dark">{{ model.detallePromocion.scheduleLabel }}</span>
+        </p>
+      </div>
+    }
+    @if (errors['scheduleLabel']) {
+      <p class="form-hint text-danger mt-2">{{ errors['scheduleLabel'] }}</p>
+    }
   </section>
 
   <!-- FECHAS EXCLUIDAS -->
@@ -582,51 +668,8 @@
     </div>
   </section>
 
-  <!-- DÍAS Y HORARIOS ESPECÍFICOS -->
-  @if (!model.detallePromocion.aplicaTodosLosDias) {
-    <section class="card editor-form-section">
-      <header class="editor-card-header">
-        <div class="icon-badge icon-badge-primary">
-          <lucide-icon name="calendar-clock" class="w-4 h-4"></lucide-icon>
-        </div>
-        <div>
-          <h3 class="section-title text-sm">Días y horarios específicos</h3>
-          <p class="subtle text-xs">Define excepciones cuando la promoción no aplica todos los días.</p>
-        </div>
-      </header>
-
-      <div class="flex flex-wrap gap-2 mb-5">
-        @for (dia of dias; track dia) {
-          <button
-            type="button"
-            class="chip"
-            [class.is-active]="model.detallePromocion.diasAplicables.includes(dia)"
-            (click)="toggleDia(dia)"
-          >
-            {{ dia }}
-          </button>
-        }
-      </div>
-
-      @if (model.detallePromocion.diasAplicables.length) {
-        <div class="space-y-3">
-          @for (dia of model.detallePromocion.diasAplicables; track dia) {
-            <div class="editor-day-row">
-              <span class="w-24 capitalize text-sm font-medium text-text-dark">{{ dia }}</span>
-              <div class="flex items-center gap-2">
-                <label class="text-xs text-text-body">Abre</label>
-                <input type="time" class="input w-auto px-2 py-1 text-xs" [(ngModel)]="model.detallePromocion.horarioPorDia[dia].abre" />
-              </div>
-              <div class="flex items-center gap-2">
-                <label class="text-xs text-text-body">Cierra</label>
-                <input type="time" class="input w-auto px-2 py-1 text-xs" [(ngModel)]="model.detallePromocion.horarioPorDia[dia].cierra" />
-              </div>
-            </div>
-          }
-        </div>
-      }
-    </section>
-  }
+  <!-- (Sección "Días y horarios específicos" fusionada en "Horario de la
+       promoción" arriba — un solo lugar para definir días + horarios.) -->
 
   <!-- PROMOCIONES EXTRA -->
   <section class="card editor-form-section">

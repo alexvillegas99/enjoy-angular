@@ -27,6 +27,9 @@ import {
   hoyISO,
   haceDiasISO,
 } from '../../utils/export';
+import { chartTheme } from '../../../../core/theme/chart-theme';
+
+const ct = chartTheme();
 
 echarts.use([
   LineChart,
@@ -98,7 +101,7 @@ export class CanjesReporte implements OnInit {
   }
 
   private buildCharts() {
-    const orange = '#FF9F1C';
+    const orange = ct.accent;
     const text = '#CFD8E8';
     const mute = '#A8B5CC';
     const grid = 'rgba(255,255,255,0.08)';
@@ -132,8 +135,8 @@ export class CanjesReporte implements OnInit {
               type: 'linear',
               x: 0, y: 0, x2: 0, y2: 1,
               colorStops: [
-                { offset: 0, color: 'rgba(255,159,28,0.45)' },
-                { offset: 1, color: 'rgba(255,159,28,0.00)' },
+                { offset: 0, color: `rgba(${ct.accentRgb},0.45)` },
+                { offset: 1, color: `rgba(${ct.accentRgb},0.00)` },
               ],
             },
           },
@@ -171,7 +174,7 @@ export class CanjesReporte implements OnInit {
     };
 
     // Métodos de pago
-    const palette = ['#FF9F1C', '#5BA4F0', '#2BD67B', '#FFBF46', '#FF5C73'];
+    const palette = ct.palette.slice(0, 5);
     this.metodosOption = {
       tooltip: { trigger: 'item', backgroundColor: '#0E1B2E', borderColor: '#27406B', textStyle: { color: text } },
       legend: { bottom: 0, textStyle: { color: mute } },

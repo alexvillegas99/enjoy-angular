@@ -27,6 +27,7 @@ export class ClientesService {
   listarAdmin(filtros: {
     q?: string;
     estado?: string;
+    isPromotor?: 'true' | 'false';
     page?: number;
     limit?: number;
   }) {
@@ -38,6 +39,10 @@ export class ClientesService {
 
     if (filtros.estado !== undefined && filtros.estado !== '') {
       params = params.set('estado', filtros.estado);
+    }
+
+    if (filtros.isPromotor === 'true' || filtros.isPromotor === 'false') {
+      params = params.set('isPromotor', filtros.isPromotor);
     }
 
     if (typeof filtros.page === 'number') {
