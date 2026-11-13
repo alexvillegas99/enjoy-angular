@@ -57,14 +57,17 @@ export class Login {
   }
 
   validarUsuario() {
+    // Enter y clic llaman aquí: no enviar dos veces mientras valida.
+    if (this.validating || !this.username?.trim() || !this.password) return;
     this.validating = true;
 
     this.authService.login(this.username, this.password).subscribe({
       next: () => this.handleLoginSuccess(),
       error: (error) => {
         this.validating = false;
-        console.log(error)
-        this.alert.error('Error', error.error.message.message);
+        const m = error?.error?.message;
+        const texto = typeof m === 'string' ? m : (m?.message ?? 'No se pudo iniciar sesión. Revisa tus datos.');
+        this.alert.error('Error', texto);
       },
     });
   }

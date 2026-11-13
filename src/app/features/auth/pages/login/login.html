@@ -33,6 +33,7 @@
             type="email"
             class="input"
             [(ngModel)]="username"
+            (keyup.enter)="validarUsuario()"
             placeholder="tu@correo.com"
             style="padding-left:38px;"
           />
@@ -49,6 +50,7 @@
             [type]="showPassword ? 'text' : 'password'"
             class="input"
             [(ngModel)]="password"
+            (keyup.enter)="validarUsuario()"
             placeholder="••••••••"
             style="padding-left:38px; padding-right:42px;"
           />
