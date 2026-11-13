@@ -1,0 +1,143 @@
+<div class="page space-y-6 pb-20">
+
+  <!-- HEADER -->
+  <div class="flex flex-wrap items-center gap-4 animate-in">
+    <span class="icon-badge icon-badge-primary">
+      <lucide-icon name="wallet" class="w-5 h-5"></lucide-icon>
+    </span>
+    <div class="flex-1 min-w-0">
+      <h1 class="page-title">Cobros por atender</h1>
+      <p class="subtle">Pagos que se cobraron pero no terminaron en una cuponera activa.</p>
+    </div>
+    <button class="btn-secondary flex items-center gap-2" (click)="cargar()" [disabled]="loading">
+      <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon>
+      Actualizar
+    </button>
+  </div>
+
+  @if (loading) {
+    <div class="flex items-center justify-center py-16">
+      <div class="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
+
+  @if (!loading && total === 0) {
+    <div class="card animate-in flex items-center gap-3">
+      <span class="icon-badge icon-badge-primary flex-shrink-0">
+        <lucide-icon name="check-circle" class="w-5 h-5"></lucide-icon>
+      </span>
+      <div>
+        <p class="text-sm font-semibold text-text-dark">Todo en orden</p>
+        <p class="text-xs text-text-body">No hay cobros pendientes de revisión ni cuponeras sin emitir.</p>
+      </div>
+    </div>
+  }
+
+  @if (!loading && total > 0) {
+
+    <!-- ── EN REVISIÓN ── -->
+    @if (enRevision.length) {
+      <section class="space-y-3">
+        <div>
+          <h2 class="text-sm font-semibold text-text-dark">En revisión <span class="text-text-body font-normal">· {{ enRevision.length }}</span></h2>
+          <p class="text-xs text-text-body">El proveedor cobró, pero el monto, la moneda o la referencia no coinciden con el pedido. Verifica el cobro en PayPhone o PayPal antes de decidir.</p>
+        </div>
+
+        @for (p of enRevision; track p._id) {
+          <div class="card animate-in space-y-4">
+            <div class="flex flex-wrap items-start gap-3">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-text-dark">{{ p.nombreCliente || 'Cliente' }}</p>
+                <p class="text-xs text-text-body">{{ p.emailCliente }}</p>
+              </div>
+              <span class="badge badge-pendiente">En revisión</span>
+            </div>
+
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+              <div><p class="text-xs text-text-body">Cuponera</p><p class="font-medium text-text-dark">{{ p.cuponeraNombre }}</p></div>
+              <div><p class="text-xs text-text-body">Monto esperado</p><p class="font-medium text-text-dark">${{ p.monto | number: '1.2-2' }}</p></div>
+              <div><p class="text-xs text-text-body">Método</p><p class="font-medium text-text-dark">{{ metodo(p) }}</p></div>
+              <div><p class="text-xs text-text-body">Fecha</p><p class="font-medium text-text-dark">{{ (p.fechaPago || p.updatedAt) | date: 'dd/MM/yyyy HH:mm' }}</p></div>
+            </div>
+
+            @if (p.revisionMotivo) {
+              <div class="flex items-start gap-2 text-xs text-text-body">
+                <lucide-icon name="alert-triangle" style="width:14px; height:14px; flex-shrink:0; margin-top:1px;"></lucide-icon>
+                <span>{{ p.revisionMotivo }}</span>
+              </div>
+            }
+            <p class="text-xs text-text-body">Transacción: <span class="font-mono">{{ p.clientTransactionId }}</span>@if (p.transactionId) { · Proveedor: <span class="font-mono">{{ p.transactionId }}</span>}</p>
+
+            <div class="flex flex-col md:flex-row gap-3 md:items-end">
+              <div class="flex-1">
+                <label class="form-label">Nota (opcional)</label>
+                <input class="input" [(ngModel)]="notas[p._id]" [placeholder]="'Ej.: cobro verificado en ' + metodo(p)" />
+              </div>
+              <div class="flex gap-2">
+                <button class="btn-secondary" (click)="rechazar(p)" [disabled]="procesandoId === p._id">Rechazar</button>
+                <button class="btn-primary" (click)="aprobar(p)" [disabled]="procesandoId === p._id">
+                  {{ procesandoId === p._id ? 'Procesando…' : 'Aprobar y emitir' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ── COBRADOS SIN CUPÓN ── -->
+    @if (sinCupon.length) {
+      <section class="space-y-3">
+        <div>
+          <h2 class="text-sm font-semibold text-text-dark">Cobrados sin cuponera <span class="text-text-body font-normal">· {{ sinCupon.length }}</span></h2>
+          <p class="text-xs text-text-body">El pago está aprobado pero la cuponera no se emitió. Reintentar es seguro: nunca crea una segunda.</p>
+        </div>
+
+        @for (p of sinCupon; track p._id) {
+          <div class="card animate-in">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+              <div class="flex-1 min-w-0 space-y-1">
+                <p class="text-sm font-semibold text-text-dark">{{ p.nombreCliente || 'Cliente' }} <span class="text-text-body font-normal">· {{ p.emailCliente }}</span></p>
+                <p class="text-xs text-text-body">{{ p.cuponeraNombre }} · ${{ p.monto | number: '1.2-2' }} · {{ metodo(p) }} · {{ (p.fechaPago || p.updatedAt) | date: 'dd/MM/yyyy HH:mm' }}</p>
+                @if (p.cuponError) {
+                  <p class="text-xs text-text-body">Error: {{ p.cuponError }}</p>
+                }
+              </div>
+              <span class="badge" [ngClass]="p.cuponEstado === 'ERROR' ? 'badge-rechazado' : 'badge-pendiente'">{{ estadoCupon(p) }}</span>
+              <button class="btn-primary flex items-center justify-center gap-2" (click)="reemitir(p)" [disabled]="procesandoId === p._id">
+                <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon>
+                {{ procesandoId === p._id ? 'Emitiendo…' : 'Reintentar' }}
+              </button>
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ── SOLICITUDES SIN CUPÓN ── -->
+    @if (solicitudes.length) {
+      <section class="space-y-3">
+        <div>
+          <h2 class="text-sm font-semibold text-text-dark">Solicitudes aprobadas sin cuponera <span class="text-text-body font-normal">· {{ solicitudes.length }}</span></h2>
+          <p class="text-xs text-text-body">Se aprobaron (por ejemplo, una transferencia) pero falló la emisión.</p>
+        </div>
+
+        @for (s of solicitudes; track s._id) {
+          <div class="card animate-in">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+              <div class="flex-1 min-w-0 space-y-1">
+                <p class="text-sm font-semibold text-text-dark">{{ s.nombreCliente }} <span class="text-text-body font-normal">· {{ s.emailCliente }}</span></p>
+                <p class="text-xs text-text-body">{{ s.cuponeraNombre }} · ${{ s.cuponeraPrecio }} · {{ s.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</p>
+                <p class="text-xs text-text-body">Error: {{ s.emisionError }}</p>
+              </div>
+              <button class="btn-primary flex items-center justify-center gap-2" (click)="reintentarSolicitud(s)" [disabled]="procesandoId === s._id">
+                <lucide-icon name="refresh-cw" style="width:14px; height:14px;"></lucide-icon>
+                {{ procesandoId === s._id ? 'Emitiendo…' : 'Reintentar' }}
+              </button>
+            </div>
+          </div>
+        }
+      </section>
+    }
+  }
+</div>

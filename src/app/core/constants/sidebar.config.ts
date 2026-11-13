@@ -74,7 +74,8 @@ export const SIDEBAR_MENU_FULL: SidebarItem[] = [
     label: 'Ventas',
     icon: 'credit-card',
     children: [
-      { label: 'Solicitudes cuponera', route: '/solicitudes-cuponera', icon: 'landmark', permission: 'solicitudes.ver' },
+      { label: 'Solicitudes cuponera', route: '/solicitudes-cuponera', icon: 'landmark', permission: 'solicitudes.ver', exact: true },
+      { label: 'Cobros por atender', route: '/solicitudes-cuponera/por-atender', icon: 'wallet', permission: 'solicitudes.aprobar' },
       { label: 'Pagos', route: '/pagos', icon: 'credit-card', permission: 'pagos.configurar' },
     ],
   },
